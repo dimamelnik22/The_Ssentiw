@@ -1,3 +1,3 @@
 ﻿  main.cpp
-c:\users\dimme\source\repos\thewitness_test\thewitness_test\interface.h(265): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  TheWitness_test.vcxproj -> C:\Users\dimme\source\repos\TheWitness_test\Debug\TheWitness_test.exe
+d:\git\the_witness\thewitness_cpptest\thewitness_test\interface.h(265): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  TheWitness_test.vcxproj -> D:\GIT\The_Witness\TheWitness_CPPtest\Debug\TheWitness_test.exe
