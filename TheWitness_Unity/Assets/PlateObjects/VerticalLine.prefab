@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 65909024714079402}
   m_Layer: 0
   m_Name: VerticalLine
-  m_TagString: Untagged
+  m_TagString: PolePart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
