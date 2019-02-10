@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - PolePart
+  - EltPoint
+  - Path
   layers:
   - Default
   - TransparentFX

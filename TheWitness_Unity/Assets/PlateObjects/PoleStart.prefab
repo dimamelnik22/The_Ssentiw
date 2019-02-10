@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23722535576671198}
   - component: {fileID: 136703880600868298}
   m_Layer: 0
-  m_Name: Start
+  m_Name: PoleStart
   m_TagString: PolePart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
