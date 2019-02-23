@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33066550368163814}
   - component: {fileID: 23852003283307228}
   - component: {fileID: 65416257650872896}
+  - component: {fileID: 114929238112493060}
   m_Layer: 0
   m_Name: PoleHorizontalLine
   m_TagString: PolePart
@@ -96,3 +97,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114929238112493060
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1465665212001174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2609855b8382a7a42bc7ca768b9b5412, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  first: {fileID: 0}
+  second: {fileID: 0}
+  isUsedBySolution: 0
+  isUsedByPlayer: 0
+  hasPoint: 0
+  point: {fileID: 0}

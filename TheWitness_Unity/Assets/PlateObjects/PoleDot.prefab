@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33138739198898872}
   - component: {fileID: 23830358726096646}
   - component: {fileID: 136717126767088644}
+  - component: {fileID: 114840493134350608}
   m_Layer: 0
   m_Name: PoleDot
   m_TagString: PolePart
@@ -84,6 +85,27 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1994654814756086}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &114840493134350608
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1994654814756086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153457becdc980b4eafafd502130fd65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  up: {fileID: 0}
+  down: {fileID: 0}
+  left: {fileID: 0}
+  right: {fileID: 0}
+  isUsedBySolution: 0
+  isUsedByPlayer: 0
+  hasPoint: 0
+  point: {fileID: 0}
+  position_x: 0
+  position_y: 0
 --- !u!136 &136717126767088644
 CapsuleCollider:
   m_ObjectHideFlags: 1

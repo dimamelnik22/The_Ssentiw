@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Core : MonoBehaviour {
 
-    public Transform DotPrefab;
+    public GameObject DotPrefab;
     public GameObject VerticalLinePrefab;
     public GameObject HorizontalLinePrefab;
-    public Transform StartPrefab;
-    public Transform FinishPrefab;
+    public GameObject StartPrefab;
+    public GameObject FinishPrefab;
     public GameObject PointPrefab;
 
     public Transform PathDotPrefab;
@@ -39,53 +39,54 @@ public class Core : MonoBehaviour {
     public bool pathIsShown = false;
     public bool playerIsActive = false;
     private Pole myPole;
+
     public void ControllerUp()
     {
         if (playerIsActive)
         {
-            PoleDot current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
+            GameObject current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
             if (current != myPole.start)
             {
-                if (current.AllowedToUp())
+                if (current.GetComponent<PoleDot>().AllowedToUp())
                 {
-                    PoleDot next;
-                    if (current.up.first == current)
-                        next = current.up.second;
-                    else next = current.up.first;
-                    if (!next.isUsedByPlayer)
+                    GameObject next;
+                    if (current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().first == current)
+                        next = current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().second;
+                    else next = current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().first;
+                    if (!next.GetComponent<PoleDot>().isUsedByPlayer)
                     {
                         playerPathLinesOnScreen.Add(Instantiate(PlayerPathVerticalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepz * 0.5f, PlayerPathVerticalLinePrefab.transform.rotation));
                         playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepz, PlayerPathDotPrefab.transform.rotation));
-                        current.up.isUsedByPlayer = true;
-                        next.isUsedByPlayer = true;
+                        current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = true;
+                        next.GetComponent<PoleDot>().isUsedByPlayer = true;
                         myPole.playerPath.dots.Add(next);
-                        myPole.playerPath.lines.Add(current.up);
+                        myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().up);
                     }
-                    else if (current.up.isUsedByPlayer)
+                    else if (current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer)
                     {
                         Destroy(playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1]);
                         Destroy(playerPathLinesOnScreen[playerPathLinesOnScreen.Count - 1]);
                         playerPathDotsOnScreen.RemoveAt(playerPathDotsOnScreen.Count - 1);
                         playerPathLinesOnScreen.RemoveAt(playerPathLinesOnScreen.Count - 1);
-                        current.isUsedByPlayer = false;
-                        current.up.isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = false;
                         myPole.playerPath.dots.Remove(current);
-                        myPole.playerPath.lines.Remove(current.up);
+                        myPole.playerPath.lines.Remove(current.GetComponent<PoleDot>().up);
                     }
                 }
             }
-            else if (current.AllowedToUp())
+            else if (current.GetComponent<PoleDot>().AllowedToUp())
             {
-                PoleDot next;
-                if (current.up.first == current)
-                    next = current.up.second;
-                else next = current.up.first;
+                GameObject next;
+                if (current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().first == current)
+                    next = current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().second;
+                else next = current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().first;
                 playerPathLinesOnScreen.Add(Instantiate(PlayerPathVerticalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepz * 0.5f, PlayerPathVerticalLinePrefab.transform.rotation));
                 playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepz, PlayerPathDotPrefab.transform.rotation));
-                current.up.isUsedByPlayer = true;
-                next.isUsedByPlayer = true;
+                current.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = true;
+                next.GetComponent<PoleDot>().isUsedByPlayer = true;
                 myPole.playerPath.dots.Add(next);
-                myPole.playerPath.lines.Add(current.up);
+                myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().up);
             }
         }
     }
@@ -93,49 +94,49 @@ public class Core : MonoBehaviour {
     {
         if (playerIsActive)
         {
-            PoleDot current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
+            GameObject current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
             if (current != myPole.start)
             {
-                if (current.AllowedToDown())
+                if (current.GetComponent<PoleDot>().AllowedToDown())
                 {
-                    PoleDot next;
-                    if (current.down.first == current)
-                        next = current.down.second;
-                    else next = current.down.first;
-                    if (!next.isUsedByPlayer)
+                    GameObject next;
+                    if (current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().first == current)
+                        next = current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().second;
+                    else next = current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().first;
+                    if (!next.GetComponent<PoleDot>().isUsedByPlayer)
                     {
                         playerPathLinesOnScreen.Add(Instantiate(PlayerPathVerticalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepz * 0.5f, PlayerPathVerticalLinePrefab.transform.rotation));
                         playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepz, PlayerPathDotPrefab.transform.rotation));
-                        current.down.isUsedByPlayer = true;
-                        next.isUsedByPlayer = true;
+                        current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = true;
+                        next.GetComponent<PoleDot>().isUsedByPlayer = true;
                         myPole.playerPath.dots.Add(next);
-                        myPole.playerPath.lines.Add(current.down);
+                        myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().down);
                     }
-                    else if (current.down.isUsedByPlayer)
+                    else if (current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer)
                     {
                         Destroy(playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1]);
                         Destroy(playerPathLinesOnScreen[playerPathLinesOnScreen.Count - 1]);
                         playerPathDotsOnScreen.RemoveAt(playerPathDotsOnScreen.Count - 1);
                         playerPathLinesOnScreen.RemoveAt(playerPathLinesOnScreen.Count - 1);
-                        current.isUsedByPlayer = false;
-                        current.down.isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = false;
                         myPole.playerPath.dots.Remove(current);
-                        myPole.playerPath.lines.Remove(current.down);
+                        myPole.playerPath.lines.Remove(current.GetComponent<PoleDot>().down);
                     }
                 }
             }
-            else if (current.AllowedToDown())
+            else if (current.GetComponent<PoleDot>().AllowedToDown())
             {
-                PoleDot next;
-                if (current.down.first == current)
-                    next = current.down.second;
-                else next = current.down.first;
+                GameObject next;
+                if (current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().first == current)
+                    next = current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().second;
+                else next = current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().first;
                 playerPathLinesOnScreen.Add(Instantiate(PlayerPathVerticalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepz * 0.5f, PlayerPathVerticalLinePrefab.transform.rotation));
                 playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepz, PlayerPathDotPrefab.transform.rotation));
-                current.down.isUsedByPlayer = true;
-                next.isUsedByPlayer = true;
+                current.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = true;
+                next.GetComponent<PoleDot>().isUsedByPlayer = true;
                 myPole.playerPath.dots.Add(next);
-                myPole.playerPath.lines.Add(current.down);
+                myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().down);
             }
         }
     }
@@ -143,49 +144,49 @@ public class Core : MonoBehaviour {
     {
         if (playerIsActive)
         {
-            PoleDot current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
+            GameObject current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
             if (current != myPole.start)
             {
-                if (current.AllowedToLeft())
+                if (current.GetComponent<PoleDot>().AllowedToLeft())
                 {
-                    PoleDot next;
-                    if (current.left.first == current)
-                        next = current.left.second;
-                    else next = current.left.first;
-                    if (!next.isUsedByPlayer)
+                    GameObject next;
+                    if (current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().first == current)
+                        next = current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().second;
+                    else next = current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().first;
+                    if (!next.GetComponent<PoleDot>().isUsedByPlayer)
                     {
                         playerPathLinesOnScreen.Add(Instantiate(PlayerPathHorizontalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepx * 0.5f, PlayerPathHorizontalLinePrefab.transform.rotation));
                         playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepx, PlayerPathDotPrefab.transform.rotation));
-                        current.left.isUsedByPlayer = true;
-                        next.isUsedByPlayer = true;
+                        current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = true;
+                        next.GetComponent<PoleDot>().isUsedByPlayer = true;
                         myPole.playerPath.dots.Add(next);
-                        myPole.playerPath.lines.Add(current.left);
+                        myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().left);
                     }
-                    else if (current.left.isUsedByPlayer)
+                    else if (current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer)
                     {
                         Destroy(playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1]);
                         Destroy(playerPathLinesOnScreen[playerPathLinesOnScreen.Count - 1]);
                         playerPathDotsOnScreen.RemoveAt(playerPathDotsOnScreen.Count - 1);
                         playerPathLinesOnScreen.RemoveAt(playerPathLinesOnScreen.Count - 1);
-                        current.isUsedByPlayer = false;
-                        current.left.isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = false;
                         myPole.playerPath.dots.Remove(current);
-                        myPole.playerPath.lines.Remove(current.left);
+                        myPole.playerPath.lines.Remove(current.GetComponent<PoleDot>().left);
                     }
                 }
             }
-            else if (current.AllowedToLeft())
+            else if (current.GetComponent<PoleDot>().AllowedToLeft())
             {
-                PoleDot next;
-                if (current.left.first == current)
-                    next = current.left.second;
-                else next = current.left.first;
+                GameObject next;
+                if (current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().first == current)
+                    next = current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().second;
+                else next = current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().first;
                 playerPathLinesOnScreen.Add(Instantiate(PlayerPathHorizontalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepx * 0.5f, PlayerPathHorizontalLinePrefab.transform.rotation));
                 playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position - stepz, PlayerPathDotPrefab.transform.rotation));
-                current.left.isUsedByPlayer = true;
-                next.isUsedByPlayer = true;
+                current.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = true;
+                next.GetComponent<PoleDot>().isUsedByPlayer = true;
                 myPole.playerPath.dots.Add(next);
-                myPole.playerPath.lines.Add(current.left);
+                myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().left);
             }
         }
     }
@@ -193,49 +194,49 @@ public class Core : MonoBehaviour {
     {
         if (playerIsActive)
         {
-            PoleDot current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
+            GameObject current = myPole.playerPath.dots[myPole.playerPath.dots.Count - 1];
             if (current != myPole.start)
             {
-                if (current.AllowedToRight())
+                if (current.GetComponent<PoleDot>().AllowedToRight())
                 {
-                    PoleDot next;
-                    if (current.right.first == current)
-                        next = current.right.second;
-                    else next = current.right.first;
-                    if (!next.isUsedByPlayer)
+                    GameObject next;
+                    if (current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().first == current)
+                        next = current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().second;
+                    else next = current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().first;
+                    if (!next.GetComponent<PoleDot>().isUsedByPlayer)
                     {
                         playerPathLinesOnScreen.Add(Instantiate(PlayerPathHorizontalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepx * 0.5f, PlayerPathHorizontalLinePrefab.transform.rotation));
                         playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepx, PlayerPathDotPrefab.transform.rotation));
-                        current.right.isUsedByPlayer = true;
-                        next.isUsedByPlayer = true;
+                        current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = true;
+                        next.GetComponent<PoleDot>().isUsedByPlayer = true;
                         myPole.playerPath.dots.Add(next);
-                        myPole.playerPath.lines.Add(current.right);
+                        myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().right);
                     }
-                    else if (current.right.isUsedByPlayer)
+                    else if (current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer)
                     {
                         Destroy(playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1]);
                         Destroy(playerPathLinesOnScreen[playerPathLinesOnScreen.Count - 1]);
                         playerPathDotsOnScreen.RemoveAt(playerPathDotsOnScreen.Count - 1);
                         playerPathLinesOnScreen.RemoveAt(playerPathLinesOnScreen.Count - 1);
-                        current.isUsedByPlayer = false;
-                        current.right.isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().isUsedByPlayer = false;
+                        current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = false;
                         myPole.playerPath.dots.Remove(current);
-                        myPole.playerPath.lines.Remove(current.right);
+                        myPole.playerPath.lines.Remove(current.GetComponent<PoleDot>().right);
                     }
                 }
             }
-            else if (current.AllowedToRight())
+            else if (current.GetComponent<PoleDot>().AllowedToRight())
             {
-                PoleDot next;
-                if (current.right.first == current)
-                    next = current.right.second;
-                else next = current.right.first;
+                GameObject next;
+                if (current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().first == current)
+                    next = current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().second;
+                else next = current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().first;
                 playerPathLinesOnScreen.Add(Instantiate(PlayerPathHorizontalLinePrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepx * 0.5f, PlayerPathHorizontalLinePrefab.transform.rotation));
                 playerPathDotsOnScreen.Add(Instantiate(PlayerPathDotPrefab, playerPathDotsOnScreen[playerPathDotsOnScreen.Count - 1].transform.position + stepx, PlayerPathDotPrefab.transform.rotation));
-                current.right.isUsedByPlayer = true;
-                next.isUsedByPlayer = true;
+                current.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = true;
+                next.GetComponent<PoleDot>().isUsedByPlayer = true;
                 myPole.playerPath.dots.Add(next);
-                myPole.playerPath.lines.Add(current.right);
+                myPole.playerPath.lines.Add(current.GetComponent<PoleDot>().right);
             }
         }
     }
@@ -243,16 +244,15 @@ public class Core : MonoBehaviour {
     {
         if (!playerIsActive)
         {
-            foreach (PoleEltPoint point in myPole.eltsManager.unsolvedPoints)
+            foreach (GameObject point in myPole.eltsManager.unsolvedPoints)
             {
-                point.pointOnScreen.GetComponent<Renderer>().material.Lerp(point.pointOnScreen.GetComponent<Renderer>().material, EltPointMaterial, 200f);
+                point.GetComponent<PoleEltPoint>().NormalizeColor();
             }
             foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
                 Destroy(gameObject);
-            myPole.start.isUsedByPlayer = true;
-            playerPathDotsOnScreen.Add(Instantiate(PlayerPathStartPrefab, transform.position + stepx * myPole.start.position_x + stepz * myPole.start.position_y + pathstepy, PlayerPathStartPrefab.transform.rotation));
+            myPole.start.GetComponent<PoleDot>().isUsedByPlayer = true;
+            playerPathDotsOnScreen.Add(Instantiate(PlayerPathStartPrefab, transform.position + stepx * myPole.start.GetComponent<PoleDot>().position_x + stepz * myPole.start.GetComponent<PoleDot>().position_y + pathstepy, PlayerPathStartPrefab.transform.rotation));
             myPole.playerPath.dots.Add(myPole.start);
-            
         }
         else
         {
@@ -262,30 +262,29 @@ public class Core : MonoBehaviour {
                 {
                     foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                     {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 200f);
+                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
                     }
                 }
                 else
                 {
                     foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                     {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 200f);
+                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                     }
-                    foreach(PoleEltPoint point in myPole.eltsManager.unsolvedPoints)
+                    foreach(GameObject point in myPole.eltsManager.unsolvedPoints)
                     {
-                        Debug.Log("!!");
-                        point.pointOnScreen.GetComponent<Renderer>().material.Lerp(point.pointOnScreen.GetComponent<Renderer>().material, EltWrongPointMaterial, 200f);
+                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
                     }
                 }
             }
             else foreach(GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                 {
-                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 200f);
+                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-            foreach (PoleDot dot in myPole.playerPath.dots)
-                dot.isUsedByPlayer = false;
-            foreach (PoleLine line in myPole.playerPath.lines)
-                line.isUsedByPlayer = false;
+            foreach (GameObject dot in myPole.playerPath.dots)
+                dot.GetComponent<PoleDot>().isUsedByPlayer = false;
+            foreach (GameObject line in myPole.playerPath.lines)
+                line.GetComponent<PoleLine>().isUsedByPlayer = false;
             myPole.playerPath.dots.Clear();
             myPole.playerPath.lines.Clear();
             playerPathDotsOnScreen.Clear(); 
@@ -296,62 +295,74 @@ public class Core : MonoBehaviour {
     public void ButtonCreate()
     {
         playerIsActive = false;
-        foreach (PoleDot dot in myPole.playerPath.dots)
-            dot.isUsedByPlayer = false;
-        foreach (PoleLine line in myPole.playerPath.lines)
-            line.isUsedByPlayer = false;
+        foreach (GameObject dot in myPole.playerPath.dots)
+            dot.GetComponent<PoleDot>().isUsedByPlayer = false;
+        foreach (GameObject line in myPole.playerPath.lines)
+            line.GetComponent<PoleLine>().isUsedByPlayer = false;
         myPole.playerPath.dots.Clear();
         myPole.playerPath.lines.Clear();
         playerPathDotsOnScreen.Clear();
         playerPathLinesOnScreen.Clear();
         foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
             Destroy(gameObject);
-
         foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("EltPoint"))
             Destroy(gameObject);
+        myPole.ClearPole();
         if (mode)
         {
-            myPole.ClearPole();
-            myPole.SetStart(0, 0);
-            myPole.SetFinish(myPole.GetSize() - 1, myPole.GetSize() - 1);
+            myPole.SetStart(myPole.myRandGen.GetRandom() % myPole.GetSize(), myPole.myRandGen.GetRandom() % myPole.GetSize());
+            int x = myPole.myRandGen.GetRandom() % myPole.GetSize();
+            int y = myPole.myRandGen.GetRandom() % myPole.GetSize();
+            while (myPole.start.GetComponent<PoleDot>().position_x == x && myPole.start.GetComponent<PoleDot>().position_y ==y)
+            {
+                x = myPole.myRandGen.GetRandom() % myPole.GetSize();
+                y = myPole.myRandGen.GetRandom() % myPole.GetSize();
+            }
+            myPole.SetFinish(x, y);
             myPole.CreateSolution();
             myPole.GeneratePoints(7);
             for (int i = 0; i < myPole.GetSize(); i++)
             {
                 for (int j = 0; j < myPole.GetSize(); j++)
                 {
-                    if (myPole.poleDots[i][j] == myPole.start) Instantiate(StartPrefab, transform.position + stepx * j + stepz * i, transform.rotation);
-                    else if (myPole.poleDots[i][j] == myPole.finish) Instantiate(FinishPrefab, transform.position + stepx * j + stepz * i, transform.rotation);
-                    else Instantiate(DotPrefab, transform.position + stepx * j + stepz * i, transform.rotation);
-                    if (myPole.poleDots[i][j].point != null) myPole.poleDots[i][j].point.pointOnScreen = Instantiate(PointPrefab, transform.position + stepx * j + stepz * i + new Vector3(0, 1, 0), transform.rotation);
+                    if (myPole.poleDots[i][j].GetComponent<PoleDot>().hasPoint)
+                    {
+                        myPole.poleDots[i][j].GetComponent<PoleDot>().point = Instantiate(PointPrefab, transform.position + stepx * j + stepz * i + new Vector3(0, 1, 0), transform.rotation);
+                        myPole.poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<PoleEltPoint>().SetDot(myPole.poleDots[i][j]);
+                        myPole.eltsManager.points.Add(myPole.poleDots[i][j].GetComponent<PoleDot>().point);
+                    }
                 }
             }
             for (int i = 0; i < myPole.GetSize(); i++)
             {
                 for (int j = 0; j < myPole.GetSize(); j++)
                 {
-                    Instantiate(DotPrefab, transform.position + stepx * j + stepz * i, transform.rotation);
                     if (j < myPole.GetSize() - 1)
-                        if (myPole.poleDots[i][j].right != null)
+                        if (myPole.poleDots[i][j].GetComponent<PoleDot>().right != null)
                         {
-                            Instantiate(HorizontalLinePrefab, transform.position + stepx * 0.5f + stepx * j + stepz * i, HorizontalLinePrefab.transform.rotation);
-                            if (myPole.poleDots[i][j].right.point != null) myPole.poleDots[i][j].right.point.pointOnScreen = Instantiate(PointPrefab, transform.position + stepx * 0.5f + stepx * j + stepz * i + new Vector3(0, 1, 0), transform.rotation);
+                            if (myPole.poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().hasPoint)
+                            {
+                                myPole.poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepx * 0.5f + stepx * j + stepz * i + new Vector3(0, 1, 0), transform.rotation);
+                                myPole.poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.poleDots[i][j].GetComponent<PoleDot>().right);
+                                myPole.eltsManager.points.Add(myPole.poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point);
+                            }
                         }
                 }
-
                 if (i < myPole.GetSize() - 1)
-
                     for (int j = 0; j < myPole.GetSize(); j++)
                     {
-                        if (myPole.poleDots[i][j].down != null)
+                        if (myPole.poleDots[i][j].GetComponent<PoleDot>().down != null)
                         {
-                            Instantiate(VerticalLinePrefab, transform.position + stepz * 0.5f + stepx * j + stepz * i, VerticalLinePrefab.transform.rotation);
-                            if (myPole.poleDots[i][j].down.point != null) myPole.poleDots[i][j].down.point.pointOnScreen = Instantiate(PointPrefab, transform.position + stepz * 0.5f + stepx * j + stepz * i + new Vector3(0, 1, 0), transform.rotation);
+                            if (myPole.poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().hasPoint)
+                            {
+                                myPole.poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepz * 0.5f + stepx * j + stepz * i + new Vector3(0, 1, 0), transform.rotation);
+                                myPole.poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.poleDots[i][j].GetComponent<PoleDot>().down);
+                                myPole.eltsManager.points.Add(myPole.poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point);
+                            }
                         }
                     }
             }
             seed = myPole.myRandGen.seed;
-            
         }
         mode = !mode;
         pathIsShown = false;
@@ -359,10 +370,10 @@ public class Core : MonoBehaviour {
     public void ButtonShowSolution()
     {
         playerIsActive = false;
-        foreach (PoleDot dot in myPole.playerPath.dots)
-            dot.isUsedByPlayer = false;
-        foreach (PoleLine line in myPole.playerPath.lines)
-            line.isUsedByPlayer = false;
+        foreach (GameObject dot in myPole.playerPath.dots)
+            dot.GetComponent<PoleDot>().isUsedByPlayer = false;
+        foreach (GameObject line in myPole.playerPath.lines)
+            line.GetComponent<PoleLine>().isUsedByPlayer = false;
         myPole.playerPath.dots.Clear();
         myPole.playerPath.lines.Clear();
         playerPathDotsOnScreen.Clear();
@@ -376,29 +387,26 @@ public class Core : MonoBehaviour {
         {
             foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
                 Destroy(gameObject);
-            //Debug.Log(myPole.systemPath.dots.Count);
             for (int i = 0; i < myPole.systemPath.dots.Count; i++)
             {
-                //Debug.Log(i);
                 if (i < myPole.systemPath.dots.Count - 1)
                 {
-                    if (i == 0) Instantiate(PathStartPrefab, transform.position + stepx * myPole.systemPath.dots[i].position_x + stepz * myPole.systemPath.dots[i].position_y + pathstepy, transform.rotation);
-                    else Instantiate(PathDotPrefab, transform.position + stepx * myPole.systemPath.dots[i].position_x + stepz * myPole.systemPath.dots[i].position_y + pathstepy, transform.rotation);
-                    if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].up) Instantiate(PathVerticalLinePrefab, transform.position - stepz * 0.5f + stepx * myPole.systemPath.dots[i].position_x + stepz * myPole.systemPath.dots[i].position_y + pathstepy, VerticalLinePrefab.transform.rotation);
-                    else if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].down) Instantiate(PathVerticalLinePrefab, transform.position + stepz * 0.5f + stepx * myPole.systemPath.dots[i].position_x + stepz * myPole.systemPath.dots[i].position_y + pathstepy, VerticalLinePrefab.transform.rotation);
-                    else if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].left) Instantiate(PathHorizontalLinePrefab, transform.position - stepx * 0.5f + stepx * myPole.systemPath.dots[i].position_x + stepz * myPole.systemPath.dots[i].position_y + pathstepy, PathHorizontalLinePrefab.transform.rotation);
-                    else if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].right) Instantiate(PathHorizontalLinePrefab, transform.position + stepx * 0.5f + stepx * myPole.systemPath.dots[i].position_x + stepz * myPole.systemPath.dots[i].position_y + pathstepy, PathHorizontalLinePrefab.transform.rotation);
+                    if (i == 0) Instantiate(PathStartPrefab, transform.position + stepx * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_x + stepz * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_y + pathstepy, transform.rotation);
+                    else Instantiate(PathDotPrefab, transform.position + stepx * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_x + stepz * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_y + pathstepy, transform.rotation);
+                    if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].GetComponent<PoleDot>().up) Instantiate(PathVerticalLinePrefab, transform.position - stepz * 0.5f + stepx * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_x + stepz * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_y + pathstepy, VerticalLinePrefab.transform.rotation);
+                    else if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].GetComponent<PoleDot>().down) Instantiate(PathVerticalLinePrefab, transform.position + stepz * 0.5f + stepx * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_x + stepz * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_y + pathstepy, VerticalLinePrefab.transform.rotation);
+                    else if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].GetComponent<PoleDot>().left) Instantiate(PathHorizontalLinePrefab, transform.position - stepx * 0.5f + stepx * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_x + stepz * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_y + pathstepy, PathHorizontalLinePrefab.transform.rotation);
+                    else if (myPole.systemPath.lines[i] == myPole.systemPath.dots[i].GetComponent<PoleDot>().right) Instantiate(PathHorizontalLinePrefab, transform.position + stepx * 0.5f + stepx * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_x + stepz * myPole.systemPath.dots[i].GetComponent<PoleDot>().position_y + pathstepy, PathHorizontalLinePrefab.transform.rotation);
                 }
             }
-            Instantiate(PathFinishPrefab, transform.position + stepx * myPole.finish.position_x + stepz * myPole.finish.position_y + pathstepy, transform.rotation);
+            Instantiate(PathFinishPrefab, transform.position + stepx * myPole.finish.GetComponent<PoleDot>().position_x + stepz * myPole.finish.GetComponent<PoleDot>().position_y + pathstepy, transform.rotation);
         }
         pathIsShown = !pathIsShown;
     }
 
-    // Use this for initialization
     void Start() {
         int size = 5;
-        myPole = new Pole(size, seed);
+        myPole = new Pole(size, seed,DotPrefab,StartPrefab,FinishPrefab,HorizontalLinePrefab,VerticalLinePrefab);
         playerPathLinesOnScreen = new List<GameObject>();
         playerPathDotsOnScreen = new List<GameObject>();
     }
@@ -407,7 +415,6 @@ public class Core : MonoBehaviour {
     {
         
     }
-
 
     class MyRandom
     {
@@ -424,95 +431,16 @@ public class Core : MonoBehaviour {
         }
     }
 
-    class PoleEltPoint
-    {
-        PoleDot attachedDot;
-        PoleLine attachedLine;
-        public GameObject pointOnScreen;
-        public PoleEltPoint(PoleDot dot)
-        {
-            attachedDot = dot;
-        }
-        public PoleEltPoint(PoleLine line)
-        {
-            attachedLine = line;
-        }
-        public bool IsSolvedByPlayer()
-        {
-            if (attachedDot != null) return attachedDot.isUsedByPlayer;
-            else return attachedLine.isUsedByPlayer;
-        }
-    }
-
-    class PoleDot
-    {
-        public PoleLine up;
-        public PoleLine down;
-        public PoleLine left;
-        public PoleLine right;
-        public bool isUsedBySolution;
-        public bool isUsedByPlayer;
-        public PoleEltPoint point;
-        public int position_x;
-        public int position_y;
-        public PoleDot(int x, int y)
-        {
-            position_x = x;
-            position_y = y;
-            up = null;
-            down = null;
-            right = null;
-            left = null;
-            isUsedBySolution = false;
-            isUsedByPlayer = false;
-        }
-        public void AddLine(PoleLine newLine, PoleDot anotherDot)
-        {
-            if (position_x < anotherDot.position_x)
-            {
-                right = newLine;
-            }
-            else if (position_x > anotherDot.position_x)
-            {
-                left = newLine;
-            }
-            else if (position_y < anotherDot.position_y)
-            {
-                down = newLine;
-            }
-            else if (position_y > anotherDot.position_y)
-            {
-                up = newLine;
-            }
-        }
-        public bool AllowedToUp()
-        {
-            return (up != null);
-        }
-        public bool AllowedToDown()
-        {
-            return (down != null);
-        }
-        public bool AllowedToLeft()
-        {
-            return (left != null);
-        }
-        public bool AllowedToRight()
-        {
-            return (right != null);
-        }
-    };
-
     class PathDotStack
     {
         class DotNode
         {
-            public PoleDot dot;
+            public GameObject dot;
             public DotNode next;
         };
         private int size;
         DotNode head;
-        public void AddDot(PoleDot newDot)
+        public void AddDot(GameObject newDot)
         {
             DotNode curNode = new DotNode
             {
@@ -530,7 +458,7 @@ public class Core : MonoBehaviour {
                 size++;
             }
         }
-        public PoleDot GetDot()
+        public GameObject GetDot()
         {
             DotNode tmp = head;
             head = head.next;
@@ -547,44 +475,23 @@ public class Core : MonoBehaviour {
         }
     };
 
-    class PoleLine
-    {
-        public PoleDot first;
-        public PoleDot second;
-        public bool isUsedBySolution;
-        public bool isUsedByPlayer;
-        public PoleEltPoint point;
-        public PoleLine(PoleDot firstDot, PoleDot secondDot)
-        {
-            first = firstDot;
-            second = secondDot;
-            isUsedBySolution = false;
-            isUsedByPlayer = false;
-        }
-    };
-
-    class PoleSquere
-    {
-
-    };
-
     class PoleElts
     {
-        public List<PoleEltPoint> points;
-        public List<PoleEltPoint> unsolvedPoints;
+        public List<GameObject> points;
+        public List<GameObject> unsolvedPoints;
         public PoleElts()
         {
-            points = new List<PoleEltPoint>();
-            unsolvedPoints = new List<PoleEltPoint>();
+            points = new List<GameObject>();
+            unsolvedPoints = new List<GameObject>();
         }
         public bool CheckSolution()
         {
             bool isSolved = true;
             unsolvedPoints.Clear();
-            foreach (PoleEltPoint p in points)
+            foreach (GameObject p in points)
             {
-                if (!p.IsSolvedByPlayer()) unsolvedPoints.Add(p);
-                isSolved = isSolved && p.IsSolvedByPlayer();
+                if (!p.GetComponent<PoleEltPoint>().IsSolvedByPlayer()) unsolvedPoints.Add(p);
+                isSolved = isSolved && p.GetComponent<PoleEltPoint>().IsSolvedByPlayer();
             }
 
             return isSolved;
@@ -593,12 +500,12 @@ public class Core : MonoBehaviour {
 
     class PolePath
     {
-        public List<PoleDot> dots;
-        public List<PoleLine> lines;
+        public List<GameObject> dots;
+        public List<GameObject> lines;
         public PolePath()
         {
-            dots = new List<PoleDot>();
-            lines = new List<PoleLine>();
+            dots = new List<GameObject>();
+            lines = new List<GameObject>();
         }
     }
 
@@ -606,105 +513,99 @@ public class Core : MonoBehaviour {
     {
         public PoleElts eltsManager;
         public MyRandom myRandGen;
-        public PoleDot start;
-        public PoleDot finish;
+        public GameObject start;
+        public GameObject finish;
         private readonly int poleSize;
         PathDotStack dotData;
-        public PoleDot[][] poleDots;
-        public List<PoleLine> poleLines;
+        public GameObject[][] poleDots;
+        public List<GameObject> poleLines;
         public PolePath systemPath;
         public PolePath playerPath;
 
-        public bool FindPath(PoleDot begin, PoleDot end, int[][] ways)
-        {
+        private GameObject DotPrefab;
+        private GameObject VerticalLinePrefab;
+        private GameObject HorizontalLinePrefab;
+        private GameObject StartPrefab;
+        private GameObject FinishPrefab;
 
-            begin.isUsedBySolution = true;
+        public bool FindPath(GameObject begin, GameObject end, int[][] ways)
+        {
+            begin.GetComponent<PoleDot>().isUsedBySolution = true;
             if (begin == end)
             {
                 if (dotData.PathLength() < poleSize * 3)
                 {
                     return false;
                 }
-                //if (!eltsManager.CheckSolution())
-                //{
-                //    return false;
-                //}
                 return true;
             }
             bool[] tries = { true, true, true, true };
             dotData.AddDot(begin);
             bool triesLeft = true;
-
             while (triesLeft)
             {
-
                 int k = myRandGen.GetRandom() % 4;
                 while (!tries[k])
                 {
                     k = myRandGen.GetRandom() % 4;
                 }
-
                 switch (k)
                 {
                     case 0:
-
-                        if (begin.position_y > 0 && ways[begin.position_y - 1][begin.position_x] == 0 && tries[0])
+                        if (begin.GetComponent<PoleDot>().position_y > 0 && ways[begin.GetComponent<PoleDot>().position_y - 1][begin.GetComponent<PoleDot>().position_x] == 0 && tries[0])
                         {
-                            ways[begin.position_y - 1][begin.position_x] = 1;
-                            begin.up.isUsedBySolution = true;
-                            if (FindPath(poleDots[begin.position_y - 1][begin.position_x], end, ways)) return true;
+                            ways[begin.GetComponent<PoleDot>().position_y - 1][begin.GetComponent<PoleDot>().position_x] = 1;
+                            begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution = true;
+                            if (FindPath(poleDots[begin.GetComponent<PoleDot>().position_y - 1][begin.GetComponent<PoleDot>().position_x], end, ways)) return true;
                             else
                             {
-                                ways[begin.position_y - 1][begin.position_x] = 0;
-                                begin.up.isUsedBySolution = false;
+                                ways[begin.GetComponent<PoleDot>().position_y - 1][begin.GetComponent<PoleDot>().position_x] = 0;
+                                begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution = false;
                                 tries[0] = false;
                             }
                         }
                         else tries[0] = false;
                         break;
                     case 1:
-
-                        if (begin.position_x < poleSize - 1 && ways[begin.position_y][begin.position_x + 1] == 0 && tries[1])
+                        if (begin.GetComponent<PoleDot>().position_x < poleSize - 1 && ways[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x + 1] == 0 && tries[1])
                         {
-                            ways[begin.position_y][begin.position_x + 1] = 1;
-                            begin.right.isUsedBySolution = true;
-                            if (FindPath(poleDots[begin.position_y][begin.position_x + 1], end, ways)) return true;
+                            ways[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x + 1] = 1;
+                            begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedBySolution = true;
+                            if (FindPath(poleDots[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x + 1], end, ways)) return true;
                             else
                             {
-                                ways[begin.position_y][begin.position_x + 1] = 0;
-                                begin.right.isUsedBySolution = false;
+                                ways[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x + 1] = 0;
+                                begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedBySolution = false;
                                 tries[1] = false;
                             }
                         }
                         else tries[1] = false;
                         break;
                     case 2:
-
-                        if (begin.position_y < poleSize - 1 && ways[begin.position_y + 1][begin.position_x] == 0 && tries[2])
+                        if (begin.GetComponent<PoleDot>().position_y < poleSize - 1 && ways[begin.GetComponent<PoleDot>().position_y + 1][begin.GetComponent<PoleDot>().position_x] == 0 && tries[2])
                         {
-                            ways[begin.position_y + 1][begin.position_x] = 1;
-                            begin.down.isUsedBySolution = true;
-                            if (FindPath(poleDots[begin.position_y + 1][begin.position_x], end, ways)) return true;
+                            ways[begin.GetComponent<PoleDot>().position_y + 1][begin.GetComponent<PoleDot>().position_x] = 1;
+                            begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedBySolution = true;
+                            if (FindPath(poleDots[begin.GetComponent<PoleDot>().position_y + 1][begin.GetComponent<PoleDot>().position_x], end, ways)) return true;
                             else
                             {
-                                ways[begin.position_y + 1][begin.position_x] = 0;
-                                begin.down.isUsedBySolution = false;
+                                ways[begin.GetComponent<PoleDot>().position_y + 1][begin.GetComponent<PoleDot>().position_x] = 0;
+                                begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedBySolution = false;
                                 tries[2] = false;
                             }
                         }
                         else tries[2] = false;
                         break;
                     case 3:
-
-                        if (begin.position_x > 0 && ways[begin.position_y][begin.position_x - 1] == 0 && tries[3])
+                        if (begin.GetComponent<PoleDot>().position_x > 0 && ways[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x - 1] == 0 && tries[3])
                         {
-                            ways[begin.position_y][begin.position_x - 1] = 1;
-                            begin.left.isUsedBySolution = true;
-                            if (FindPath(poleDots[begin.position_y][begin.position_x - 1], end, ways)) return true;
+                            ways[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x - 1] = 1;
+                            begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedBySolution = true;
+                            if (FindPath(poleDots[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x - 1], end, ways)) return true;
                             else
                             {
-                                ways[begin.position_y][begin.position_x - 1] = 0;
-                                begin.left.isUsedBySolution = false;
+                                ways[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x - 1] = 0;
+                                begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedBySolution = false;
                                 tries[3] = false;
                             }
                         }
@@ -715,10 +616,9 @@ public class Core : MonoBehaviour {
                 {
                     triesLeft = false;
                 }
-
             }
-            ways[begin.position_y][begin.position_x] = 0;
-            begin.isUsedBySolution = false;
+            ways[begin.GetComponent<PoleDot>().position_y][begin.GetComponent<PoleDot>().position_x] = 0;
+            begin.GetComponent<PoleDot>().isUsedBySolution = false;
             dotData.GetDot();
             return false;
         }
@@ -726,48 +626,61 @@ public class Core : MonoBehaviour {
         {
             return poleSize;
         }
-        public Pole(int size, int seed)
+        public Pole(int size, int seed, GameObject dot, GameObject st, GameObject fin, GameObject hor, GameObject ver)
         {
+            DotPrefab = dot;
+            StartPrefab = st;
+            FinishPrefab = fin;
+            HorizontalLinePrefab = hor;
+            VerticalLinePrefab = ver;
             playerPath = new PolePath();
             systemPath = new PolePath();
             myRandGen = new MyRandom(seed);
             poleSize = size;
             eltsManager = new PoleElts();
-            poleDots = new PoleDot[size][];
-            poleLines = new List<PoleLine>();
+            poleDots = new GameObject[size][];
+            poleLines = new List<GameObject>();
             for (int y = 0; y < size; y++)
             {
-                poleDots[y] = new PoleDot[size];
+                poleDots[y] = new GameObject[size];
                 for (int x = 0; x < size; x++)
                 {
-                    poleDots[y][x] = new PoleDot(x, y);
+                    poleDots[y][x] = Instantiate(DotPrefab, stepx * x + stepz * y, DotPrefab.transform.rotation);
+                    poleDots[y][x].GetComponent<PoleDot>().position_x = x;
+                    poleDots[y][x].GetComponent<PoleDot>().position_y = y;
                 }
             }
             for (int y = 0; y < size; y++)
             {
                 for (int x = 0; x < size - 1; x++)
                 {
-                    PoleLine line = new PoleLine(poleDots[y][x], poleDots[y][x + 1]);
-                    poleDots[y][x].AddLine(line, poleDots[y][x + 1]);
-                    poleDots[y][x + 1].AddLine(line, poleDots[y][x]);
+                    GameObject line = Instantiate(HorizontalLinePrefab, stepx * 0.5f + stepx * x + stepz * y, HorizontalLinePrefab.transform.rotation);
+                    line.GetComponent<PoleLine>().first = poleDots[y][x];
+                    line.GetComponent<PoleLine>().second = poleDots[y][x + 1];
+                    poleDots[y][x].GetComponent<PoleDot>().AddLine(line, poleDots[y][x + 1]);
+                    poleDots[y][x + 1].GetComponent<PoleDot>().AddLine(line, poleDots[y][x]);
                     poleLines.Add(line);
                 }
                 if (y < size - 1)
                     for (int x = 0; x < size; x++)
                     {
-                        PoleLine line = new PoleLine(poleDots[y][x], poleDots[y + 1][x]);
-                        poleDots[y][x].AddLine(line, poleDots[y + 1][x]);
-                        poleDots[y + 1][x].AddLine(line, poleDots[y][x]);
+                        GameObject line = Instantiate(VerticalLinePrefab, stepz * 0.5f + stepx * x + stepz * y, VerticalLinePrefab.transform.rotation); ;
+                        line.GetComponent<PoleLine>().first = poleDots[y][x];
+                        line.GetComponent<PoleLine>().second = poleDots[y + 1][x];
+                        poleDots[y][x].GetComponent<PoleDot>().AddLine(line, poleDots[y + 1][x]);
+                        poleDots[y + 1][x].GetComponent<PoleDot>().AddLine(line, poleDots[y][x]);
                         poleLines.Add(line);
                     }
             }
         }
         public void SetStart(int x, int y)
         {
+            Instantiate(StartPrefab, stepx * x + stepz * y, StartPrefab.transform.rotation);
             start = poleDots[y][x];
         }
         public void SetFinish(int x, int y)
         {
+            Instantiate(FinishPrefab, stepx * x + stepz * y, FinishPrefab.transform.rotation);
             finish = poleDots[y][x];
         }
         public void SetNewSeed(int k)
@@ -784,23 +697,17 @@ public class Core : MonoBehaviour {
                 r %= systemPath.dots.Count + systemPath.lines.Count;
                 if (r % 2 == 0)
                 {
-
-                    if (systemPath.dots[(r / 2)].point == null)
+                    if (!systemPath.dots[(r / 2)].GetComponent<PoleDot>().hasPoint)
                     {
-                        PoleEltPoint point = new PoleEltPoint(systemPath.dots[(r / 2)]);
-                        systemPath.dots[(r / 2)].point = point;
-                        eltsManager.points.Add(point);
+                        systemPath.dots[(r / 2)].GetComponent<PoleDot>().hasPoint = true;
                     }
                     else i--;
-
                 }
                 else
                 {
-                    if (systemPath.lines[(r - 1) / 2].point == null)
+                    if (!systemPath.lines[(r - 1) / 2].GetComponent<PoleLine>().hasPoint)
                     {
-                        PoleEltPoint point = new PoleEltPoint(systemPath.lines[(r - 1) / 2]);
-                        systemPath.lines[(r - 1) / 2].point = point;
-                        eltsManager.points.Add(point);
+                        systemPath.lines[(r - 1) / 2].GetComponent<PoleLine>().hasPoint = true;
                     }
                     else i--;
                 }
@@ -817,23 +724,22 @@ public class Core : MonoBehaviour {
                     ways[i][j] = 0;
                 }
             }
-            ways[start.position_y][start.position_x] = 1;
+            ways[start.GetComponent<PoleDot>().position_y][start.GetComponent<PoleDot>().position_x] = 1;
             dotData = new PathDotStack();
-
             bool isFound = FindPath(start, finish, ways);
             if (isFound)
             {
-                PoleDot prevDot;
-                PoleDot curDot = finish;
+                GameObject prevDot;
+                GameObject curDot = finish;
                 systemPath.dots.Add(curDot);
                 while (!dotData.IsEmpty())
                 {
                     prevDot = dotData.GetDot();
                     systemPath.dots.Add(prevDot);
-                    if (curDot.position_x < prevDot.position_x) systemPath.lines.Add(curDot.right);
-                    else if (curDot.position_x > prevDot.position_x) systemPath.lines.Add(curDot.left);
-                    else if (curDot.position_y < prevDot.position_y) systemPath.lines.Add(curDot.down);
-                    else if (curDot.position_y > prevDot.position_y) systemPath.lines.Add(curDot.up);
+                    if (curDot.GetComponent<PoleDot>().position_x < prevDot.GetComponent<PoleDot>().position_x) systemPath.lines.Add(curDot.GetComponent<PoleDot>().right);
+                    else if (curDot.GetComponent<PoleDot>().position_x > prevDot.GetComponent<PoleDot>().position_x) systemPath.lines.Add(curDot.GetComponent<PoleDot>().left);
+                    else if (curDot.GetComponent<PoleDot>().position_y < prevDot.GetComponent<PoleDot>().position_y) systemPath.lines.Add(curDot.GetComponent<PoleDot>().down);
+                    else if (curDot.GetComponent<PoleDot>().position_y > prevDot.GetComponent<PoleDot>().position_y) systemPath.lines.Add(curDot.GetComponent<PoleDot>().up);
                     curDot = prevDot;
                 }
                 systemPath.dots.Reverse();
@@ -846,21 +752,18 @@ public class Core : MonoBehaviour {
             {
                 for (int x = 0; x < poleSize; x++)
                 {
-                    poleDots[y][x].isUsedBySolution = false;
-                    poleDots[y][x].point = null;
+                    poleDots[y][x].GetComponent<PoleDot>().isUsedBySolution = false;
+                    poleDots[y][x].GetComponent<PoleDot>().hasPoint = false;
                 }
             }
             for (int n = 0; n < poleLines.Count; n++)
             {
-                poleLines[n].isUsedBySolution = false;
-                poleLines[n].point = null;
+                poleLines[n].GetComponent<PoleLine>().isUsedBySolution = false;
+                poleLines[n].GetComponent<PoleLine>().hasPoint = false;
             }
-
+            foreach (GameObject temp in GameObject.FindGameObjectsWithTag("PoleTemp")) Destroy(temp);
             systemPath.dots.Clear();
             systemPath.lines.Clear();
-
         }
-
     }
-
 }

@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 33031963525719250}
   - component: {fileID: 23564170868836896}
   - component: {fileID: 65832029078229874}
+  - component: {fileID: 114147618112082262}
   m_Layer: 0
   m_Name: PoleFinish
-  m_TagString: PolePart
+  m_TagString: PoleTemp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,3 +97,24 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114147618112082262
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1127332840723964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153457becdc980b4eafafd502130fd65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  up: {fileID: 0}
+  down: {fileID: 0}
+  left: {fileID: 0}
+  right: {fileID: 0}
+  isUsedBySolution: 0
+  isUsedByPlayer: 0
+  hasPoint: 0
+  point: {fileID: 0}
+  position_x: 0
+  position_y: 0

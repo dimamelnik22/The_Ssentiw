@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33124074862368400}
   - component: {fileID: 23636827540228578}
   - component: {fileID: 136236778620689780}
+  - component: {fileID: 114870698088596080}
   m_Layer: 0
   m_Name: Point
   m_TagString: EltPoint
@@ -84,6 +85,19 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1313451005600678}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &114870698088596080
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1313451005600678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3526bd147c551149bcb8af53262600a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NormalColor: {fileID: 2100000, guid: d0d1138da8eb25a4e8c6b6998e4a091d, type: 2}
+  UnsolvedColor: {fileID: 2100000, guid: 33d4088112100ed4a9b805479de6e86b, type: 2}
 --- !u!136 &136236778620689780
 CapsuleCollider:
   m_ObjectHideFlags: 1
