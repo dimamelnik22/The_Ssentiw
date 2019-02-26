@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoleLine : MonoBehaviour {
+public class PoleSquare : MonoBehaviour {
 
 	public GameObject up;
 	public GameObject down;
 	public GameObject left;
 	public GameObject right;
-    public bool isUsedBySolution = false;
-    public bool isUsedByPlayer = false;
-    public bool hasPoint = false;
-    public GameObject point;
+	public bool hasElem = false;
+	public GameObject element;
 
-    // Use this for initialization
-    void Start () {
+	// Use this for initialization
+	void Start () {
 		
 	}
 	
