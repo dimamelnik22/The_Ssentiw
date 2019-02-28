@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Core : MonoBehaviour {
 
+	public GameObject SquerePrefab;
     public GameObject DotPrefab;
     public GameObject VerticalLinePrefab;
     public GameObject HorizontalLinePrefab;
@@ -390,7 +391,7 @@ public class Core : MonoBehaviour {
 
     void Start() {
         int size = 5;
-        myPole = new Pole(size, seed,DotPrefab,StartPrefab,FinishPrefab,HorizontalLinePrefab,VerticalLinePrefab);
+		myPole = new Pole(size, seed,DotPrefab,StartPrefab,FinishPrefab,HorizontalLinePrefab,VerticalLinePrefab,SquerePrefab);
         playerPathLinesOnScreen = new List<GameObject>();
         playerPathDotsOnScreen = new List<GameObject>();
     }
@@ -506,12 +507,88 @@ public class Core : MonoBehaviour {
         public PolePath systemPath;
         public PolePath playerPath;
 
+		private GameObject SquerePrefab;
         private GameObject DotPrefab;
         private GameObject VerticalLinePrefab;
         private GameObject HorizontalLinePrefab;
         private GameObject StartPrefab;
         private GameObject FinishPrefab;
 
+		public Pole(int size, int seed, GameObject dot, GameObject st, GameObject fin, GameObject hor, GameObject ver, GameObject squ)
+		{
+			SquerePrefab = squ;
+			DotPrefab = dot;
+			StartPrefab = st;
+			FinishPrefab = fin;
+			HorizontalLinePrefab = hor;
+			VerticalLinePrefab = ver;
+			playerPath = new PolePath();
+			systemPath = new PolePath();
+			myRandGen = new MyRandom(seed);
+			poleSize = size;
+			eltsManager = new PoleElts();
+			poleDots = new GameObject[size][];
+			poleLines = new List<GameObject>();
+			for (int y = 0; y < size; y++)
+			{
+				poleDots[y] = new GameObject[size];
+				for (int x = 0; x < size; x++)
+				{
+					poleDots[y][x] = Instantiate(DotPrefab, stepx * x + stepz * y, DotPrefab.transform.rotation);
+					poleDots[y][x].GetComponent<PoleDot>().posX = x;
+					poleDots[y][x].GetComponent<PoleDot>().posY = y;
+				}
+			}
+
+			for (int y = 0; y < size; y++)
+			{
+				for (int x = 0; x < size-1; x++)
+				{
+				// horizontal line
+					GameObject lineH = Instantiate(HorizontalLinePrefab, stepx * (x + 0.5f) + stepz * y, HorizontalLinePrefab.transform.rotation);
+					lineH.GetComponent<PoleLine>().left = poleDots[y][x];
+					lineH.GetComponent<PoleLine>().right = poleDots[y][x + 1];
+					poleDots[y][x].GetComponent<PoleDot>().AddLine(lineH, poleDots[y][x + 1]);
+					poleDots[y][x + 1].GetComponent<PoleDot>().AddLine(lineH, poleDots[y][x]);
+					poleLines.Add(lineH);
+					// vertical line
+					GameObject lineV = Instantiate(HorizontalLinePrefab,stepx * y + stepz * (x + 0.5f), VerticalLinePrefab.transform.rotation);
+					lineV.GetComponent<PoleLine>().up = poleDots[x][y];
+					lineV.GetComponent<PoleLine>().down = poleDots[x + 1][y];
+					poleDots[x][y].GetComponent<PoleDot>().AddLine(lineV, poleDots[x + 1][y]);
+					poleDots[x + 1][y].GetComponent<PoleDot>().AddLine(lineV, poleDots[x][y]);
+					poleLines.Add(lineV);
+					if(y < size - 1)
+					{
+						GameObject Squere = Instantiate(SquerePrefab, stepx * (x + 0.5f) + stepz * (y + 0.5f), SquerePrefab.transform.rotation);
+						Squere.GetComponent<PoleSquare>().up = lineH;
+						lineH.GetComponent<PoleLine>().down = Squere;
+					}
+
+				}
+
+			}
+			for (int y = 0; y < size; y++)
+			{
+				for (int x = 0; x < size; x++)
+				{ 
+					if(x > 0 && y > 0)
+					{
+						GameObject Squere = poleDots[x-1][y-1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down;
+						GameObject lineH = poleDots[x][y].GetComponent<PoleDot>().left;
+						Squere.GetComponent<PoleSquare>().down = lineH;
+						lineH.GetComponent<PoleLine>().up = Squere;
+						GameObject lineVR = poleDots[x][y].GetComponent<PoleDot>().up;
+						Squere.GetComponent<PoleSquare>().right = lineVR;
+						lineVR.GetComponent<PoleLine>().left = Squere;
+						GameObject lineVL = poleDots[x-1][y-1].GetComponent<PoleDot>().down;
+						Squere.GetComponent<PoleSquare>().left = lineVL;
+						lineVL.GetComponent<PoleLine>().right = Squere;
+					}	
+				}
+			}
+
+		}
         public bool FindPath(GameObject begin, GameObject end, int[][] ways)
         {
             begin.GetComponent<PoleDot>().isUsedBySolution = true;
@@ -610,54 +687,7 @@ public class Core : MonoBehaviour {
         {
             return poleSize;
         }
-        public Pole(int size, int seed, GameObject dot, GameObject st, GameObject fin, GameObject hor, GameObject ver)
-        {
-            DotPrefab = dot;
-            StartPrefab = st;
-            FinishPrefab = fin;
-            HorizontalLinePrefab = hor;
-            VerticalLinePrefab = ver;
-            playerPath = new PolePath();
-            systemPath = new PolePath();
-            myRandGen = new MyRandom(seed);
-            poleSize = size;
-            eltsManager = new PoleElts();
-            poleDots = new GameObject[size][];
-            poleLines = new List<GameObject>();
-            for (int y = 0; y < size; y++)
-            {
-                poleDots[y] = new GameObject[size];
-                for (int x = 0; x < size; x++)
-                {
-                    poleDots[y][x] = Instantiate(DotPrefab, stepx * x + stepz * y, DotPrefab.transform.rotation);
-                    poleDots[y][x].GetComponent<PoleDot>().posX = x;
-                    poleDots[y][x].GetComponent<PoleDot>().posY = y;
-                }
-            }
-            for (int y = 0; y < size; y++)
-            {
-                for (int x = 0; x < size - 1; x++)
-                {
-
-					// horizontal line
-                    GameObject line = Instantiate(HorizontalLinePrefab, stepx * 0.5f + stepx * x + stepz * y, HorizontalLinePrefab.transform.rotation);
-                    line.GetComponent<PoleLine>().left = poleDots[y][x];
-                    line.GetComponent<PoleLine>().right = poleDots[y][x + 1];
-                    poleDots[y][x].GetComponent<PoleDot>().AddLine(line, poleDots[y][x + 1]);
-                    poleDots[y][x + 1].GetComponent<PoleDot>().AddLine(line, poleDots[y][x]);
-                    poleLines.Add(line);
-
-					// vertical line
-					line = Instantiate(VerticalLinePrefab, stepz * 0.5f + stepx * y + stepz * x, VerticalLinePrefab.transform.rotation); ;
-					line.GetComponent<PoleLine>().up = poleDots[x][y];
-					line.GetComponent<PoleLine>().down = poleDots[x + 1][y];
-					poleDots[x][y].GetComponent<PoleDot>().AddLine(line, poleDots[x + 1][y]);
-					poleDots[x + 1][y].GetComponent<PoleDot>().AddLine(line, poleDots[x][y]);
-					poleLines.Add(line);
-                }
-                        
-            }
-        }
+        
         public void SetStart(int x, int y)
         {
             Instantiate(StartPrefab, stepx * x + stepz * y, StartPrefab.transform.rotation);

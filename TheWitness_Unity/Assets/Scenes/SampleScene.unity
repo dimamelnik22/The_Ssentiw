@@ -1538,6 +1538,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0bbb27722f07344862dfb25959ab86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SquerePrefab: {fileID: 1860496519395624, guid: d57a0b6e0fa5bbe49a7ee409c354cc5c,
+    type: 2}
   DotPrefab: {fileID: 1897885903044452, guid: b37c0ed4bd4d3b340bdf432ad63a3024, type: 2}
   VerticalLinePrefab: {fileID: 1992651564755078, guid: 71f49f1780c0d054190531be0bc79337,
     type: 2}
