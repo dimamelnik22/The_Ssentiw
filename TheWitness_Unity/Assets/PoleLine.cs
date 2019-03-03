@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class PoleLine : MonoBehaviour {
 
-    public GameObject first;
-    public GameObject second;
+    public GameObject up;
+    public GameObject down;
+    public GameObject left;
+    public GameObject right;
     public bool isUsedBySolution = false;
     public bool isUsedByPlayer = false;
     public bool hasPoint = false;

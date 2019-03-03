@@ -39,9 +39,9 @@ public class follow : MonoBehaviour {
                     Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.z) * Mathf.Abs(dista.z)))
                 {
                     dista = go.transform.position - transform.position;
-                    nearestDot.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
+                   // nearestDot.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
                     nearestDot = go;
-                    nearestDot.GetComponent<Renderer>().material.Lerp(grey, blue, 20f);
+                    //nearestDot.GetComponent<Renderer>().material.Lerp(grey, blue, 20f);
                 }
             }
             dista = new Vector3(10f, 0f, 10f);
@@ -51,9 +51,9 @@ public class follow : MonoBehaviour {
                     Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.z) * Mathf.Abs(dista.z)))
                 {
                     dista = go.transform.position - transform.position;
-                    currentLine.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
+                    //currentLine.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
                     currentLine = go;
-                    currentLine.GetComponent<Renderer>().material.Lerp(grey, blue, 20f);
+                    //currentLine.GetComponent<Renderer>().material.Lerp(grey, blue, 20f);
                 }
             }
             dista = new Vector3(10f, 0f, 10f);
@@ -105,18 +105,18 @@ public class follow : MonoBehaviour {
                         {
                             transform.position = nearestDot.transform.position;
                             transform.Translate(new Vector3(0f, 1f, 0f));
-                            currentLine.GetComponent<Renderer>().material.Lerp(green, grey, 2f);
+                            //currentLine.GetComponent<Renderer>().material.Lerp(green, grey, 2f);
                             currentLine = nearestDot.GetComponent<PoleDot>().up;
-                            currentLine.GetComponent<Renderer>().material.Lerp(grey, green, 2f);
+                            //currentLine.GetComponent<Renderer>().material.Lerp(grey, green, 2f);
                             moveHor = !moveHor;
                         }
                         else if (dir.y < 0 && nearestDot.GetComponent<PoleDot>().AllowedToDown())
                         {
                             transform.position = nearestDot.transform.position;
                             transform.Translate(new Vector3(0f, 1f, 0f));
-                            currentLine.GetComponent<Renderer>().material.Lerp(green, grey, 2f);
+                            //currentLine.GetComponent<Renderer>().material.Lerp(green, grey, 2f);
                             currentLine = nearestDot.GetComponent<PoleDot>().down;
-                            currentLine.GetComponent<Renderer>().material.Lerp(grey, green, 2f);
+                            //currentLine.GetComponent<Renderer>().material.Lerp(grey, green, 2f);
                             moveHor = !moveHor;
                         }
                     }
