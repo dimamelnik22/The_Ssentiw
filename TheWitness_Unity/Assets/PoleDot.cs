@@ -12,24 +12,24 @@ public class PoleDot : MonoBehaviour {
     public bool isUsedByPlayer = false;
     public bool hasPoint = false;
     public GameObject point;
-    public int position_x;
-    public int position_y;
+    public int posX;
+    public int posY;
     
     public void AddLine(GameObject newLine, GameObject anotherDot)
     {
-        if (position_x < anotherDot.GetComponent<PoleDot>().position_x)
+        if (posX < anotherDot.GetComponent<PoleDot>().posX)
         {
             right = newLine;
         }
-        else if (position_x > anotherDot.GetComponent<PoleDot>().position_x)
+        else if (posX > anotherDot.GetComponent<PoleDot>().posX)
         {
             left = newLine;
         }
-        else if (position_y < anotherDot.GetComponent<PoleDot>().position_y)
+        else if (posY < anotherDot.GetComponent<PoleDot>().posY)
         {
             down = newLine;
         }
-        else if (position_y > anotherDot.GetComponent<PoleDot>().position_y)
+        else if (posY > anotherDot.GetComponent<PoleDot>().posY)
         {
             up = newLine;
         }
