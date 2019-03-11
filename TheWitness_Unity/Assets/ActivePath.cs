@@ -25,6 +25,20 @@ public class ActivePath : MonoBehaviour {
         pointer = Instantiate(pointerPF, start.transform.position + new Vector3(0f, 2f, 0f), pointerPF.transform.rotation);
         pointer.GetComponent<follow>().nearestDot = start;
         pointer.GetComponent<follow>().currentLine = start.GetComponent<PoleDot>().left;
+        pointer.GetComponent<follow>().pathDots = dots;
+    }
+
+    public void Restart(GameObject start)
+    {
+        isScaling = !isScaling;
+        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Path")) Destroy(obj);
+        Destroy(pointer);
+        dots.Clear();
+        lines.Clear();
+
+        dotsOnPole.Clear();
+        linesOnPole.Clear();
+        Init(start);
     }
 
     private void lineScaleDestroy()
@@ -164,7 +178,7 @@ public class ActivePath : MonoBehaviour {
 
             if (lines.Count > 1 && Vector3.Distance(lines[lines.Count - 2].transform.position, pointer.transform.position) < 2.5f)
             {
-                Debug.Log("removed " + dots.Count);
+
                 Destroy(currentLine);
                 lines.RemoveAt(lines.Count - 1);
                 currentLine = lines[lines.Count - 1];
