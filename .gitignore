@@ -67,8 +67,4 @@ sysinfo.txt
 *.exe
 *.out
 *.app
-TheWitness_Unity/ProjectSettings/
 
-TheWitness_Unity/Assets/PlateObjects/
-
-TheWitness_Unity/Assets/Scenes/

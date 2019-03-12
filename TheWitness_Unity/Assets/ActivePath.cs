@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ActivePath : MonoBehaviour {
-    public float sizeMap = 5;
     public GameObject pointerPF;
 
     public List<GameObject> dots = new List<GameObject>();
