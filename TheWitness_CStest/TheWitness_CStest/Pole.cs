@@ -6,15 +6,35 @@ namespace TheWitness_CStest
 {
     class MyRandom
     {
-        private int seed;
+        public int seed;
         public MyRandom(int k)
         {
+
             seed = k;
         }
         public int GetRandom()
         {
-            seed = (seed * 13 + (seed >> 3)) % 1000000 + 22;
+            seed = (seed * 106 + 1283) % 6075;
             return seed;
+        }
+    }
+
+    class PoleEltPoint
+    {
+        PoleDot attachedDot;
+        PoleLine attachedLine;
+        public PoleEltPoint(PoleDot dot)
+        {
+            attachedDot = dot;
+        }
+        public PoleEltPoint(PoleLine line)
+        {
+            attachedLine = line;
+        }
+        public bool IsSolved()
+        {
+            if (attachedDot != null) return attachedDot.isUsed;
+            else return attachedLine.isUsed;
         }
     }
 
@@ -24,6 +44,8 @@ namespace TheWitness_CStest
         public PoleLine down;
         public PoleLine left;
         public PoleLine right;
+        public bool isUsed;
+        public PoleEltPoint point;
         public int position_x;
         public int position_y;
         public PoleDot(int x, int y)
@@ -34,22 +56,23 @@ namespace TheWitness_CStest
             down = null;
             right = null;
             left = null;
+            isUsed = false;
         }
         public void AddLine(PoleLine newLine, PoleDot anotherDot)
         {
-            if (position_x < anotherDot.position_x /*&& position_y == anotherDot.position_y*/)
+            if (position_x < anotherDot.position_x)
             {
                 right = newLine;
             }
-            else if (position_x > anotherDot.position_x /*&& position_y == anotherDot.position_y*/)
+            else if (position_x > anotherDot.position_x)
             {
                 left = newLine;
             }
-            else if (position_y < anotherDot.position_y /*&& position_x == anotherDot.position_x*/)
+            else if (position_y < anotherDot.position_y)
             {
                 down = newLine;
             }
-            else if (position_y > anotherDot.position_y /*&& position_x == anotherDot.position_x*/)
+            else if (position_y > anotherDot.position_y)
             {
                 up = newLine;
             }
@@ -120,10 +143,13 @@ namespace TheWitness_CStest
     {
         public PoleDot first;
         public PoleDot second;
+        public bool isUsed;
+        public PoleEltPoint point;
         public PoleLine(PoleDot firstDot, PoleDot secondDot)
         {
             first = firstDot;
             second = secondDot;
+            isUsed = false;
         }
     };
 
@@ -132,54 +158,74 @@ namespace TheWitness_CStest
 
     };
 
+    class PoleElts
+    {
+        public List<PoleEltPoint> points;
+        public List<PoleEltPoint> unsolvedPoints;
+        public PoleElts()
+        {
+            points = new List<PoleEltPoint>();
+            unsolvedPoints = new List<PoleEltPoint>();
+        }
+        public bool CheckSolution()
+        {
+            bool isSolved = true;
+            unsolvedPoints.Clear();
+            foreach (PoleEltPoint p in points)
+            {
+                if (!p.IsSolved()) unsolvedPoints.Add(p);
+                isSolved = isSolved && p.IsSolved();
+            }
+
+            return isSolved;
+        }
+    }
+
+    class PolePath
+    {
+        public List<PoleDot> dots;
+        public List<PoleLine> lines;
+        public PolePath()
+        {
+            dots = new List<PoleDot>();
+            lines = new List<PoleLine>();
+        }
+    }
+
     class Pole
     {
-        MyRandom myRandGen;
-        Random randGen;
-        PoleDot start;
-        PoleDot finish;
+        PoleElts eltsManager;
+        public MyRandom myRandGen;
+        public PoleDot start;
+        public PoleDot finish;
         private readonly int poleSize;
         PathDotStack dotData;
+        public PoleDot[][] poleDots;
+        public List<PoleLine> poleLines;
+        public PolePath path;
 
         public bool FindPath(PoleDot begin, PoleDot end, int[][] ways)
         {
-            //for (int i = 0; i < poleSize; i++)
-            //{
-            //    for (int j = 0; j < poleSize; j++)
-            //    {
-            //        Console.Write(ways[i][j] + " ");
-            //    }
-            //    Console.WriteLine();
-            //}
-            //Console.ReadKey();
 
+            begin.isUsed = true;
             if (begin == end)
             {
-                if (dotData.PathLength() < poleSize * 2 + poleSize / 2)
+                if (dotData.PathLength() < poleSize * 3)
                 {
                     return false;
                 }
+                //if (!eltsManager.CheckSolution())
+                //{
+                //    return false;
+                //}
                 return true;
             }
             bool[] tries = { true, true, true, true };
-            //for (int i = 0; i < 4; i++)
-            //{
-            //    tries[i] = true;
-            //}
             dotData.AddDot(begin);
-
             bool triesLeft = true;
 
             while (triesLeft)
             {
-                
-               // var randGen = new System.Random();
-
-                //int k = randGen.Next(0, 4);
-                //while (!tries[k])
-                //{
-                //    k = randGen.Next(0, 4);
-                //}
 
                 int k = myRandGen.GetRandom() % 4;
                 while (!tries[k])
@@ -190,56 +236,64 @@ namespace TheWitness_CStest
                 switch (k)
                 {
                     case 0:
-                        
+
                         if (begin.position_y > 0 && ways[begin.position_y - 1][begin.position_x] == 0 && tries[0])
                         {
                             ways[begin.position_y - 1][begin.position_x] = 1;
+                            begin.up.isUsed = true;
                             if (FindPath(poleDots[begin.position_y - 1][begin.position_x], end, ways)) return true;
                             else
                             {
                                 ways[begin.position_y - 1][begin.position_x] = 0;
+                                begin.up.isUsed = false;
                                 tries[0] = false;
                             }
                         }
                         else tries[0] = false;
                         break;
                     case 1:
-                        
+
                         if (begin.position_x < poleSize - 1 && ways[begin.position_y][begin.position_x + 1] == 0 && tries[1])
                         {
                             ways[begin.position_y][begin.position_x + 1] = 1;
+                            begin.right.isUsed = true;
                             if (FindPath(poleDots[begin.position_y][begin.position_x + 1], end, ways)) return true;
                             else
                             {
                                 ways[begin.position_y][begin.position_x + 1] = 0;
+                                begin.right.isUsed = false;
                                 tries[1] = false;
                             }
                         }
                         else tries[1] = false;
                         break;
                     case 2:
-                        
+
                         if (begin.position_y < poleSize - 1 && ways[begin.position_y + 1][begin.position_x] == 0 && tries[2])
                         {
                             ways[begin.position_y + 1][begin.position_x] = 1;
+                            begin.down.isUsed = true;
                             if (FindPath(poleDots[begin.position_y + 1][begin.position_x], end, ways)) return true;
                             else
                             {
                                 ways[begin.position_y + 1][begin.position_x] = 0;
+                                begin.down.isUsed = false;
                                 tries[2] = false;
                             }
                         }
                         else tries[2] = false;
                         break;
                     case 3:
-                        
+
                         if (begin.position_x > 0 && ways[begin.position_y][begin.position_x - 1] == 0 && tries[3])
                         {
                             ways[begin.position_y][begin.position_x - 1] = 1;
+                            begin.left.isUsed = true;
                             if (FindPath(poleDots[begin.position_y][begin.position_x - 1], end, ways)) return true;
                             else
                             {
                                 ways[begin.position_y][begin.position_x - 1] = 0;
+                                begin.left.isUsed = false;
                                 tries[3] = false;
                             }
                         }
@@ -253,17 +307,22 @@ namespace TheWitness_CStest
 
             }
             ways[begin.position_y][begin.position_x] = 0;
-
+            begin.isUsed = false;
             dotData.GetDot();
             return false;
         }
-        public PoleDot[][] poleDots;
-        public Pole(int size)
+        public int GetSize()
         {
-            myRandGen = new MyRandom(10000);
-            randGen = new System.Random();
+            return poleSize;
+        }
+        public Pole(int size, int seed)
+        {
+            path = new PolePath();
+            myRandGen = new MyRandom(seed);
             poleSize = size;
+            eltsManager = new PoleElts();
             poleDots = new PoleDot[size][];
+            poleLines = new List<PoleLine>();
             for (int y = 0; y < size; y++)
             {
                 poleDots[y] = new PoleDot[size];
@@ -271,6 +330,24 @@ namespace TheWitness_CStest
                 {
                     poleDots[y][x] = new PoleDot(x, y);
                 }
+            }
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size - 1; x++)
+                {
+                    PoleLine line = new PoleLine(poleDots[y][x], poleDots[y][x + 1]);
+                    poleDots[y][x].AddLine(line, poleDots[y][x + 1]);
+                    poleDots[y][x + 1].AddLine(line, poleDots[y][x]);
+                    poleLines.Add(line);
+                }
+                if (y < size - 1)
+                    for (int x = 0; x < size; x++)
+                    {
+                        PoleLine line = new PoleLine(poleDots[y][x], poleDots[y + 1][x]);
+                        poleDots[y][x].AddLine(line, poleDots[y + 1][x]);
+                        poleDots[y + 1][x].AddLine(line, poleDots[y][x]);
+                        poleLines.Add(line);
+                    }
             }
         }
         public void SetStart(int x, int y)
@@ -285,6 +362,37 @@ namespace TheWitness_CStest
         {
             myRandGen = new MyRandom(k);
         }
+        public void GeneratePoints(int numberOfPoints)
+        {
+            numberOfPoints = System.Math.Min(numberOfPoints, path.dots.Count + path.lines.Count - 1);
+            for (int i = 0; i < numberOfPoints; i++)
+            {
+                int r = myRandGen.GetRandom();
+                r %= path.dots.Count + path.lines.Count;
+                if (r % 2 == 0)
+                {
+
+                    if (path.dots[(r / 2)].point == null)
+                    {
+                        PoleEltPoint point = new PoleEltPoint(path.dots[(r / 2)]);
+                        path.dots[(r / 2)].point = point;
+                        eltsManager.points.Add(point);
+                    }
+                    else i--;
+
+                }
+                else
+                {
+                    if (path.lines[(r - 1) / 2].point == null)
+                    {
+                        PoleEltPoint point = new PoleEltPoint(path.lines[(r - 1) / 2]);
+                        path.lines[(r - 1) / 2].point = point;
+                        eltsManager.points.Add(point);
+                    }
+                    else i--;
+                }
+            }
+        }
         public void CreateSolution()
         {
             int[][] ways = new int[poleSize][];
@@ -298,39 +406,48 @@ namespace TheWitness_CStest
             }
             ways[start.position_y][start.position_x] = 1;
             dotData = new PathDotStack();
-            dotData.AddDot(start);
-            if (start == finish)
-            {
-                Console.WriteLine("wtf");
-            }
+
             bool isFound = FindPath(start, finish, ways);
             if (isFound)
             {
-                int rate = 0;
                 PoleDot prevDot;
                 PoleDot curDot = finish;
+                path.dots.Add(curDot);
                 while (!dotData.IsEmpty())
                 {
                     prevDot = dotData.GetDot();
-                    PoleLine newLine = new PoleLine(curDot, prevDot);
-                    prevDot.AddLine(newLine, curDot);
-                    curDot.AddLine(newLine, prevDot);
+                    path.dots.Add(prevDot);
+                    if (curDot.position_x < prevDot.position_x) path.lines.Add(curDot.right);
+                    else if (curDot.position_x > prevDot.position_x) path.lines.Add(curDot.left);
+                    else if (curDot.position_y < prevDot.position_y) path.lines.Add(curDot.down);
+                    else if (curDot.position_y > prevDot.position_y) path.lines.Add(curDot.up);
                     curDot = prevDot;
-                    rate++;
                 }
+                path.dots.Reverse();
+                path.lines.Reverse();
             }
         }
         public void ClearPole()
         {
-            poleDots = new PoleDot[poleSize][];
             for (int y = 0; y < poleSize; y++)
             {
-                poleDots[y] = new PoleDot[poleSize];
                 for (int x = 0; x < poleSize; x++)
                 {
-                    poleDots[y][x] = new PoleDot(x, y);
+                    poleDots[y][x].isUsed = false;
+                    poleDots[y][x].point = null;
                 }
             }
+            for (int n = 0; n < poleLines.Count; n++)
+            {
+                poleLines[n].isUsed = false;
+                poleLines[n].point = null;
+            }
+
+            path.dots.Clear();
+            path.lines.Clear();
+
         }
-    };
+
+    }
+
 }
