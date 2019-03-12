@@ -19,21 +19,24 @@ public class follow : MonoBehaviour {
     public bool onDot = true;
     public bool moveHor = true;
     Vector3 lastpos;
-    Vector3 dista = new Vector3(10f,0f,10f);
+    Vector3 dista = new Vector3(10f,10f,10f);
     private float distanceToDot;
     public Text debugtext;
+    Vector3 stepz = new Vector3(0f, 0f, -0.5f);
+
+
 
     private float upLimit = 0f;
-    private float downLimit = -20f;
+    private float downLimit =-(Core.PolePreferences.poleSize - 1) * 5f;
     private float leftLimit = 0f;
-    private float rightLimit = 20f;
+    private float rightLimit = (Core.PolePreferences.poleSize - 1) * 5f;
 
 
 
 
     public List<GameObject> pathDots;
 
-    // Use this for initialization
+    // Use this for initialiyation
     void Start () {
         lastpos = Input.mousePosition;
 	}
@@ -42,26 +45,26 @@ public class follow : MonoBehaviour {
 	void Update () {
 
         upLimit = 0f;
-        downLimit = -20f;
+        downLimit = -(Core.PolePreferences.poleSize - 1) * 5f;
         leftLimit = 0f;
-        rightLimit = 20f;
+        rightLimit = (Core.PolePreferences.poleSize - 1) * 5f;
         foreach (GameObject dot in pathDots)
         {
-            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.z == transform.position.z && dot.transform.position.x > transform.position.x && dot.transform.position.x <= rightLimit)
+            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.y == transform.position.y && dot.transform.position.x > transform.position.x && dot.transform.position.x <= rightLimit)
             {
                 rightLimit = dot.transform.position.x - 1f;
             }
-            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.z == transform.position.z && dot.transform.position.x < transform.position.x && dot.transform.position.x >= leftLimit)
+            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.y == transform.position.y && dot.transform.position.x < transform.position.x && dot.transform.position.x >= leftLimit)
             {
                 leftLimit = dot.transform.position.x + 1f;
             }
-            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.z > transform.position.z && dot.transform.position.z <= upLimit)
+            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.y > transform.position.y && dot.transform.position.y <= upLimit)
             {
-                upLimit = dot.transform.position.z - 1f;
+                upLimit = dot.transform.position.y - 1f;
             }
-            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.z < transform.position.z && dot.transform.position.z >= downLimit)
+            if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.y < transform.position.y && dot.transform.position.y >= downLimit)
             {
-                downLimit = dot.transform.position.z + 1f;
+                downLimit = dot.transform.position.y + 1f;
             }
         }
 
@@ -70,8 +73,8 @@ public class follow : MonoBehaviour {
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("PoleDot"))
             {
-                if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.z - transform.position.z) * Mathf.Abs(go.transform.position.z - transform.position.z)) <
-                    Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.z) * Mathf.Abs(dista.z)))
+                if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.y - transform.position.y) * Mathf.Abs(go.transform.position.y - transform.position.y)) <
+                    Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.y) * Mathf.Abs(dista.y)))
                 {
                     dista = go.transform.position - transform.position;
                    // nearestDot.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
@@ -79,11 +82,11 @@ public class follow : MonoBehaviour {
                     //nearestDot.GetComponent<Renderer>().material.Lerp(grey, blue, 20f);
                 }
             }
-            dista = new Vector3(10f, 0f, 10f);
+            dista = new Vector3(10f, 10f, 10f);
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("PolePart"))
             {
-                if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.z - transform.position.z) * Mathf.Abs(go.transform.position.z - transform.position.z)) <
-                    Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.z) * Mathf.Abs(dista.z)))
+                if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.y - transform.position.y) * Mathf.Abs(go.transform.position.y - transform.position.y)) <
+                    Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.y) * Mathf.Abs(dista.y)))
                 {
                     dista = go.transform.position - transform.position;
                     //currentLine.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
@@ -91,7 +94,7 @@ public class follow : MonoBehaviour {
                     //currentLine.GetComponent<Renderer>().material.Lerp(grey, blue, 20f);
                 }
             }
-            dista = new Vector3(10f, 0f, 10f);
+            dista = new Vector3(10f, 10f, 10f);
             Vector3 dir = 0.03f * (Input.mousePosition - lastpos);
             lastpos = Input.mousePosition;
             //Debug.Log(Mathf.Abs(dir.x) + "    " + Mathf.Abs(dir.y));
@@ -106,31 +109,31 @@ public class follow : MonoBehaviour {
                 {
                     //debugtext.text = GameObject.FindGameObjectsWithTag("PoleDot").Length.ToString();
                     
-                    if (Mathf.Abs(transform.position.z - nearestDot.transform.position.z) < eps)
+                    if (Mathf.Abs(transform.position.y - nearestDot.transform.position.y) < eps)
                     {
                         if (dir.x > 0 && nearestDot.GetComponent<PoleDot>().AllowedToRight())
                         {
                             transform.position = nearestDot.transform.position;
-                            transform.Translate(new Vector3(0f, 1f, 0f));
+                            transform.Translate(stepz);
                             //currentLine = nearestDot.GetComponent<PoleDot>().right;
                             moveHor = !moveHor;
                         }
                         else if (dir.x < 0 && nearestDot.GetComponent<PoleDot>().AllowedToLeft())
                         {
                             transform.position = nearestDot.transform.position;
-                            transform.Translate(new Vector3(0f, 1f, 0f));
+                            transform.Translate(stepz);
                            // currentLine = nearestDot.GetComponent<PoleDot>().left;
                             moveHor = !moveHor;
                         }
                     }
-                    else transform.Translate(new Vector3(0f, 0f, dir.y));
+                    else transform.Translate(new Vector3(0f, dir.y, 0f));
                 }
             }
             else
             {
                 if (!moveHor)
                 {
-                    transform.Translate(new Vector3(0f, 0f, dir.y));
+                    transform.Translate(new Vector3(0f, dir.y, 0f));
                     
                 }
                 else
@@ -142,7 +145,7 @@ public class follow : MonoBehaviour {
                         if (dir.y > 0 && nearestDot.GetComponent<PoleDot>().AllowedToUp())
                         {
                             transform.position = nearestDot.transform.position;
-                            transform.Translate(new Vector3(0f, 1f, 0f));
+                            transform.Translate(stepz);
                             //currentLine.GetComponent<Renderer>().material.Lerp(green, grey, 2f);
                             currentLine = nearestDot.GetComponent<PoleDot>().up;
                             //currentLine.GetComponent<Renderer>().material.Lerp(grey, green, 2f);
@@ -151,7 +154,7 @@ public class follow : MonoBehaviour {
                         else if (dir.y < 0 && nearestDot.GetComponent<PoleDot>().AllowedToDown())
                         {
                             transform.position = nearestDot.transform.position;
-                            transform.Translate(new Vector3(0f, 1f, 0f));
+                            transform.Translate(stepz);
                             //currentLine.GetComponent<Renderer>().material.Lerp(green, grey, 2f);
                             currentLine = nearestDot.GetComponent<PoleDot>().down;
                             //currentLine.GetComponent<Renderer>().material.Lerp(grey, green, 2f);
@@ -169,9 +172,9 @@ public class follow : MonoBehaviour {
         
         
 
+        
 
-
-        if (Input.touchCount > 0)
+        if (Input.touchCount > 0 && false)
         {
             
 
@@ -193,8 +196,8 @@ public class follow : MonoBehaviour {
                     //Debug.Log(Mathf.Abs(dir.x) + "    " + Mathf.Abs(dir.y));
                     foreach (GameObject go in GameObject.FindGameObjectsWithTag("PoleDot"))
                     {
-                        if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.z - transform.position.z) * Mathf.Abs(go.transform.position.z - transform.position.z)) <
-                            Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.z) * Mathf.Abs(dista.z)))
+                        if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.y - transform.position.y) * Mathf.Abs(go.transform.position.y - transform.position.y)) <
+                            Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.y) * Mathf.Abs(dista.y)))
                         {
                             dista = go.transform.position - transform.position;
                             //nearestDot.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
@@ -205,8 +208,8 @@ public class follow : MonoBehaviour {
                     dista = new Vector3(10f, 0f, 10f);
                     foreach (GameObject go in GameObject.FindGameObjectsWithTag("PolePart"))
                     {
-                        if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.z - transform.position.z) * Mathf.Abs(go.transform.position.z - transform.position.z)) <
-                            Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.z) * Mathf.Abs(dista.z)))
+                        if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.y - transform.position.y) * Mathf.Abs(go.transform.position.y - transform.position.y)) <
+                            Mathf.Sqrt(Mathf.Abs(dista.x) * Mathf.Abs(dista.x) + Mathf.Abs(dista.y) * Mathf.Abs(dista.y)))
                         {
                             dista = go.transform.position - transform.position;
                             //currentLine.GetComponent<Renderer>().material.Lerp(blue, grey, 20f);
@@ -228,7 +231,7 @@ public class follow : MonoBehaviour {
                         {
                             //debugtext.text = GameObject.FindGameObjectsWithTag("PoleDot").Length.ToString();
 
-                            if (Mathf.Abs(transform.position.z - nearestDot.transform.position.z) < eps)
+                            if (Mathf.Abs(transform.position.y - nearestDot.transform.position.y) < eps)
                             {
                                 if (dir.x > 0 && nearestDot.GetComponent<PoleDot>().AllowedToRight())
                                 {
@@ -285,6 +288,6 @@ public class follow : MonoBehaviour {
                 
             
         }
-        transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), 1f, Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.z)));
+        transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.y)), 0f) +stepz;
     }
 }

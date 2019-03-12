@@ -54,3 +54,14 @@ MonoBehaviour:
   start: {fileID: 0}
   finish: {fileID: 0}
   poleLines: []
+  SquerePrefab: {fileID: 1874120634789504, guid: d57a0b6e0fa5bbe49a7ee409c354cc5c,
+    type: 2}
+  DotPrefab: {fileID: 1994654814756086, guid: b37c0ed4bd4d3b340bdf432ad63a3024, type: 2}
+  VerticalLinePrefab: {fileID: 1992651564755078, guid: 71f49f1780c0d054190531be0bc79337,
+    type: 2}
+  HorizontalLinePrefab: {fileID: 1465665212001174, guid: f37e8b29f2457b14c85e409885c256cc,
+    type: 2}
+  StartPrefab: {fileID: 1222575531240192, guid: 5d037326e119ac242855bbad0617123b,
+    type: 2}
+  FinishPrefab: {fileID: 1127332840723964, guid: eebeba9ffc21f7a4381fea9ecf22f795,
+    type: 2}
