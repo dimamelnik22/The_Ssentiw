@@ -66,7 +66,7 @@ public class follow : MonoBehaviour {
         }
 
 
-        if (Input.GetMouseButton(0) && false)
+        if (Input.GetMouseButton(0))
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("PoleDot"))
             {
@@ -123,6 +123,7 @@ public class follow : MonoBehaviour {
                             moveHor = !moveHor;
                         }
                     }
+                    else transform.Translate(new Vector3(0f, 0f, dir.y));
                 }
             }
             else
@@ -157,6 +158,7 @@ public class follow : MonoBehaviour {
                             moveHor = !moveHor;
                         }
                     }
+                    else transform.Translate(new Vector3(dir.x, 0f, 0f));
                 }
             }
         }
