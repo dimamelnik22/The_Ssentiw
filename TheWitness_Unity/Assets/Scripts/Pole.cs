@@ -116,6 +116,7 @@ public class Pole : MonoBehaviour
     public GameObject HorizontalLinePrefab;
     public GameObject StartPrefab;
     public GameObject FinishPrefab;
+    public int[][] poleZones;
 
     public void OnDestroy()
     {
@@ -193,6 +194,15 @@ public class Pole : MonoBehaviour
         eltsManager = new PoleElts();
         poleDots = new GameObject[size][];
         poleLines = new List<GameObject>();
+        poleZones = new int[size - 1][];
+        for (int y = 0; y < size - 1; y++)
+        {
+            poleZones[y] = new int[size - 1];
+            for (int x = 0; x < size - 1; x++)
+            {
+                poleZones[y][x] = 0;
+            }
+        }
         for (int y = 0; y < size; y++)
         {
             poleDots[y] = new GameObject[size];
@@ -351,6 +361,70 @@ public class Pole : MonoBehaviour
         dotData.GetDot();
         return false;
     }
+
+    private void FindZone(GameObject square, int x, int y)
+    {
+        GameObject lineH = square.GetComponent<PoleSquare>().up;
+        if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().up != null)
+        {
+            if (poleZones[y - 1][x] == 0)
+            {
+                poleZones[y - 1][x] = poleZones[y][x];
+                FindZone(lineH.GetComponent<PoleLine>().up, x, y - 1);
+            }
+        }
+        lineH = square.GetComponent<PoleSquare>().down;
+        if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().down != null)
+        {
+            if (poleZones[y + 1][x] == 0)
+            {
+                poleZones[y + 1][x] = poleZones[y][x];
+                FindZone(lineH.GetComponent<PoleLine>().down, x, y + 1);
+            }
+        }
+
+        GameObject lineV = square.GetComponent<PoleSquare>().left;
+        if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().left != null)
+        {
+            if (poleZones[y][x - 1] == 0)
+            {
+                poleZones[y][x - 1] = poleZones[y][x];
+                FindZone(lineV.GetComponent<PoleLine>().left, x - 1, y);
+            }
+        }
+        lineV = square.GetComponent<PoleSquare>().right;
+        if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().right != null)
+        {
+            if (poleZones[y][x + 1] == 0)
+            {
+                poleZones[y][x + 1] = poleZones[y][x];
+                FindZone(lineV.GetComponent<PoleLine>().right, x + 1, y);
+            }
+        }
+    }
+    public void SetZone()
+    {
+        GameObject square = poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down;
+        int k = 1;
+        int size = poleSize - 1;
+        for (int x = 0; x < size; ++x)
+        {
+            GameObject square1 = square;
+            for (int y = 0; y < size; ++y)
+            {
+                if (poleZones[y][x] == 0)
+                {
+                    poleZones[y][x] = k;
+                    ++k;
+                    FindZone(square1, x, y);
+                }
+                square1 = square1.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down;
+                Debug.Log(poleZones[y][x]);
+            }
+            square = square.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right;
+        }
+    }
+
     public int GetSize()
     {
         return poleSize;
@@ -424,6 +498,7 @@ public class Pole : MonoBehaviour
             systemPath.dots.Reverse();
             systemPath.lines.Reverse();
         }
+        SetZone();
     }
     public void ClearPole()
     {
