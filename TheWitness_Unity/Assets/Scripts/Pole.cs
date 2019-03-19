@@ -7,20 +7,7 @@ public class Pole : MonoBehaviour
 
     private static Vector3 stepx = new Vector3(5f,0f,0f);
     private static Vector3 stepy = new Vector3(0f,-5f,0f);
-    public class MyRandom
-    {
-        public int seed;
-        public MyRandom(int k)
-        {
-
-            seed = k;
-        }
-        public int GetRandom()
-        {
-            seed = (seed * 106 + 1283) % 6075;
-            return seed;
-        }
-    }
+    
 
 
 
@@ -111,7 +98,6 @@ public class Pole : MonoBehaviour
     }
     
     public PoleElts eltsManager;
-    public MyRandom myRandGen;
     public GameObject start;
     public GameObject tempStart;
     public GameObject finish;
@@ -133,15 +119,7 @@ public class Pole : MonoBehaviour
 
     public void OnDestroy()
     {
-        //foreach (GameObject line in poleLines) Destroy(line);
-        //Destroy(tempStart);
-        //foreach (GameObject fin in tempFins) Destroy(fin);
-        //for (int y = 0; y < poleDots.Length; ++y)
-        //{
-        //    for (int x = 0; x < poleDots[y].Length; ++x)
-        //        if (poleDots[x][y] != null)
-        //            Destroy(poleDots[y][x]);
-        //}
+        
         Debug.Log("Destroy Pole");
         for (int i = transform.childCount - 1; i >= 0; --i)
         {
@@ -207,11 +185,10 @@ public class Pole : MonoBehaviour
         tempStart.transform.parent = this.transform;
     }
 
-    public void Init(int size, int seed)
+    public void Init(int size)
     {
         playerPath = new PolePath();
         systemPath = new PolePath();
-        myRandGen = new MyRandom(seed);
         poleSize = size;
         eltsManager = new PoleElts();
         poleDots = new GameObject[size][];
@@ -296,10 +273,10 @@ public class Pole : MonoBehaviour
         bool triesLeft = true;
         while (triesLeft)
         {
-            int k = myRandGen.GetRandom() % 4;
+            int k = Core.PolePreferences.MyRandom.GetRandom() % 4;
             while (!tries[k])
             {
-                k = myRandGen.GetRandom() % 4;
+                k = Core.PolePreferences.MyRandom.GetRandom() % 4;
             }
             switch (k)
             {
@@ -389,17 +366,13 @@ public class Pole : MonoBehaviour
         Instantiate(FinishPrefab, stepx * x + stepy * y, FinishPrefab.transform.rotation);
         finish = poleDots[y][x];
     }
-    public void SetNewSeed(int k)
-    {
-        myRandGen = new MyRandom(k);
-    }
     public void GeneratePoints(int numberOfPoints)
     {
         eltsManager.points.Clear();
-        numberOfPoints = System.Math.Min(numberOfPoints, systemPath.dots.Count + systemPath.lines.Count - 1);
+        numberOfPoints = System.Math.Min(numberOfPoints, (systemPath.dots.Count + systemPath.lines.Count) / 2);
         for (int i = 0; i < numberOfPoints; i++)
         {
-            int r = myRandGen.GetRandom();
+            int r = Core.PolePreferences.MyRandom.GetRandom();
             r %= systemPath.dots.Count + systemPath.lines.Count;
             if (r % 2 == 0)
             {
