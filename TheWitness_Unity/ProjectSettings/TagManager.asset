@@ -9,6 +9,8 @@ TagManager:
   - PoleTemp
   - PoleDot
   - PoleLine
+  - PolePart
+  - MenuItem
   layers:
   - Default
   - TransparentFX

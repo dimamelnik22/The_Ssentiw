@@ -223,7 +223,15 @@ namespace TheWitness_CStest
             bool[] tries = { true, true, true, true };
             dotData.AddDot(begin);
             bool triesLeft = true;
-
+            //for (int i = 0; i < poleSize; i++)
+            //{
+            //    for (int l = 0; l < poleSize; l++)
+            //    {
+            //        Console.Write(ways[i][l] + " ");
+            //    }
+            //    Console.WriteLine();
+            //}
+            //Console.WriteLine();
             while (triesLeft)
             {
 
