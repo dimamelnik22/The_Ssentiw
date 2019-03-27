@@ -15,7 +15,7 @@ public class follow : MonoBehaviour {
     public bool onDot = true;
     public bool moveHor = true;
     public bool notActive = false;
-    Vector2 lastpos;
+    public Vector2 lastpos;
     Vector3 dista = new Vector3(10f,10f,10f);
     private float distanceToDot;
     public Text debugtext;

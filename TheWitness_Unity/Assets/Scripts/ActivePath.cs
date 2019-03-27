@@ -33,7 +33,6 @@ public class ActivePath : MonoBehaviour {
         //foreach (GameObject dot in dots) Destroy(dot);
         //foreach (GameObject line in lines) Destroy(line);
         //Destroy(pointer);
-        Debug.Log("Destroy ActivrPath");
         for (int i = transform.childCount - 1; i >=0; --i)
         {
             Destroy(transform.GetChild(i));
@@ -159,8 +158,9 @@ public class ActivePath : MonoBehaviour {
 
                 //creating new dot and line
                 float dist = pointer.transform.position.x - dots[dots.Count - 1].transform.position.x;
-                while (Mathf.Abs(dist) >= 5f && CheckBorder())
+                while (Mathf.Abs(dist) > 5f && CheckBorder())
                 {
+                    //Debug.Log("auto new by x "+ lines.Count);
                     if (dist > 0)
                     {
                         if (lines.Count > 1 && lines[lines.Count - 2].transform.position.x > dots[dots.Count - 1].transform.position.x)
@@ -204,8 +204,9 @@ public class ActivePath : MonoBehaviour {
                     dist = pointer.transform.position.x - dots[dots.Count - 1].transform.position.x;
                 }
                 dist = pointer.transform.position.y - dots[dots.Count - 1].transform.position.y;
-                while (Mathf.Abs(dist) >= 5f && CheckBorder())
+                while (Mathf.Abs(dist) > 5f && CheckBorder())
                 {
+                    //Debug.Log("auto new  by y "+ lines.Count);
                     if (dist > 0)
                     {
                         if (lines.Count > 1 && lines[lines.Count - 2].transform.position.y > dots[dots.Count - 1].transform.position.y)
@@ -251,18 +252,22 @@ public class ActivePath : MonoBehaviour {
 
                 if (Mathf.Abs(currentLine.transform.localScale.x) >= 5f || Mathf.Abs(currentLine.transform.localScale.y) >= 5f)
                 {
+                    //Debug.Log("new by scale" + lines.Count);
                     dotsOnPole.Add(pointer.GetComponent<follow>().nearestDot);
+
+                    currentLine.transform.position = dotsOnPole[dotsOnPole.Count - 2].transform.position + 0.5f * (dotsOnPole[dotsOnPole.Count - 1].transform.position - dotsOnPole[dotsOnPole.Count - 2].transform.position) + stepz;
                     dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                     currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                     lines.Add(currentLine);
                     linesOnPole.Add(pointer.GetComponent<follow>().currentLine);
+                    
                     dots[dots.Count - 1].transform.parent = this.transform;
                     currentLine.transform.parent = this.transform;
                 }
 
                 if (lines.Count > 1 && Vector3.Distance(lines[lines.Count - 2].transform.position, pointer.transform.position) < 2.5f)
                 {
-
+                    //Debug.Log("fuck go back");
                     Destroy(currentLine);
                     lines.RemoveAt(lines.Count - 1);
                     currentLine = lines[lines.Count - 1];
@@ -278,6 +283,8 @@ public class ActivePath : MonoBehaviour {
                 dots.Add(Instantiate(PathStartPrefab, start.transform.position + stepz, PathStartPrefab.transform.rotation));
                 pointer = Instantiate(pointerPF, start.transform.position + stepz, pointerPF.transform.rotation);
                 pointer.transform.parent = this.transform;
+                if (Input.touchCount > 0)
+                    pointer.GetComponent<follow>().lastpos = Input.GetTouch(0).position;
                 pointer.GetComponent<follow>().poleDots = pole.GetComponent<Pole>().poleDots;
                 pointer.GetComponent<follow>().path = this;
                 pointer.GetComponent<follow>().nearestDot = start;

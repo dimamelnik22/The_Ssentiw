@@ -8,7 +8,7 @@ public class Core : MonoBehaviour {
 
     public GameObject PolePrefab;
     public GameObject PointPrefab;
-
+    
     public GameObject PathDotPrefab;
     public GameObject PathVerticalLinePrefab;
     public GameObject PathHorizontalLinePrefab;
@@ -29,7 +29,7 @@ public class Core : MonoBehaviour {
 
     private static Vector3 stepx = new Vector3(5f, 0f, 0f);
     private static Vector3 stepy = new Vector3(0f, -5f, 0f);
-
+    private List<GameObject> finishes = new List<GameObject>();
     public int seed = 95;
     public bool mode = true;
     public bool pathIsShown = false;
@@ -292,14 +292,162 @@ public class Core : MonoBehaviour {
                     }
                 }
         }
-
+        finishes.Add(myPole.GetComponent<Pole>().finish);
         mode = !mode;
         pathIsShown = false;
     }
 
     void Update()
     {
-        
+#if UNITY_EDITOR
+        if (!playerIsActive && PolePreferences.isFrozen == false)
+        {
+
+            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+            {
+                point.GetComponent<PoleEltPoint>().NormalizeColor();
+            }
+            if (activePath == null)
+            {
+                activePath = Instantiate(ActivePathPF);
+                
+                
+                activePath.GetComponent<ActivePath>().Init(myPole, myPole.GetComponent<Pole>().start, finishes);
+            }
+            else
+            {
+                
+                
+                activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
+            }
+            playerIsActive = !playerIsActive;
+        }
+        if (activePath.GetComponent<ActivePath>().isFinished && !Input.GetMouseButton(0))
+        {
+            PolePreferences.isFrozen = true;
+            myPole.GetComponent<Pole>().playerPath.Clear();
+            activePath.GetComponent<ActivePath>().EndSolution();
+            foreach (GameObject dot in activePath.GetComponent<ActivePath>().dotsOnPole)
+            {
+                dot.GetComponent<PoleDot>().isUsedByPlayer = true;
+                myPole.GetComponent<Pole>().playerPath.dots.Add(dot);
+            }
+            foreach (GameObject line in activePath.GetComponent<ActivePath>().linesOnPole)
+            {
+                line.GetComponent<PoleLine>().isUsedByPlayer = true;
+                myPole.GetComponent<Pole>().playerPath.lines.Add(line);
+            }
+            if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
+            {
+                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution())
+                {
+                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
+                    {
+                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
+                    }
+                }
+                else
+                {
+                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
+                    {
+                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
+                    }
+                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+                    {
+                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
+                    }
+                }
+            }
+            else foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
+                {
+                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
+                }
+            foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
+                dot.GetComponent<PoleDot>().isUsedByPlayer = false;
+            foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
+                line.GetComponent<PoleLine>().isUsedByPlayer = false;
+            playerIsActive = !playerIsActive;
+        }
+        if (Input.GetMouseButton(0) && PolePreferences.isFrozen)
+        {
+            PolePreferences.isFrozen = false;
+            activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
+        }
+#endif
+        if (!playerIsActive && PolePreferences.isFrozen == false)
+        {
+
+            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+            {
+                point.GetComponent<PoleEltPoint>().NormalizeColor();
+            }
+            if (activePath == null)
+            {
+                activePath = Instantiate(ActivePathPF);
+
+
+                activePath.GetComponent<ActivePath>().Init(myPole, myPole.GetComponent<Pole>().start, finishes);
+                
+            }
+            else
+            {
+
+
+                activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
+            }
+            playerIsActive = !playerIsActive;
+        }
+        if (activePath.GetComponent<ActivePath>().isFinished && Input.touchCount == 0)
+        {
+            PolePreferences.isFrozen = true;
+            myPole.GetComponent<Pole>().playerPath.Clear();
+            activePath.GetComponent<ActivePath>().EndSolution();
+            foreach (GameObject dot in activePath.GetComponent<ActivePath>().dotsOnPole)
+            {
+                dot.GetComponent<PoleDot>().isUsedByPlayer = true;
+                myPole.GetComponent<Pole>().playerPath.dots.Add(dot);
+            }
+            foreach (GameObject line in activePath.GetComponent<ActivePath>().linesOnPole)
+            {
+                line.GetComponent<PoleLine>().isUsedByPlayer = true;
+                myPole.GetComponent<Pole>().playerPath.lines.Add(line);
+            }
+            if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
+            {
+                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution())
+                {
+                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
+                    {
+                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
+                    }
+                }
+                else
+                {
+                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
+                    {
+                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
+                    }
+                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+                    {
+                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
+                    }
+                }
+            }
+            else foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
+                {
+                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
+                }
+            foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
+                dot.GetComponent<PoleDot>().isUsedByPlayer = false;
+            foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
+                line.GetComponent<PoleLine>().isUsedByPlayer = false;
+            playerIsActive = !playerIsActive;
+        }
+        if (Input.touchCount > 0 && PolePreferences.isFrozen)
+        {
+            PolePreferences.isFrozen = false;
+            activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
+        }
     }
 
 }
