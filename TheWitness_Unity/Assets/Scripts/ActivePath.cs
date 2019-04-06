@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActivePath : MonoBehaviour {
+public class ActivePath : MonoBehaviour
+{
     public GameObject pointerPF;
-    
+
 
     public List<GameObject> dots = new List<GameObject>();
     public List<GameObject> lines = new List<GameObject>();
@@ -33,33 +34,33 @@ public class ActivePath : MonoBehaviour {
         //foreach (GameObject dot in dots) Destroy(dot);
         //foreach (GameObject line in lines) Destroy(line);
         //Destroy(pointer);
-        for (int i = transform.childCount - 1; i >=0; --i)
+        for (int i = transform.childCount - 1; i >= 0; --i)
         {
             Destroy(transform.GetChild(i));
         }
     }
 
-    public void Init(GameObject _pole, GameObject _start,List<GameObject> _finishes)
+    public void Init(GameObject _pole, GameObject _start, List<GameObject> _finishes)
     {
         pole = _pole;
         finishes = _finishes;
         start = _start;
         dotsOnPole.Add(start);
-        
+
     }
 
     public void Restart(GameObject start, List<GameObject> _finishes)
     {
 
         isStarted = !isStarted;
-        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Path")) Destroy(obj);
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Path")) Destroy(obj);
         Destroy(pointer);
         dots.Clear();
         lines.Clear();
 
         dotsOnPole.Clear();
         linesOnPole.Clear();
-        Init(pole,start,_finishes);
+        Init(pole, start, _finishes);
     }
 
     private void lineScaleDestroy()
@@ -90,7 +91,7 @@ public class ActivePath : MonoBehaviour {
     {
         if (isFinished)
         {
-            if (dotsOnPole[dotsOnPole.Count-1] != currentFinishOnPole)
+            if (dotsOnPole[dotsOnPole.Count - 1] != currentFinishOnPole)
             {
                 GameObject dot = dotsOnPole[dotsOnPole.Count - 1];
                 dotsOnPole.Add(currentFinishOnPole);
@@ -116,28 +117,28 @@ public class ActivePath : MonoBehaviour {
                     currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
                 }
                 currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
-                
+
             }
         }
     }
 
-    private bool CheckBorder()
-    {
-        GameObject lastDot = dotsOnPole[dotsOnPole.Count - 1];
-        if (transform.position.x > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToRight()
-            || transform.position.x < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToLeft()
-            || transform.position.y > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToUp()
-            || transform.position.y < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToDown())
-            return false;
-        else return true;
+    //private bool CheckBorder()
+    //{
+    //    GameObject lastDot = dotsOnPole[dotsOnPole.Count - 1];
+    //    if (transform.position.x > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToRight()
+    //        || transform.position.x < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToLeft()
+    //        || transform.position.y > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToUp()
+    //        || transform.position.y < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToDown())
+    //        return false;
+    //    else return true;
 
-    }
+    //}
 
     void Update()
     {
         if (!Core.PolePreferences.isFrozen)
         {
-            
+
             if (isStarted)
             {
                 if (!isFinished)
@@ -177,7 +178,7 @@ public class ActivePath : MonoBehaviour {
 
                 //creating new dot and line
                 float dist = pointer.transform.position.x - dots[dots.Count - 1].transform.position.x;
-                while (Mathf.Abs(dist) > 5f && CheckBorder())
+                while (Mathf.Abs(dist) > 5f /*&& CheckBorder()*/)
                 {
                     //Debug.Log("auto new by x "+ lines.Count);
                     if (dist > 0)
@@ -191,7 +192,7 @@ public class ActivePath : MonoBehaviour {
                             currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
                             dotsOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
-                            
+
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().right);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
@@ -223,7 +224,7 @@ public class ActivePath : MonoBehaviour {
                     dist = pointer.transform.position.x - dots[dots.Count - 1].transform.position.x;
                 }
                 dist = pointer.transform.position.y - dots[dots.Count - 1].transform.position.y;
-                while (Mathf.Abs(dist) > 5f && CheckBorder())
+                while (Mathf.Abs(dist) > 5f /*&& CheckBorder()*/)
                 {
                     //Debug.Log("auto new  by y "+ lines.Count);
                     if (dist > 0)
@@ -269,18 +270,20 @@ public class ActivePath : MonoBehaviour {
 
                 //pointer.GetComponent<follow>().nearestDot = dotsOnPole[dotsOnPole.Count - 1];
 
-                if (Mathf.Abs(currentLine.transform.localScale.x) >= 5f || Mathf.Abs(currentLine.transform.localScale.y) >= 5f)
+                if ((Mathf.Abs(currentLine.transform.localScale.x) >= 5f || Mathf.Abs(currentLine.transform.localScale.y) >= 5f) && dotsOnPole[dotsOnPole.Count-1] !=pointer.GetComponent<follow>().nearestDot)
                 {
                     //Debug.Log("new by scale" + lines.Count);
                     dotsOnPole.Add(pointer.GetComponent<follow>().nearestDot);
 
-                    currentLine.transform.position = dotsOnPole[dotsOnPole.Count - 2].transform.position + 0.5f * (dotsOnPole[dotsOnPole.Count - 1].transform.position - dotsOnPole[dotsOnPole.Count - 2].transform.position) + stepz;
+                    if (Mathf.Abs(currentLine.transform.localScale.x) >= 5f) currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
+                    else currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
+                    //currentLine.transform.position = dotsOnPole[dotsOnPole.Count - 2].transform.position + 0.5f * (dotsOnPole[dotsOnPole.Count - 1].transform.position - dotsOnPole[dotsOnPole.Count - 2].transform.position) + stepz;
                     dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                     currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                     lines.Add(currentLine);
-// TUT DOLZHEN BYT' BAGOSIK   
+                    // TUT DOLZHEN BYT' BAGOSIK   
                     //linesOnPole.Add(pointer.GetComponent<follow>().currentLine);
-// TUT DOLZHEN BYT' BAGOSIK                    
+                    // TUT DOLZHEN BYT' BAGOSIK                    
 
                     if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().right == dotsOnPole[dotsOnPole.Count - 2])
                     {
@@ -298,6 +301,7 @@ public class ActivePath : MonoBehaviour {
                     {
                         linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down);
                     }
+                    lines[lines.Count - 2].transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
                     dots[dots.Count - 1].transform.parent = this.transform;
                     currentLine.transform.parent = this.transform;
                 }
@@ -348,6 +352,6 @@ public class ActivePath : MonoBehaviour {
         //}
     }
 
-	
-	
+
+
 }

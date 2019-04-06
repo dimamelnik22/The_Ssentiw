@@ -49,7 +49,7 @@ MonoBehaviour:
   tempFins: []
   finishes: []
   poleLines: []
-  ClrRingPrefab: {fileID: 5359798921110495731, guid: b8fd6a9e8ed8bb7408c17df885c94dd5,
+  ClrRingPrefab: {fileID: 4801137110236326409, guid: dde506f2eb580a04c962ee05cc32b570,
     type: 3}
   SquerePrefab: {fileID: 1392544281636072, guid: c520f12892cf3964e9f8a17875d605a7,
     type: 3}

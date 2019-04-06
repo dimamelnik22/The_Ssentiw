@@ -645,7 +645,6 @@ public class Pole : MonoBehaviour
                 }
                 if(Core.PolePreferences.MyRandom.GetRandom() % 2 == 1)
                 {
-                    Debug.Log(zone[k].Count + " " + k +" "+ i);
                     zone[k][i].GetComponent<PoleSquare>().hasElem = true;
                     zone[k][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, zone[k][i].transform.position, ClrRingPrefab.transform.rotation);
                     zone[k][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
