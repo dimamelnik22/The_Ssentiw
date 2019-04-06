@@ -1,5 +1,14 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+<<<<<<< HEAD
+--- !u!1 &1670594076711100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+=======
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -17,6 +26,7 @@ GameObject:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
+>>>>>>> 20370438f82df355fe26c00ba1d1946b492d62e2
   m_Component:
   - component: {fileID: 4903258844837924}
   - component: {fileID: 114275296312687424}
@@ -29,9 +39,16 @@ GameObject:
   m_IsActive: 1
 --- !u!4 &4903258844837924
 Transform:
+<<<<<<< HEAD
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+=======
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
+>>>>>>> 20370438f82df355fe26c00ba1d1946b492d62e2
   m_GameObject: {fileID: 1670594076711100}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -42,9 +59,16 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114275296312687424
 MonoBehaviour:
+<<<<<<< HEAD
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+=======
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
+>>>>>>> 20370438f82df355fe26c00ba1d1946b492d62e2
   m_GameObject: {fileID: 1670594076711100}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -52,6 +76,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   start: {fileID: 0}
+<<<<<<< HEAD
+  tempStart: {fileID: 0}
+  finish: {fileID: 0}
+  tempFins: []
+  finishes: []
+  poleLines: []
+  ClrRingPrefab: {fileID: 8807882044340581539, guid: 376ab1adbb199db4a8363606f87a3a76,
+    type: 3}
+  SquerePrefab: {fileID: 1874120634789504, guid: d57a0b6e0fa5bbe49a7ee409c354cc5c,
+    type: 3}
+  DotPrefab: {fileID: 1994654814756086, guid: b37c0ed4bd4d3b340bdf432ad63a3024, type: 3}
+  VerticalLinePrefab: {fileID: 1992651564755078, guid: 71f49f1780c0d054190531be0bc79337,
+    type: 3}
+  HorizontalLinePrefab: {fileID: 1465665212001174, guid: f37e8b29f2457b14c85e409885c256cc,
+    type: 3}
+  StartPrefab: {fileID: 1222575531240192, guid: 5d037326e119ac242855bbad0617123b,
+    type: 3}
+  FinishPrefab: {fileID: 1127332840723964, guid: eebeba9ffc21f7a4381fea9ecf22f795,
+    type: 3}
+  quantityZones: 0
+  quantityColor: 3
+=======
   finish: {fileID: 0}
   poleLines: []
   SquerePrefab: {fileID: 1874120634789504, guid: d57a0b6e0fa5bbe49a7ee409c354cc5c,
@@ -65,3 +111,4 @@ MonoBehaviour:
     type: 2}
   FinishPrefab: {fileID: 1127332840723964, guid: eebeba9ffc21f7a4381fea9ecf22f795,
     type: 2}
+>>>>>>> 20370438f82df355fe26c00ba1d1946b492d62e2
