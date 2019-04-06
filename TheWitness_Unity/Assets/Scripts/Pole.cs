@@ -105,11 +105,14 @@ public class Pole : MonoBehaviour
     public List<GameObject> finishes = new List<GameObject>();
     private int poleSize;
     PathDotStack dotData;
+	List<List<GameObject>> zone = new List<List<GameObject>>();
     public GameObject[][] poleDots;
     public List<GameObject> poleLines;
     public PolePath systemPath;
     public PolePath playerPath;
 
+	
+	public GameObject ClrRingPrefab;
     public GameObject SquerePrefab;
     public GameObject DotPrefab;
     public GameObject VerticalLinePrefab;
@@ -117,7 +120,10 @@ public class Pole : MonoBehaviour
     public GameObject StartPrefab;
     public GameObject FinishPrefab;
     public int[][] poleZones;
-
+	public int quantityZones;
+    int quantityColor = 2;
+    int quantityRing = 7;
+    Color[] color = { Color.cyan, Color.red, Color.green, Color.magenta, Color.blue };
     public void OnDestroy()
     {
         
@@ -549,7 +555,7 @@ public class Pole : MonoBehaviour
     public void SetZone()
     {
         GameObject square = poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down;
-        int k = 1;
+        quantityZones = 0;
         int size = poleSize - 1;
         for (int x = 0; x < size; ++x)
         {
@@ -558,17 +564,30 @@ public class Pole : MonoBehaviour
             {
                 if (poleZones[y][x] == 0)
                 {
-                    poleZones[y][x] = k;
-                    ++k;
+                    ++quantityZones;
+                    poleZones[y][x] = quantityZones;
                     FindZone(square1, x, y);
                 }
                 square1 = square1.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down;
-                //Debug.Log(poleZones[y][x]);
+            }
+            square = square.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right;
+        }
+        square = poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down;
+        for (int i = 0; i < quantityZones; ++i)
+        {
+            zone.Add(new List<GameObject>());
+        }
+        for (int x = 0; x < size; ++x)
+        {
+            GameObject square1 = square;
+            for (int y = 0; y < size; ++y)
+            {
+                zone[poleZones[y][x] - 1].Add(square1);
+                square1 = square1.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down;
             }
             square = square.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right;
         }
     }
-
     public int GetSize()
     {
         return poleSize;
@@ -607,6 +626,43 @@ public class Pole : MonoBehaviour
                     systemPath.lines[(r - 1) / 2].GetComponent<PoleLine>().hasPoint = true;
                 }
                 else i--;
+            }
+        }
+    }
+	public void SetClrRing(int zoneQuantity, int ringQuantity)
+    {
+        
+        while(zoneQuantity > 0)
+        {
+            int k = Core.PolePreferences.MyRandom.GetRandom() % zone.Count;
+            int ringInZone = 2;
+            int i = 0;
+            while (ringInZone > 0)
+            {
+                if(zone[k].Count == 0)
+                {
+                    break;
+                }
+                if(Core.PolePreferences.MyRandom.GetRandom() % 2 == 1)
+                {
+                    Debug.Log(zone[k].Count + " " + k +" "+ i);
+                    zone[k][i].GetComponent<PoleSquare>().hasElem = true;
+                    zone[k][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, zone[k][i].transform.position, ClrRingPrefab.transform.rotation);
+                    zone[k][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
+                    ringInZone--;
+                    zone[k].RemoveAt(i);
+                }
+                i++;
+                if (i >= zone[k].Count)
+                {
+                    i = 0;
+                }
+            }
+            zone.RemoveAt(k);
+            --zoneQuantity;
+            if (zone.Count == 0)
+            {
+                break;
             }
         }
     }
@@ -655,6 +711,15 @@ public class Pole : MonoBehaviour
             systemPath.lines.Reverse();
         }
         SetZone();
+		if (quantityZones >= quantityColor)
+        {
+            
+            SetClrRing(quantityColor, quantityRing);
+        }
+        else
+        {
+            Debug.Log("Call find path again");
+        }
     }
     public void ClearPole()
     {

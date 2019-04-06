@@ -257,7 +257,7 @@ public class MenuManager : MonoBehaviour {
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
             
             }
-            else
+            else  if (prevPaths.Count>0)
             {
                 foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
                 {
