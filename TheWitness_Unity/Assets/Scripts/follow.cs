@@ -190,6 +190,7 @@ public class follow : MonoBehaviour {
                     else transform.Translate(new Vector3(dir.x, 0f, 0f));
                 }
             }
+            
             transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.y)), 0f) + stepz;
         }
     }

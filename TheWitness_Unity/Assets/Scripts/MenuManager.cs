@@ -90,8 +90,13 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-
     private void LoadPoleLevel()
+    {
+        Debug.Log(Core.PolePreferences.poleSize + " " + Core.PolePreferences.complexity + " " + Core.PolePreferences.numOfPoints);
+        SceneManager.LoadScene("PoleLevel");
+    }
+
+    private void LoadRandomPoleLevel()
     {
         Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
         Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 3;
@@ -132,7 +137,7 @@ public class MenuManager : MonoBehaviour {
         menuMap = new MenuLinkedList();
 
         MenuFunc[] funcList = new MenuFunc[5];
-        funcList[0] = LoadPoleLevel;
+        funcList[0] = LoadRandomPoleLevel;
         funcList[2] = LoadLevelSelect;
         funcList[4] = Application.Quit;
         string[] names = {"Start", "Custom", "Debug", "Settings", "Exit" };
@@ -146,13 +151,55 @@ public class MenuManager : MonoBehaviour {
         menuMap.go2(1);
         menuMap.add(new MenuNode(names, funcList, 4), 3);
         funcList = new MenuFunc[5];
+        funcList[0] = () => Core.PolePreferences.poleSize = 5;
+        funcList[1] = () => Core.PolePreferences.poleSize = 6;
+        funcList[2] = () => Core.PolePreferences.poleSize = 7;
+        funcList[3] = () => Core.PolePreferences.poleSize = 8;
+        funcList[4] = () => Core.PolePreferences.poleSize = 9;
         names = new string[5] { "Easy", "Medium", "Hard", "Pro", "Developer" };
+        
         menuMap.add(new MenuNode(names, funcList, 5), 1);
+        funcList = new MenuFunc[5];
+        funcList[0] = () => Core.PolePreferences.complexity = 2;
+        funcList[1] = () => Core.PolePreferences.complexity = 2.5f;
+        funcList[2] = () => Core.PolePreferences.complexity = 3;
+        funcList[3] = () => Core.PolePreferences.complexity = 3.5f;
+        funcList[4] = () => Core.PolePreferences.complexity = 4;
+
         menuMap.add(new MenuNode(names, funcList, 5), 2);
         menuMap.go2(3);
         for (int i = 0; i < 4; i++)
         {
             funcList = new MenuFunc[5];
+            switch (i)
+            {
+                case 0:
+                    funcList = new MenuFunc[5];
+                    funcList[0] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize;
+                    funcList[1] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 2;
+                    funcList[2] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 4;
+                    funcList[3] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 6;
+                    funcList[4] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 8;
+                    break;
+                case 1:
+                    for (int j = 0; j < 5; j++)
+                    {
+                        funcList[j] = () => Core.PolePreferences.numOfCircles = j + Core.PolePreferences.MyRandom.GetRandom() % j;
+                    }
+                    break;
+                case 2:
+                    for (int j = 0; j < 5; j++)
+                    {
+                        funcList[j] = () => Core.PolePreferences.numOfStars = 2*j;
+                    }
+                    break;
+                case 3:
+                    for (int j = 0; j < 5; j++)
+                    {
+                        funcList[j] = () => Core.PolePreferences.numOfShapes = j;
+                    }
+                    break;
+            }
             names = new string[5] { "Easy","Medium","Hard","Pro","Developer" };
             menuMap.add(new MenuNode(names, funcList, 5), i);
             menuMap.pointer.next[i].MainName += " difficulty";
@@ -209,6 +256,35 @@ public class MenuManager : MonoBehaviour {
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
             
+            }
+            else
+            {
+                foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
+                {
+                    Destroy(finish);
+                }
+                Destroy(menuPole);
+                Destroy(activePath);
+
+                activePath = prevPaths[prevPaths.Count - 1];
+
+                menuPole = prevPoles[prevPoles.Count - 1];
+                prevPaths.RemoveAt(prevPaths.Count - 1);
+                prevPoles.RemoveAt(prevPoles.Count - 1);
+                activePath.GetComponent<ActivePath>().pointer.GetComponent<follow>().notActive = false;
+                menuMap.back();
+                foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
+                {
+                    Destroy(finish);
+                }
+                foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
+                {
+                    int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
+                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(7f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+
+                }
+                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+                resumed = false;
             }
         }
         else if (prevPaths.Count > 0 && resumed)

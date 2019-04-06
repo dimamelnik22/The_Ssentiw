@@ -321,7 +321,7 @@ public class Pole : MonoBehaviour
         begin.GetComponent<PoleDot>().isUsedBySolution = true;
         if (begin == end)
         {
-            if (dotData.PathLength() < poleSize * 3)
+            if (dotData.PathLength() < poleSize * Core.PolePreferences.complexity)
             {
                 return false;
             }

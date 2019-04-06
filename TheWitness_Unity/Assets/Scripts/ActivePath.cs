@@ -94,10 +94,29 @@ public class ActivePath : MonoBehaviour {
             {
                 GameObject dot = dotsOnPole[dotsOnPole.Count - 1];
                 dotsOnPole.Add(currentFinishOnPole);
-                if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().right);
-                else if (dot.GetComponent<PoleDot>().posX > currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().left);
-                else if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().down);
-                else if (dot.GetComponent<PoleDot>().posX > currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().up);
+
+                if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().right);
+                    currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
+                }
+                else if (dot.GetComponent<PoleDot>().posX > currentFinishOnPole.GetComponent<PoleDot>().posX)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().left);
+                    currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
+                }
+                else if (dot.GetComponent<PoleDot>().posY < currentFinishOnPole.GetComponent<PoleDot>().posY)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().down);
+                    currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
+                }
+                else if (dot.GetComponent<PoleDot>().posY > currentFinishOnPole.GetComponent<PoleDot>().posY)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().up);
+                    currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
+                }
+                currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                
             }
         }
     }
@@ -259,8 +278,26 @@ public class ActivePath : MonoBehaviour {
                     dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                     currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                     lines.Add(currentLine);
-                    linesOnPole.Add(pointer.GetComponent<follow>().currentLine);
-                    
+// TUT DOLZHEN BYT' BAGOSIK   
+                    //linesOnPole.Add(pointer.GetComponent<follow>().currentLine);
+// TUT DOLZHEN BYT' BAGOSIK                    
+
+                    if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().right == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right);
+                    }
+                    else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left.GetComponent<PoleLine>().left == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left);
+                    }
+                    else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up.GetComponent<PoleLine>().up == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up);
+                    }
+                    else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down.GetComponent<PoleLine>().down == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down);
+                    }
                     dots[dots.Count - 1].transform.parent = this.transform;
                     currentLine.transform.parent = this.transform;
                 }
