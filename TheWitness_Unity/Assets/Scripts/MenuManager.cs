@@ -17,7 +17,11 @@ public class MenuManager : MonoBehaviour {
 
     private Vector3 lastPos;
     private bool resumed = true;
-
+    public static class MainSettings
+    {
+        public static string language = "ENG";
+        public static float speed = 1f;
+    }
     private MenuLinkedList menuMap;
 
     delegate void MenuFunc();
@@ -46,7 +50,16 @@ public class MenuManager : MonoBehaviour {
             if (pointer == null)
             {
                 pointer = next;
-                pointer.MainName = "Main Menu";
+                
+                switch (MainSettings.language)
+                {
+                    case "RUS":
+                        pointer.MainName = "Главное меню";
+                        break;
+                    default:
+                        pointer.MainName = "Main Menu";
+                        break;
+                }
             }
             else
             {
@@ -140,14 +153,89 @@ public class MenuManager : MonoBehaviour {
         funcList[0] = LoadRandomPoleLevel;
         funcList[2] = LoadLevelSelect;
         funcList[4] = Application.Quit;
-        string[] names = {"Start", "Custom", "Debug", "Settings", "Exit" };
+        string[] names;
+        switch(MainSettings.language)
+        {
+            case "RUS":
+                names = new string[] { "Старт", "Пользовательская", "Для отладки", "Настройки", "Выход" };
+                break;
+            default:
+                names = new string[] { "Start random", "Custom", "Debug", "Settings", "Exit" };
+                break;
+        }
         menuMap.add(new MenuNode(names, funcList, 5), 0);
+
+        funcList = new MenuFunc[2];
+        switch (MainSettings.language)
+        {
+            case "RUS":
+                names = new string[] { "Язык" , "Скорость" };
+                break;
+            default:
+                names = new string[] { "Language", "Game speed"  };
+                break;
+        }
+        menuMap.add(new MenuNode(names, funcList, 2), 3);
+        menuMap.go2(3);
+        funcList = new MenuFunc[2];
+        funcList[0] = () => 
+        {
+            if (MenuManager.MainSettings.language !="ENG")
+            {
+                MenuManager.MainSettings.language = "ENG";
+                SceneManager.LoadScene("MainMenu");
+            }
+        };
+        funcList[1] = () => 
+        {
+            if (MenuManager.MainSettings.language != "RUS")
+            {
+                MenuManager.MainSettings.language = "RUS";
+                SceneManager.LoadScene("MainMenu");
+            }
+        };
+        names = new string[] { "English", "Russian" };
+        switch (MainSettings.language)
+        {
+            case "RUS":
+                names = new string[] { "Английский", "Русский" };
+                break;
+            default:
+                names = new string[] { "English", "Russian" };
+                break;
+        }
+        menuMap.add(new MenuNode(names, funcList, 2),0);
+        names = new string[5] { "0.5x", "0.75x", "1x", "1.5x", "2x" };
+        funcList = new MenuFunc[5];
+        funcList[0] = () => MenuManager.MainSettings.speed = 0.5f;
+        funcList[1] = () => MenuManager.MainSettings.speed = 0.75f;
+        funcList[2] = () => MenuManager.MainSettings.speed = 1f;
+        funcList[3] = () => MenuManager.MainSettings.speed = 1.5f;
+        funcList[4] = () => MenuManager.MainSettings.speed = 2f;
+        menuMap.add(new MenuNode(names, funcList, 5), 1);
+        menuMap.back();
         funcList = new MenuFunc[4];
         funcList[0] = LoadPoleLevel;
-        names = new string[]{ "Start", "Size","Complexity","Elements"};
+        switch (MainSettings.language)
+        {
+            case "RUS":
+                names = new string[] { "Старт", "Размер", "Длина", "Элементы" };
+                break;
+            default:
+                names = new string[] { "Start", "Size", "Complexity", "Elements" };
+                break;
+        }
         menuMap.add(new MenuNode(names, funcList, 4),1);
         funcList = new MenuFunc[4];
-        names = new string[] { "Points", "Circles", "Stars", "Shapes" };
+        switch (MainSettings.language)
+        {
+            case "RUS":
+                names = new string[] { "Точки", "Круги", "Звезды", "Фигуры" };
+                break;
+            default:
+                names = new string[] { "Points", "Circles", "Stars", "Shapes" };
+                break;
+        }
         menuMap.go2(1);
         menuMap.add(new MenuNode(names, funcList, 4), 3);
         funcList = new MenuFunc[5];
@@ -157,14 +245,23 @@ public class MenuManager : MonoBehaviour {
         funcList[3] = () => Core.PolePreferences.poleSize = 8;
         funcList[4] = () => Core.PolePreferences.poleSize = 9;
         names = new string[5] { "Easy", "Medium", "Hard", "Pro", "Developer" };
-        
+        switch (MainSettings.language)
+        {
+            case "RUS":
+                names = new string[] { "Чайник", "Легко", "Средне", "Сложно", "Разработчик" };
+                break;
+            default:
+                names = new string[] { "Easy", "Medium", "Hard", "Pro", "Developer" };
+                break;
+        }
+
         menuMap.add(new MenuNode(names, funcList, 5), 1);
         funcList = new MenuFunc[5];
-        funcList[0] = () => Core.PolePreferences.complexity = 2;
-        funcList[1] = () => Core.PolePreferences.complexity = 2.5f;
-        funcList[2] = () => Core.PolePreferences.complexity = 3;
-        funcList[3] = () => Core.PolePreferences.complexity = 3.5f;
-        funcList[4] = () => Core.PolePreferences.complexity = 4;
+        funcList[0] = () => Core.PolePreferences.complexity = 0.3f;
+        funcList[1] = () => Core.PolePreferences.complexity = 0.4f;
+        funcList[2] = () => Core.PolePreferences.complexity = 0.5f;
+        funcList[3] = () => Core.PolePreferences.complexity = 0.6f;
+        funcList[4] = () => Core.PolePreferences.complexity = 0.7f;
 
         menuMap.add(new MenuNode(names, funcList, 5), 2);
         menuMap.go2(3);
@@ -175,11 +272,11 @@ public class MenuManager : MonoBehaviour {
             {
                 case 0:
                     funcList = new MenuFunc[5];
-                    funcList[0] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize;
-                    funcList[1] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 2;
-                    funcList[2] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 4;
-                    funcList[3] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 6;
-                    funcList[4] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + 8;
+                    funcList[0] = () => Core.PolePreferences.numOfPoints = 0;
+                    funcList[1] = () => Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize*0.5f + Core.PolePreferences.MyRandom.GetRandom() %(Core.PolePreferences.poleSize-1));
+                    funcList[2] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1);
+                    funcList[3] = () => Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize * 1.5f+ Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1));
+                    funcList[4] = () => Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize * 2f+ Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1));
                     break;
                 case 1:
                     for (int j = 0; j < 5; j++)
@@ -200,9 +297,26 @@ public class MenuManager : MonoBehaviour {
                     }
                     break;
             }
-            names = new string[5] { "Easy","Medium","Hard","Pro","Developer" };
+            switch (MainSettings.language)
+            {
+                case "RUS":
+                    names = new string[] { "Чайник", "Легко", "Средне", "Сложно", "Разработчик" };
+                    break;
+                default:
+                    names = new string[] { "Easy", "Medium", "Hard", "Pro", "Developer" };
+                    break;
+            }
             menuMap.add(new MenuNode(names, funcList, 5), i);
-            menuMap.pointer.next[i].MainName += " difficulty";
+
+            switch (MainSettings.language)
+            {
+                case "RUS":
+                    menuMap.pointer.next[i].MainName += ": уровень";
+                    break;
+                default:
+                    menuMap.pointer.next[i].MainName += " difficulty";
+                    break;
+            }
         }
         menuMap.back();
         menuMap.back();
@@ -220,7 +334,7 @@ public class MenuManager : MonoBehaviour {
         foreach(GameObject finish in menuPole.GetComponent<Pole>().finishes)
         {
             int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-            Instantiate(MenuItemPF, finish.transform.position + new Vector3(7f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+            Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
             
         }
         Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
@@ -251,7 +365,7 @@ public class MenuManager : MonoBehaviour {
                 foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
                 {
                     int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(7f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
 
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
@@ -280,7 +394,7 @@ public class MenuManager : MonoBehaviour {
                 foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
                 {
                     int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(7f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
 
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
@@ -309,7 +423,7 @@ public class MenuManager : MonoBehaviour {
                 foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
                 {
                     int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(7f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
 
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
