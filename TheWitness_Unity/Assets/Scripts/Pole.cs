@@ -60,6 +60,47 @@ public class Pole : MonoBehaviour
         public List<GameObject> points;
         public List<GameObject> clrRing;
         public List<GameObject> unsolvedElts;
+        public int[][] checkZones = new int[Core.PolePreferences.poleSize][];
+        private void FindZone(GameObject square, int x, int y)
+        {
+            GameObject lineH = square.GetComponent<PoleSquare>().up;
+            if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().up != null)
+            {
+                if (checkZones[y - 1][x] == 0)
+                {
+                    checkZones[y - 1][x] = checkZones[y][x];
+                    FindZone(lineH.GetComponent<PoleLine>().up, x, y - 1);
+                }
+            }
+            lineH = square.GetComponent<PoleSquare>().down;
+            if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().down != null)
+            {
+                if (checkZones[y + 1][x] == 0)
+                {
+                    checkZones[y + 1][x] = checkZones[y][x];
+                    FindZone(lineH.GetComponent<PoleLine>().down, x, y + 1);
+                }
+            }
+
+            GameObject lineV = square.GetComponent<PoleSquare>().left;
+            if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().left != null)
+            {
+                if (checkZones[y][x - 1] == 0)
+                {
+                    checkZones[y][x - 1] = checkZones[y][x];
+                    FindZone(lineV.GetComponent<PoleLine>().left, x - 1, y);
+                }
+            }
+            lineV = square.GetComponent<PoleSquare>().right;
+            if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().right != null)
+            {
+                if (checkZones[y][x + 1] == 0)
+                {
+                    checkZones[y][x + 1] = checkZones[y][x];
+                    FindZone(lineV.GetComponent<PoleLine>().right, x + 1, y);
+                }
+            }
+        }
         public PoleElts()
         {
             points = new List<GameObject>();
@@ -637,7 +678,7 @@ public class Pole : MonoBehaviour
         List<List<GameObject>> coloredZones = new List<List<GameObject>>(zoneQuantity);
         List<int> quantityClrRingInZone = new List<int>();
         ringQuantity -= zoneQuantity;
-        int quantityNotUsedSquare = 0;
+        int quantityNotUsedSquare = -zoneQuantity;
         for (int i = 0; i < zone.Count;++i)
         {
             quantityNotUsedSquare += zone[i].Count;
@@ -666,17 +707,22 @@ public class Pole : MonoBehaviour
         
         while(ringQuantity > 0)
         {
-            int i = Core.PolePreferences.MyRandom.GetRandom() % (quantityNotUsedSquare-1);
+            int i = Core.PolePreferences.MyRandom.GetRandom() % (quantityNotUsedSquare)+1;
             int k = 0;
-            Debug.Log(i + " " + k);
+            for(int t = 0;t < coloredZones.Count;++t)
+            {
+                Debug.Log(coloredZones[t].Count+" "+ quantityClrRingInZone[t]);
+
+            }
+            Debug.Log(i + " " + k+" "+ quantityNotUsedSquare);
             while (i - (coloredZones[k].Count - quantityClrRingInZone[k]) > 0)
             {
                 i -= (coloredZones[k].Count - quantityClrRingInZone[k]);
                 k++;
             }
-            quantityNotUsedSquare--;
-            quantityClrRingInZone[k]++;
-            ringQuantity--;
+            --quantityNotUsedSquare;
+            ++quantityClrRingInZone[k];
+            --ringQuantity;
         }
         for(int j = 0;j < zoneQuantity;++j)
         {
