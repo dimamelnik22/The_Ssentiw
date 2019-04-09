@@ -775,16 +775,16 @@ public class Pole : MonoBehaviour
             systemPath.lines.Reverse();
             
         }
-  //      SetZone();
-		//if (quantityZones >= quantityColor)
-  //      {
-            
-  //          SetClrRing(quantityColor, quantityRing);
-  //      }
-  //      else
-  //      {
-  //          Debug.Log("Call find path again");
-  //      }
+        SetZone();
+        if (quantityZones >= quantityColor)
+        {
+
+            SetClrRing(quantityColor, quantityRing);
+        }
+        else
+        {
+            Debug.Log("Call find path again");
+        }
     }
     public void ClearPole()
     {

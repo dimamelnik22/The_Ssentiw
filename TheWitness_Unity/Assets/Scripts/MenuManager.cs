@@ -282,10 +282,10 @@ public class MenuManager : MonoBehaviour {
                 case 1:
                     funcList = new MenuFunc[5];
                     funcList[0] = () => Core.PolePreferences.numOfCircles = 0;
-                    funcList[1] = () => Core.PolePreferences.numOfCircles = 3;
-                    funcList[2] = () => Core.PolePreferences.numOfCircles = 5;
-                    funcList[3] = () => Core.PolePreferences.numOfCircles =7;
-                    funcList[4] = () => Core.PolePreferences.numOfCircles = 1;
+                    funcList[1] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize /2;
+                    funcList[2] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize;
+                    funcList[3] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize /2 + Core.PolePreferences.poleSize;
+                    funcList[4] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize * 2;
                     break;
                 case 2:
                     for (int j = 0; j < 5; j++)
