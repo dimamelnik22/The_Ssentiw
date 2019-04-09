@@ -7,7 +7,6 @@ public class Pole : MonoBehaviour
 
     private static Vector3 stepx = new Vector3(5f,0f,0f);
     private static Vector3 stepy = new Vector3(0f,-5f,0f);
-    
 
 
 
@@ -59,19 +58,22 @@ public class Pole : MonoBehaviour
     public class PoleElts
     {
         public List<GameObject> points;
-        public List<GameObject> unsolvedPoints;
+        public List<GameObject> clrRing;
+        public List<GameObject> unsolvedElts;
         public PoleElts()
         {
             points = new List<GameObject>();
-            unsolvedPoints = new List<GameObject>();
+            clrRing = new List<GameObject>();
+            unsolvedElts = new List<GameObject>();
         }
         public bool CheckSolution()
         {
             bool isSolved = true;
-            unsolvedPoints.Clear();
+            unsolvedElts.Clear();
             foreach (GameObject p in points)
             {
-                if (!p.GetComponent<PoleEltPoint>().IsSolvedByPlayer()) unsolvedPoints.Add(p);
+
+                if (!p.GetComponent<PoleEltPoint>().IsSolvedByPlayer()) unsolvedElts.Add(p);
                 isSolved = isSolved && p.GetComponent<PoleEltPoint>().IsSolvedByPlayer();
             }
 
@@ -121,9 +123,9 @@ public class Pole : MonoBehaviour
     public GameObject FinishPrefab;
     public int[][] poleZones;
 	public int quantityZones;
-    int quantityColor = 2;
-    int quantityRing = 7;
-    Color[] color = { Color.cyan, Color.red, Color.green, Color.magenta, Color.blue };
+    int quantityColor = 3;
+    int quantityRing = 0;
+    List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
     public void OnDestroy()
     {
         
@@ -243,6 +245,7 @@ public class Pole : MonoBehaviour
 
     public void Init(int size)
     {
+        quantityRing = Core.PolePreferences.numOfCircles;
         playerPath = new PolePath();
         systemPath = new PolePath();
         poleSize = size;
@@ -631,38 +634,64 @@ public class Pole : MonoBehaviour
     }
 	public void SetClrRing(int zoneQuantity, int ringQuantity)
     {
-        
-        while(zoneQuantity > 0)
+        List<List<GameObject>> coloredZones = new List<List<GameObject>>(zoneQuantity);
+        List<int> quantityClrRingInZone = new List<int>();
+        ringQuantity -= zoneQuantity;
+        int quantityNotUsedSquare = 0;
+        for (int i = 0; i < zone.Count;++i)
         {
-            int k = Core.PolePreferences.MyRandom.GetRandom() % zone.Count;
-            int ringInZone = 2;
-            int i = 0;
-            while (ringInZone > 0)
+            quantityNotUsedSquare += zone[i].Count;
+            if (i < zoneQuantity)
             {
-                if(zone[k].Count == 0)
-                {
-                    break;
-                }
-                if(Core.PolePreferences.MyRandom.GetRandom() % 2 == 1)
-                {
-                    zone[k][i].GetComponent<PoleSquare>().hasElem = true;
-                    zone[k][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, zone[k][i].transform.position, ClrRingPrefab.transform.rotation);
-                    zone[k][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
-                    ringInZone--;
-                    zone[k].RemoveAt(i);
-                }
-                i++;
-                if (i >= zone[k].Count)
-                {
-                    i = 0;
-                }
+                quantityClrRingInZone.Add(1);
+                coloredZones.Add(new List<GameObject>());
+                coloredZones[i].AddRange(zone[i]);
             }
-            zone.RemoveAt(k);
-            --zoneQuantity;
-            if (zone.Count == 0)
+            else
             {
-                break;
+                List<GameObject> m = new List<GameObject>();
+                int mm = 0;
+                m = coloredZones[0];
+                for (int j = 1; j < coloredZones.Count; ++j)
+                {
+                    if(m.Count > coloredZones[j].Count)
+                    {
+                        m = coloredZones[j];
+                        mm = j;
+                    }
+                }
+                coloredZones[mm].AddRange(zone[i]);
             }
+        }
+        
+        while(ringQuantity > 0)
+        {
+            int i = Core.PolePreferences.MyRandom.GetRandom() % (quantityNotUsedSquare-1);
+            int k = 0;
+            Debug.Log(i + " " + k);
+            while (i - (coloredZones[k].Count - quantityClrRingInZone[k]) > 0)
+            {
+                i -= (coloredZones[k].Count - quantityClrRingInZone[k]);
+                k++;
+            }
+            quantityNotUsedSquare--;
+            quantityClrRingInZone[k]++;
+            ringQuantity--;
+        }
+        for(int j = 0;j < zoneQuantity;++j)
+        {
+            int k = Core.PolePreferences.MyRandom.GetRandom() % color.Count;
+            while(quantityClrRingInZone[j] > 0)
+            {
+                int i = Core.PolePreferences.MyRandom.GetRandom() % coloredZones[j].Count;
+                coloredZones[j][i].GetComponent<PoleSquare>().hasElem = true;
+                coloredZones[j][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, coloredZones[j][i].transform.position, ClrRingPrefab.transform.rotation);
+                eltsManager.clrRing.Add(coloredZones[j][i].GetComponent<PoleSquare>().element);
+                coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
+                quantityClrRingInZone[j]--;
+                coloredZones[j].RemoveAt(i);
+            }
+            color.RemoveAt(k);
         }
     }
     public void CreateSolution()

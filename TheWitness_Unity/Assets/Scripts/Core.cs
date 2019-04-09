@@ -72,7 +72,7 @@ public class Core : MonoBehaviour {
     {
         PolePreferences.isFrozen = true;
         playerIsActive = false;
-        foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+        foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
         {
             point.GetComponent<PoleEltPoint>().NormalizeColor();
         }
@@ -239,7 +239,7 @@ public class Core : MonoBehaviour {
         if (!playerIsActive && PolePreferences.isFrozen == false)
         {
 
-            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
             {
                 point.GetComponent<PoleEltPoint>().NormalizeColor();
             }
@@ -252,8 +252,6 @@ public class Core : MonoBehaviour {
             }
             else
             {
-                
-                
                 activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
             }
             playerIsActive = !playerIsActive;
@@ -288,7 +286,7 @@ public class Core : MonoBehaviour {
                     {
                         path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                     }
-                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                     {
                         point.GetComponent<PoleEltPoint>().ShowUnsolved();
                     }
