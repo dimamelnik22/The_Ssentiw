@@ -91,7 +91,7 @@ public class follow : MonoBehaviour {
             #if UNITY_EDITOR
             if (Input.GetMouseButton(0))
             {
-                dir = 0.03f * new Vector2(Input.mousePosition.x - lastpos.x, Input.mousePosition.y - lastpos.y);
+                dir = 0.03f * MenuManager.MainSettings.speed * new Vector2(Input.mousePosition.x - lastpos.x, Input.mousePosition.y - lastpos.y);
                 lastpos = Input.mousePosition;
             }
             else
@@ -109,7 +109,7 @@ public class follow : MonoBehaviour {
                         lastpos = touch.position;
                         break;
                     case TouchPhase.Moved:
-                        dir = 0.02f * (touch.position - lastpos);
+                        dir = 0.02f * MenuManager.MainSettings.speed * (touch.position - lastpos);
                         lastpos = touch.position;
                         break;
                 }

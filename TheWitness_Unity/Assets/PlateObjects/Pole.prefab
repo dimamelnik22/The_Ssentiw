@@ -54,9 +54,9 @@ MonoBehaviour:
   SquerePrefab: {fileID: 1392544281636072, guid: c520f12892cf3964e9f8a17875d605a7,
     type: 3}
   DotPrefab: {fileID: 1994654814756086, guid: b37c0ed4bd4d3b340bdf432ad63a3024, type: 3}
-  VerticalLinePrefab: {fileID: 1992651564755078, guid: 71f49f1780c0d054190531be0bc79337,
+  VerticalLinePrefab: {fileID: 3285808869419000342, guid: 2f4353df3550431489ad27b487a08d34,
     type: 3}
-  HorizontalLinePrefab: {fileID: 1465665212001174, guid: f37e8b29f2457b14c85e409885c256cc,
+  HorizontalLinePrefab: {fileID: 6820176348997654938, guid: 8046834cbc33449438b69b6a1c6aba7c,
     type: 3}
   StartPrefab: {fileID: 1222575531240192, guid: 5d037326e119ac242855bbad0617123b,
     type: 3}
