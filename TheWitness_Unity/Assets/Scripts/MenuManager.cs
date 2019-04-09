@@ -113,6 +113,7 @@ public class MenuManager : MonoBehaviour {
     {
         Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
         Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 3;
+        Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
@@ -279,10 +280,12 @@ public class MenuManager : MonoBehaviour {
                     funcList[4] = () => Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize * 2f+ Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1));
                     break;
                 case 1:
-                    for (int j = 0; j < 5; j++)
-                    {
-                        funcList[j] = () => Core.PolePreferences.numOfCircles = j + Core.PolePreferences.MyRandom.GetRandom() % j;
-                    }
+                    funcList = new MenuFunc[5];
+                    funcList[0] = () => Core.PolePreferences.numOfCircles = 0;
+                    funcList[1] = () => Core.PolePreferences.numOfCircles = 3;
+                    funcList[2] = () => Core.PolePreferences.numOfCircles = 5;
+                    funcList[3] = () => Core.PolePreferences.numOfCircles =7;
+                    funcList[4] = () => Core.PolePreferences.numOfCircles = 1;
                     break;
                 case 2:
                     for (int j = 0; j < 5; j++)
