@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EltColorRing : MonoBehaviour {
-
+public class EltClrRing : MonoBehaviour {
+    public Color c;
 	// Use this for initialization
 	void Start () {
 		

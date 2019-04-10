@@ -60,22 +60,24 @@ public class Pole : MonoBehaviour
         public List<GameObject> points;
         public List<GameObject> clrRing;
         public List<GameObject> unsolvedElts;
-        public int[][] checkZones = new int[Core.PolePreferences.poleSize][];
+        public int[][] checkZones;
+        List<List<GameObject>> zone = new List<List<GameObject>>();
         private void FindZone(GameObject square, int x, int y)
         {
+            int size = Core.PolePreferences.poleSize - 1;
             GameObject lineH = square.GetComponent<PoleSquare>().up;
-            if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().up != null)
+            if (!lineH.GetComponent<PoleLine>().isUsedByPlayer && lineH.GetComponent<PoleLine>().up != null)
             {
-                if (checkZones[y - 1][x] == 0)
+                if (y > 0 && checkZones[y - 1][x] == 0)
                 {
                     checkZones[y - 1][x] = checkZones[y][x];
                     FindZone(lineH.GetComponent<PoleLine>().up, x, y - 1);
                 }
             }
             lineH = square.GetComponent<PoleSquare>().down;
-            if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().down != null)
+            if (!lineH.GetComponent<PoleLine>().isUsedByPlayer && lineH.GetComponent<PoleLine>().down != null)
             {
-                if (checkZones[y + 1][x] == 0)
+                if (y < size && checkZones[y + 1][x] == 0)
                 {
                     checkZones[y + 1][x] = checkZones[y][x];
                     FindZone(lineH.GetComponent<PoleLine>().down, x, y + 1);
@@ -83,22 +85,59 @@ public class Pole : MonoBehaviour
             }
 
             GameObject lineV = square.GetComponent<PoleSquare>().left;
-            if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().left != null)
+            if (!lineV.GetComponent<PoleLine>().isUsedByPlayer && lineV.GetComponent<PoleLine>().left != null)
             {
-                if (checkZones[y][x - 1] == 0)
+                if (x > 0 && checkZones[y][x - 1] == 0)
                 {
                     checkZones[y][x - 1] = checkZones[y][x];
                     FindZone(lineV.GetComponent<PoleLine>().left, x - 1, y);
                 }
             }
             lineV = square.GetComponent<PoleSquare>().right;
-            if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().right != null)
+            if (!lineV.GetComponent<PoleLine>().isUsedByPlayer && lineV.GetComponent<PoleLine>().right != null)
             {
-                if (checkZones[y][x + 1] == 0)
+                if (x < size && checkZones[y][x + 1] == 0)
                 {
                     checkZones[y][x + 1] = checkZones[y][x];
                     FindZone(lineV.GetComponent<PoleLine>().right, x + 1, y);
                 }
+            }
+        }
+        public void SetZone(GameObject square)
+        {
+            GameObject square1 = square;
+            int quantityZones = 0;
+            int size = Core.PolePreferences.poleSize - 1;
+            for (int x = 0; x < size; ++x)
+            {
+                GameObject square2 = square1;
+                for (int y = 0; y < size; ++y)
+                {
+                    if (checkZones[y][x] == 0)
+                    {
+                        ++quantityZones;
+                        checkZones[y][x] = quantityZones;
+                        FindZone(square2, x, y);
+                    }
+                    square2 = square2.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down;
+                }
+                square1 = square1.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right;
+            }
+            
+            for (int i = 0; i < quantityZones; ++i)
+            {
+                zone.Add(new List<GameObject>());
+            }
+            square1 = square;
+            for (int x = 0; x < size; ++x)
+            {
+                GameObject square2 = square1;
+                for (int y = 0; y < size; ++y)
+                {
+                    zone[checkZones[y][x] - 1].Add(square2);
+                    square2 = square2.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down;
+                }
+                square1 = square1.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right;
             }
         }
         public PoleElts()
@@ -106,11 +145,42 @@ public class Pole : MonoBehaviour
             points = new List<GameObject>();
             clrRing = new List<GameObject>();
             unsolvedElts = new List<GameObject>();
+            checkZones = new int[Core.PolePreferences.poleSize][];
+            for(int i = 0; i < Core.PolePreferences.poleSize; ++i)
+            {
+                checkZones[i] = new int[Core.PolePreferences.poleSize];
+                for (int j = 0; j < Core.PolePreferences.poleSize; ++j)
+                {
+                    checkZones[i][j] = 0;
+                }
+            }
         }
-        public bool CheckSolution()
+        public bool CheckSolution(GameObject square)
         {
             bool isSolved = true;
             unsolvedElts.Clear();
+            SetZone(square);
+            foreach (List<GameObject> p in zone)
+            {
+                Color c = Color.red;
+                foreach (GameObject z in p)
+                {
+                    if (z.GetComponent<PoleSquare>().hasElem == true)
+                    {
+                        if (c == Color.red)
+                        {
+                            c = z.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c;
+                        }
+                        else
+                        {
+                            if(c != z.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c)
+                            {
+                                isSolved = false;
+                            }
+                        }
+                    }
+                }
+            }
             foreach (GameObject p in points)
             {
 
@@ -371,7 +441,7 @@ public class Pole : MonoBehaviour
         begin.GetComponent<PoleDot>().isUsedBySolution = true;
         if (begin == end)
         {
-            if (dotData.PathLength() < poleSize * Core.PolePreferences.complexity)
+            if (dotData.PathLength() <= poleSize * poleSize * Core.PolePreferences.complexity)
             {
                 return false;
             }
@@ -569,10 +639,11 @@ public class Pole : MonoBehaviour
 
     private void FindZone(GameObject square, int x, int y)
     {
+        int size = poleSize - 1;
         GameObject lineH = square.GetComponent<PoleSquare>().up;
         if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().up != null)
         {
-            if (poleZones[y - 1][x] == 0)
+            if (y > 0 && poleZones[y - 1][x] == 0)
             {
                 poleZones[y - 1][x] = poleZones[y][x];
                 FindZone(lineH.GetComponent<PoleLine>().up, x, y - 1);
@@ -581,7 +652,7 @@ public class Pole : MonoBehaviour
         lineH = square.GetComponent<PoleSquare>().down;
         if (!lineH.GetComponent<PoleLine>().isUsedBySolution && lineH.GetComponent<PoleLine>().down != null)
         {
-            if (poleZones[y + 1][x] == 0)
+            if (y < size && poleZones[y + 1][x] == 0)
             {
                 poleZones[y + 1][x] = poleZones[y][x];
                 FindZone(lineH.GetComponent<PoleLine>().down, x, y + 1);
@@ -591,7 +662,7 @@ public class Pole : MonoBehaviour
         GameObject lineV = square.GetComponent<PoleSquare>().left;
         if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().left != null)
         {
-            if (poleZones[y][x - 1] == 0)
+            if (x > 0 && poleZones[y][x - 1] == 0)
             {
                 poleZones[y][x - 1] = poleZones[y][x];
                 FindZone(lineV.GetComponent<PoleLine>().left, x - 1, y);
@@ -600,7 +671,7 @@ public class Pole : MonoBehaviour
         lineV = square.GetComponent<PoleSquare>().right;
         if (!lineV.GetComponent<PoleLine>().isUsedBySolution && lineV.GetComponent<PoleLine>().right != null)
         {
-            if (poleZones[y][x + 1] == 0)
+            if (x < size &&poleZones[y][x + 1] == 0)
             {
                 poleZones[y][x + 1] = poleZones[y][x];
                 FindZone(lineV.GetComponent<PoleLine>().right, x + 1, y);
@@ -740,12 +811,6 @@ public class Pole : MonoBehaviour
         {
             int i = Core.PolePreferences.MyRandom.GetRandom() % (quantityNotUsedSquare)+1;
             int k = 0;
-            for(int t = 0;t < coloredZones.Count;++t)
-            {
-                Debug.Log(coloredZones[t].Count+" "+ quantityClrRingInZone[t]);
-
-            }
-            Debug.Log(i + " " + k+" "+ quantityNotUsedSquare);
             while (i - (coloredZones[k].Count - quantityClrRingInZone[k]) > 0)
             {
                 i -= (coloredZones[k].Count - quantityClrRingInZone[k]);
@@ -763,6 +828,7 @@ public class Pole : MonoBehaviour
                 int i = Core.PolePreferences.MyRandom.GetRandom() % coloredZones[j].Count;
                 coloredZones[j][i].GetComponent<PoleSquare>().hasElem = true;
                 coloredZones[j][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, coloredZones[j][i].transform.position, ClrRingPrefab.transform.rotation);
+                coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = color[k];
                 eltsManager.clrRing.Add(coloredZones[j][i].GetComponent<PoleSquare>().element);
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
                 quantityClrRingInZone[j]--;
@@ -784,21 +850,21 @@ public class Pole : MonoBehaviour
         }
         ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
         dotData = new PathDotStack();
-        //bool isFound = FindPath(start, finish, ways);
-        bool isFound = FindPathQuick(start, finish, ways);
-        while(!isFound)
-        {
-            for (int i = 0; i < poleSize; i++)
-            {
-                for (int j = 0; j < poleSize; j++)
-                {
-                    ways[i][j] = 0;
-                }
-            }
-            ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
-            dotData = new PathDotStack();
-            isFound = FindPathQuick(start, finish, ways);
-        }
+        bool isFound = FindPath(start, finish, ways);
+        //bool isFound = FindPathQuick(start, finish, ways);
+        //while(!isFound)
+        //{
+        //    for (int i = 0; i < poleSize; i++)
+        //    {
+        //        for (int j = 0; j < poleSize; j++)
+        //        {
+        //            ways[i][j] = 0;
+        //        }
+        //    }
+        //    ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
+        //    dotData = new PathDotStack();
+        //    isFound = FindPathQuick(start, finish, ways);
+        //}
         if (isFound)
         {
             GameObject prevDot;
