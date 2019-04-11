@@ -7,6 +7,9 @@ public class Pole : MonoBehaviour
 
     private static Vector3 stepx = new Vector3(5f,0f,0f);
     private static Vector3 stepy = new Vector3(0f,-5f,0f);
+    public List<GameObject> zone1;
+    public List<GameObject> zone2;
+    public List<GameObject> zone3;
 
 
 
@@ -60,8 +63,8 @@ public class Pole : MonoBehaviour
         public List<GameObject> points;
         public List<GameObject> clrRing;
         public List<GameObject> unsolvedElts;
-        public int[][] checkZones;
-        List<List<GameObject>> zone = new List<List<GameObject>>();
+        int[][] checkZones = new int[Core.PolePreferences.poleSize - 1][];
+        public List<List<GameObject>> zone = new List<List<GameObject>>();
         private void FindZone(GameObject square, int x, int y)
         {
             int size = Core.PolePreferences.poleSize - 1;
@@ -105,9 +108,18 @@ public class Pole : MonoBehaviour
         }
         public void SetZone(GameObject square)
         {
+
+            int size = Core.PolePreferences.poleSize - 1;
+            for (int i = 0; i < size; ++i)
+            {
+                checkZones[i] = new int[size];
+                for (int j = 0; j < size; ++j)
+                {
+                    checkZones[i][j] = 0;
+                }
+            }
             GameObject square1 = square;
             int quantityZones = 0;
-            int size = Core.PolePreferences.poleSize - 1;
             for (int x = 0; x < size; ++x)
             {
                 GameObject square2 = square1;
@@ -145,28 +157,25 @@ public class Pole : MonoBehaviour
             points = new List<GameObject>();
             clrRing = new List<GameObject>();
             unsolvedElts = new List<GameObject>();
-            checkZones = new int[Core.PolePreferences.poleSize][];
-            for(int i = 0; i < Core.PolePreferences.poleSize; ++i)
-            {
-                checkZones[i] = new int[Core.PolePreferences.poleSize];
-                for (int j = 0; j < Core.PolePreferences.poleSize; ++j)
-                {
-                    checkZones[i][j] = 0;
-                }
-            }
+
         }
         public bool CheckSolution(GameObject square)
         {
             bool isSolved = true;
             unsolvedElts.Clear();
+            zone.Clear();
             SetZone(square);
+
             foreach (List<GameObject> p in zone)
             {
                 Color c = Color.red;
+                Debug.Log(p.Count);
                 foreach (GameObject z in p)
                 {
+
                     if (z.GetComponent<PoleSquare>().hasElem == true)
                     {
+                        Debug.Log(c + " " + z.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c);
                         if (c == Color.red)
                         {
                             c = z.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c;
