@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -49,16 +50,19 @@ public class Core : MonoBehaviour {
         public static int numOfCircles = 5;
         public static int numOfStars = 5;
         public static int numOfShapes = 0;
-        public static float complexity =0.3f;
+        public static float complexity =0.9f;
         public static bool isFrozen = false;
+        public static System.Random r = new System.Random();
         public static class MyRandom
         {
             public static int seed = 4323;
-
+            
             public static int GetRandom()
             {
-                seed = (seed * 430 + 2531) % 11979;
-                return seed;
+                //seed = (seed * 430 + 2531) % 11979;
+                //return seed;
+
+                return r.Next();
             }
         }
         
@@ -278,7 +282,7 @@ public class Core : MonoBehaviour {
             }
             if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
             {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution())
+                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
                 {
                     foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                     {
