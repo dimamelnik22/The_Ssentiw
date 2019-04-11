@@ -105,7 +105,7 @@ public class MenuManager : MonoBehaviour {
 
     private void LoadPoleLevel()
     {
-        Debug.Log(Core.PolePreferences.poleSize + " " + Core.PolePreferences.complexity + " " + Core.PolePreferences.numOfPoints);
+        //Debug.Log(Core.PolePreferences.poleSize + " " + Core.PolePreferences.complexity + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
     }
 

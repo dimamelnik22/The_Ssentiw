@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PoleDot : MonoBehaviour {
-
+    public GameObject DotPF;
     public GameObject up;
     public GameObject down;
     public GameObject left;
@@ -51,6 +51,10 @@ public class PoleDot : MonoBehaviour {
         return (right != null);
     }
 
+    public void CreateDot()
+    {
+        Instantiate(DotPF, transform);
+    }
     // Use this for initialization
     void Start () {
 		

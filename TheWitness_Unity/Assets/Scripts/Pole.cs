@@ -241,6 +241,7 @@ public class Pole : MonoBehaviour
         start = poleDots[0][0];
         tempStart = Instantiate(StartPrefab, poleDots[0][0].transform.position, StartPrefab.transform.rotation);
         tempStart.transform.parent = this.transform;
+        StartScaling(start);
     }
 
     public void Init(int size)
@@ -611,6 +612,8 @@ public class Pole : MonoBehaviour
     {
         Instantiate(StartPrefab, stepx * x + stepy * y, StartPrefab.transform.rotation);
         start = poleDots[y][x];
+        start.GetComponent<PoleDot>().CreateDot();
+        StartScaling(start);
     }
     public void SetFinish(int x, int y)
     {
@@ -699,7 +702,7 @@ public class Pole : MonoBehaviour
         {
             int i = Core.PolePreferences.MyRandom.GetRandom() % (quantityNotUsedSquare-1);
             int k = 0;
-            Debug.Log(i + " " + k);
+            //Debug.Log(i + " " + k);
             while (i - (coloredZones[k].Count - quantityClrRingInZone[k]) > 0)
             {
                 i -= (coloredZones[k].Count - quantityClrRingInZone[k]);
@@ -806,6 +809,43 @@ public class Pole : MonoBehaviour
         systemPath.dots.Clear();
         systemPath.lines.Clear();
     }
+
+    public List<GameObject> scalingLines = new List<GameObject>();
+    public List<GameObject> scalingDots = new List<GameObject>();
+    public void StartScaling(GameObject dot)
+    {
+        if (dot.GetComponent<PoleDot>().AllowedToDown())
+        {
+            if (!dot.GetComponent<PoleDot>().down.GetComponent<PoleLine>().scalingIsFinished)
+                scalingLines.Add(dot.GetComponent<PoleDot>().down);
+            else scalingLines.Remove(dot.GetComponent<PoleDot>().down);
+        }
+        if (dot.GetComponent<PoleDot>().AllowedToUp())
+        {
+            if (!dot.GetComponent<PoleDot>().up.GetComponent<PoleLine>().scalingIsFinished)
+                scalingLines.Add(dot.GetComponent<PoleDot>().up);
+            else scalingLines.Remove(dot.GetComponent<PoleDot>().up);
+        }
+        if (dot.GetComponent<PoleDot>().AllowedToLeft())
+        {
+            if (!dot.GetComponent<PoleDot>().left.GetComponent<PoleLine>().scalingIsFinished)
+                scalingLines.Add(dot.GetComponent<PoleDot>().left);
+            else scalingLines.Remove(dot.GetComponent<PoleDot>().left);
+        }
+        if (dot.GetComponent<PoleDot>().AllowedToRight())
+        {
+            if (!dot.GetComponent<PoleDot>().right.GetComponent<PoleLine>().scalingIsFinished)
+                scalingLines.Add(dot.GetComponent<PoleDot>().right);
+            else scalingLines.Remove(dot.GetComponent<PoleDot>().right);
+        }
+        foreach (GameObject line in scalingLines)
+        {
+            if (line != null)
+                line.GetComponent<PoleLine>().StartScaling(dot);
+
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
