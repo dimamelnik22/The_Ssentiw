@@ -50,7 +50,7 @@ public class Core : MonoBehaviour {
         public static int numOfCircles = 5;
         public static int numOfStars = 5;
         public static int numOfShapes = 0;
-        public static float complexity =0.9f;
+        public static float complexity =0.5f;
         public static bool isFrozen = false;
         public static System.Random r = new System.Random();
         public static class MyRandom
@@ -84,7 +84,14 @@ public class Core : MonoBehaviour {
         playerIsActive = false;
         foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
         {
-            point.GetComponent<PoleEltPoint>().NormalizeColor();
+            if (point.GetComponent<PoleEltPoint>() != null)
+            {
+                point.GetComponent<PoleEltPoint>().ShowNormalizeColor();
+            }
+            if (point.GetComponent<EltClrRing>() != null)
+            {
+                point.GetComponent<EltClrRing>().ShowNormalizeColor();
+            }
         }
         foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
             dot.GetComponent<PoleDot>().isUsedByPlayer = false;
@@ -250,7 +257,14 @@ public class Core : MonoBehaviour {
 
             foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
             {
-                point.GetComponent<PoleEltPoint>().NormalizeColor();
+                if (point.GetComponent<PoleEltPoint>() != null)
+                {
+                    point.GetComponent<PoleEltPoint>().ShowNormalizeColor();
+                }
+                if (point.GetComponent<EltClrRing>() != null)
+                {
+                    point.GetComponent<EltClrRing>().ShowNormalizeColor();
+                }
             }
             if (activePath == null)
             {
@@ -297,7 +311,14 @@ public class Core : MonoBehaviour {
                     }
                     foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                     {
-                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
+                        if (point.GetComponent<PoleEltPoint>() != null)
+                        {
+                            point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
+                        }
+                        if (point.GetComponent<EltClrRing>() != null)
+                        {
+                            point.GetComponent<EltClrRing>().ShowUnsolvedColor();
+                        }
                     }
                 }
             }
@@ -325,7 +346,14 @@ public class Core : MonoBehaviour {
 
             foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
             {
-                point.GetComponent<PoleEltPoint>().NormalizeColor();
+                if (point.GetComponent<PoleEltPoint>() != null)
+                {
+                    point.GetComponent<PoleEltPoint>().ShowNormalizeColor();
+                }
+                if (point.GetComponent<EltClrRing>() != null)
+                {
+                    point.GetComponent<EltClrRing>().ShowNormalizeColor();
+                }
             }
             if (activePath == null)
             {
@@ -360,7 +388,7 @@ public class Core : MonoBehaviour {
             }
             if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
             {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution())
+                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down)))
                 {
                     foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                     {
@@ -375,7 +403,14 @@ public class Core : MonoBehaviour {
                     }
                     foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                     {
-                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
+                        if (point.GetComponent<PoleEltPoint>() != null)
+                        {
+                            point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
+                        }
+                        if (point.GetComponent<EltClrRing>() != null)
+                        {
+                            point.GetComponent<EltClrRing>().ShowUnsolvedColor();
+                        }
                     }
                 }
             }

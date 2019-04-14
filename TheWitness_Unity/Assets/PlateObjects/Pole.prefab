@@ -43,6 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89a6df83bd42f9c478647c29e946a3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  zone1: []
+  zone2: []
+  zone3: []
   start: {fileID: 0}
   tempStart: {fileID: 0}
   finish: {fileID: 0}
@@ -50,6 +53,8 @@ MonoBehaviour:
   finishes: []
   poleLines: []
   ClrRingPrefab: {fileID: 4801137110236326409, guid: dde506f2eb580a04c962ee05cc32b570,
+    type: 3}
+  ClrStarPrefab: {fileID: 3168919368890927314, guid: ddfcfc1334682354db6ae1dd0b3c17b5,
     type: 3}
   SquerePrefab: {fileID: 1392544281636072, guid: c520f12892cf3964e9f8a17875d605a7,
     type: 3}

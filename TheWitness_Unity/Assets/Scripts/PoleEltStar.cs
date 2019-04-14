@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EltClrRing : MonoBehaviour {
+public class PoleEltStar : MonoBehaviour
+{
     public Color c;
 
     public void ShowUnsolvedColor()
@@ -14,13 +15,15 @@ public class EltClrRing : MonoBehaviour {
         GetComponent<Renderer>().material.color = c;
     }
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 }
