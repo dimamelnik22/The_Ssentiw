@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 3285808869419000337}
   m_Layer: 0
   m_Name: PoleVerLine
-  m_TagString: Untagged
+  m_TagString: PoleLine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -135,9 +135,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2609855b8382a7a42bc7ca768b9b5412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pole: {fileID: 0}
   isHorizontal: 0
   Line: {fileID: 3285808868407149158}
-  speed: 2
   up: {fileID: 0}
   down: {fileID: 0}
   left: {fileID: 0}
@@ -146,3 +146,6 @@ MonoBehaviour:
   isUsedByPlayer: 0
   hasPoint: 0
   point: {fileID: 0}
+  scalingIsFinished: 0
+  first: {fileID: 0}
+  second: {fileID: 0}
