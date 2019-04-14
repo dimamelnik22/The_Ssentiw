@@ -52,6 +52,8 @@ MonoBehaviour:
   poleLines: []
   ClrRingPrefab: {fileID: 4801137110236326409, guid: dde506f2eb580a04c962ee05cc32b570,
     type: 3}
+  ClrStarPrefab: {fileID: 3168919368890927314, guid: ddfcfc1334682354db6ae1dd0b3c17b5,
+    type: 3}
   SquerePrefab: {fileID: 1392544281636072, guid: c520f12892cf3964e9f8a17875d605a7,
     type: 3}
   DotPrefab: {fileID: 710910093910903250, guid: b37c0ed4bd4d3b340bdf432ad63a3024,
