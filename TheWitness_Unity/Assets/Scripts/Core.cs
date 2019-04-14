@@ -126,26 +126,13 @@ public class Core : MonoBehaviour {
         gentime = Time.realtimeSinceStartup;
         myPole = Instantiate(PolePrefab);
         myPole.GetComponent<Pole>().Init(PolePreferences.poleSize);
-        //GameObject.FindGameObjectWithTag("Player").GetComponent<follow>().dot = myPole.poleDots[0][0];
+        
         playerPathLinesOnScreen = new List<GameObject>();
         playerPathDotsOnScreen = new List<GameObject>();
 
         playerIsActive = false;
 
-        //int index = PolePreferences.MyRandom.GetRandom() % (PolePreferences.poleSize * PolePreferences.poleSize);
-        //int x = index % PolePreferences.poleSize;
-        //int y = index / PolePreferences.poleSize;
-        //myPole.GetComponent<Pole>().SetStart(x, y);
-        //index = PolePreferences.MyRandom.GetRandom() % (PolePreferences.poleSize * PolePreferences.poleSize);
-        //x = index % PolePreferences.poleSize;
-        //y = index / PolePreferences.poleSize;
-        //while (myPole.GetComponent<Pole>().start.GetComponent<PoleDot>().posX == x && myPole.GetComponent<Pole>().start.GetComponent<PoleDot>().posY == y)
-        //{
-        //    index = PolePreferences.MyRandom.GetRandom() % (PolePreferences.poleSize * PolePreferences.poleSize);
-        //    x = index % PolePreferences.poleSize;
-        //    y = index / PolePreferences.poleSize;
-        //}
-        //myPole.GetComponent<Pole>().SetFinish(x, y);
+        // START and FINISH creating
         int x = 0;
         int y = 0;
         switch (PolePreferences.MyRandom.GetRandom() % 4)
@@ -193,7 +180,14 @@ public class Core : MonoBehaviour {
         myPole.GetComponent<Pole>().SetFinish(x, y);
 
         myPole.GetComponent<Pole>().CreateSolution();
-        myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints); 
+        myPole.GetComponent<Pole>().SetShapes();
+
+        //if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
+        //{
+
+        //    myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+        //}
+        //myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints); 
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
@@ -238,6 +232,9 @@ public class Core : MonoBehaviour {
         finishes.Add(myPole.GetComponent<Pole>().finish);
         mode = !mode;
         pathIsShown = false;
+
+
+
         gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
         gentime = Time.realtimeSinceStartup;
     }

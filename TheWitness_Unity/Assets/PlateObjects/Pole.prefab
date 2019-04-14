@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89a6df83bd42f9c478647c29e946a3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShapePF: {fileID: 6661360437687080269, guid: eb23d85c9f73834478a4317f044a386b, type: 3}
   start: {fileID: 0}
   tempStart: {fileID: 0}
   finish: {fileID: 0}
@@ -64,5 +65,7 @@ MonoBehaviour:
   FinishPrefab: {fileID: 1127332840723964, guid: eebeba9ffc21f7a4381fea9ecf22f795,
     type: 3}
   quantityZones: 0
+  quantityColor: 3
+  quantityRing: 0
   scalingLines: []
   scalingDots: []

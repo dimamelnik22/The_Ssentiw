@@ -8,7 +8,7 @@ public class Pole : MonoBehaviour
     private static Vector3 stepx = new Vector3(5f,0f,0f);
     private static Vector3 stepy = new Vector3(0f,-5f,0f);
 
-
+    public GameObject ShapePF;
 
 
     public class PathDotStack
@@ -223,7 +223,7 @@ public class Pole : MonoBehaviour
     public List<GameObject> poleLines;
     public PolePath systemPath;
     public PolePath playerPath;
-
+    List<List<List<GameObject>>> shapes = new List<List<List<GameObject>>>();
 	
 	public GameObject ClrRingPrefab;
     public GameObject SquerePrefab;
@@ -232,10 +232,10 @@ public class Pole : MonoBehaviour
     public GameObject HorizontalLinePrefab;
     public GameObject StartPrefab;
     public GameObject FinishPrefab;
-    public int[][] poleZones;
+    public int[][] poleZones;   
 	public int quantityZones;
-    int quantityColor = 3;
-    int quantityRing = 0;
+    public int quantityColor = 3;
+    public int quantityRing = 0;
     List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
     public void OnDestroy()
     {
@@ -714,6 +714,7 @@ public class Pole : MonoBehaviour
             }
             square = square.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right;
         }
+        
     }
     public int GetSize()
     {
@@ -853,21 +854,21 @@ public class Pole : MonoBehaviour
         }
         ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
         dotData = new PathDotStack();
-        bool isFound = FindPath(start, finish, ways);
-        //bool isFound = FindPathQuick(start, finish, ways);
-        //while(!isFound)
-        //{
-        //    for (int i = 0; i < poleSize; i++)
-        //    {
-        //        for (int j = 0; j < poleSize; j++)
-        //        {
-        //            ways[i][j] = 0;
-        //        }
-        //    }
-        //    ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
-        //    dotData = new PathDotStack();
-        //    isFound = FindPathQuick(start, finish, ways);
-        //}
+        //bool isFound = FindPath(start, finish, ways);
+        bool isFound = FindPathQuick(start, finish, ways);
+        while (!isFound)
+        {
+            for (int i = 0; i < poleSize; i++)
+            {
+                for (int j = 0; j < poleSize; j++)
+                {
+                    ways[i][j] = 0;
+                }
+            }
+            ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
+            dotData = new PathDotStack();
+            isFound = FindPathQuick(start, finish, ways);
+        }
         if (isFound)
         {
             GameObject prevDot;
@@ -891,16 +892,109 @@ public class Pole : MonoBehaviour
             
         }
         SetZone();
-        if (quantityZones >= quantityColor)
-        {
+        
+        
+    }
 
-            SetClrRing(quantityColor, quantityRing);
-        }
-        else
+    public void SetShapes()
+    {
+        List<List<GameObject>> set = new List<List<GameObject>>(zone);
+        foreach (List<GameObject> z in set)
+            shapes.Add(SplitZone(z));
+        var tmpShapes = new List<List<List<GameObject>>>(shapes);
+        foreach(List<List<GameObject>> shlist in tmpShapes)
         {
-            Debug.Log("Call find path again");
+            foreach(List<GameObject> shape in shlist)
+            {
+                List<GameObject> squeresToCheck = new List<GameObject>();
+                List<GameObject> newsqueresToCheck = new List<GameObject>();
+                Transform squere = shape[0].transform;
+                Instantiate(ShapePF, shape[0].transform.position, shape[0].transform.rotation);
+                squeresToCheck.Add(shape[0]);
+                while (shape.Count > 0)
+                {
+                    foreach (GameObject currentSquere in squeresToCheck)
+                    {
+                        if (currentSquere.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().up != null && shape.Contains(currentSquere.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().up))
+                        {
+                            newsqueresToCheck.Add(currentSquere.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().up);
+                            Instantiate(ShapePF, squere.position + (currentSquere.transform.position - squere.position) / 10  + new Vector3(0f,0.5f,0f), squere.rotation);
+                        }
+                        if (currentSquere.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right != null && shape.Contains(currentSquere.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right))
+                        {
+                            newsqueresToCheck.Add(currentSquere.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right);
+                            Instantiate(ShapePF, squere.position + (currentSquere.transform.position - squere.position) / 10 + new Vector3(0.5f, 0f, 0f), squere.rotation);
+                        }
+                        if (currentSquere.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down != null && shape.Contains(currentSquere.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down))
+                        {
+                            newsqueresToCheck.Add(currentSquere.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down);
+                            Instantiate(ShapePF, squere.position + (currentSquere.transform.position - squere.position) / 10 - new Vector3(0f, 0.5f, 0f), squere.rotation);
+                        }
+                        if (currentSquere.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().left != null && shape.Contains(currentSquere.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().left))
+                        {
+                            newsqueresToCheck.Add(currentSquere.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().left);
+                            Instantiate(ShapePF, squere.position + (currentSquere.transform.position - squere.position) / 10 - new Vector3(0.5f, 0f, 0f), squere.rotation);
+                        }
+                        shape.Remove(currentSquere);
+                    }
+                    squeresToCheck = new List<GameObject>(newsqueresToCheck);
+                    newsqueresToCheck = new List<GameObject>();
+                    if (squeresToCheck.Count == 0) break;
+                    
+                }
+                
+            }
         }
     }
+
+    public List<List<GameObject>> SplitZone(List<GameObject> zone)
+    {
+        List<List<GameObject>> zoneShapes = new List<List<GameObject>>();
+        List<GameObject> currentShape = new List<GameObject>();
+        List<GameObject> squeresToCheck = new List<GameObject>();
+        while (zone.Count > 0)
+        {
+            currentShape = new List<GameObject>();
+            currentShape.Add(zone[0]);
+            while (currentShape.Count < 4)
+            {
+                foreach (GameObject currentSquere in currentShape)
+                {
+                    if (currentSquere.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().up != null && zone.Contains(currentSquere.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().up) && !currentShape.Contains(currentSquere.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().up))
+                    {
+                        squeresToCheck.Add(currentSquere.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().up);
+                    }
+                    if (currentSquere.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right != null && zone.Contains(currentSquere.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right) && !currentShape.Contains(currentSquere.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right))
+                    {
+                        squeresToCheck.Add(currentSquere.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().right);
+                    }
+                    if (currentSquere.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down != null && zone.Contains(currentSquere.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down) && !currentShape.Contains(currentSquere.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down))
+                    {
+                        squeresToCheck.Add(currentSquere.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down);
+                    }
+                    if (currentSquere.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().left != null && zone.Contains(currentSquere.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().left) && !currentShape.Contains(currentSquere.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().left))
+                    {
+                        squeresToCheck.Add(currentSquere.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().left);
+                    }
+                }
+                if (squeresToCheck.Count == 0) break;
+                currentShape.Add(squeresToCheck[Core.PolePreferences.MyRandom.GetRandom() % squeresToCheck.Count]);
+                squeresToCheck.Clear();
+            }
+            foreach (GameObject squere in currentShape)
+                zone.Remove(squere);
+            zoneShapes.Add(currentShape);
+        }
+        return zoneShapes;
+    }
+
+    public List<List<bool>> ZoneToBoolList(List<List<GameObject>> zone)
+    {
+        List<List<bool>> zoneBool = new List<List<bool>>();
+        var curZone = new List<List<GameObject>>(zone);
+        return zoneBool;
+    }
+
     public void ClearPole()
     {
         for (int y = 0; y < poleSize; y++)
@@ -924,6 +1018,7 @@ public class Pole : MonoBehaviour
 
     public List<GameObject> scalingLines = new List<GameObject>();
     public List<GameObject> scalingDots = new List<GameObject>();
+
     public void StartScaling(GameObject dot)
     {
         if (dot.GetComponent<PoleDot>().AllowedToDown())
