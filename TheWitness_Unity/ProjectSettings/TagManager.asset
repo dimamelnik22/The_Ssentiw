@@ -11,6 +11,9 @@ TagManager:
   - PoleLine
   - PolePart
   - MenuItem
+  - PoleStart
+  - PoleFinish
+  - Pole
   layers:
   - Default
   - TransparentFX

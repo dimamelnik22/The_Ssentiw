@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 114275296312687424}
   m_Layer: 0
   m_Name: Pole
-  m_TagString: Untagged
+  m_TagString: Pole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,9 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89a6df83bd42f9c478647c29e946a3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zone1: []
-  zone2: []
-  zone3: []
+  ShapePF: {fileID: 3770795184194819828, guid: ae90e4ed66029d148a11e8b52bc63ae4, type: 3}
   start: {fileID: 0}
   tempStart: {fileID: 0}
   finish: {fileID: 0}
@@ -58,7 +56,8 @@ MonoBehaviour:
     type: 3}
   SquerePrefab: {fileID: 1392544281636072, guid: c520f12892cf3964e9f8a17875d605a7,
     type: 3}
-  DotPrefab: {fileID: 1994654814756086, guid: b37c0ed4bd4d3b340bdf432ad63a3024, type: 3}
+  DotPrefab: {fileID: 710910093910903250, guid: b37c0ed4bd4d3b340bdf432ad63a3024,
+    type: 3}
   VerticalLinePrefab: {fileID: 3285808869419000342, guid: 2f4353df3550431489ad27b487a08d34,
     type: 3}
   HorizontalLinePrefab: {fileID: 6820176348997654938, guid: 8046834cbc33449438b69b6a1c6aba7c,
@@ -68,3 +67,7 @@ MonoBehaviour:
   FinishPrefab: {fileID: 1127332840723964, guid: eebeba9ffc21f7a4381fea9ecf22f795,
     type: 3}
   quantityZones: 0
+  quantityColor: 3
+  quantityRing: 0
+  scalingLines: []
+  scalingDots: []
