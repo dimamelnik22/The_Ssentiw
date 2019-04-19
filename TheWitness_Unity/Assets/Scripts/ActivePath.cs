@@ -14,6 +14,7 @@ public class ActivePath : MonoBehaviour
     public List<GameObject> finishes = new List<GameObject>();
     public GameObject start;
     public GameObject pointer;
+    public GameObject leadDot;
     public GameObject currentLine;
     public GameObject currentFinish;
     public GameObject currentFinishOnPole;
@@ -38,6 +39,7 @@ public class ActivePath : MonoBehaviour
         {
             Destroy(transform.GetChild(i));
         }
+        Destroy(leadDot);
     }
 
     public void Init(GameObject _pole, GameObject _start, List<GameObject> _finishes)
@@ -168,12 +170,18 @@ public class ActivePath : MonoBehaviour
                 if (Mathf.Abs(pos.x) > 0f)
                 {
                     currentLine.transform.localScale = new Vector3(Mathf.Abs(pos.x * 2f), 1f, 0.1f);
+                    leadDot.transform.position = currentLine.transform.position + new Vector3(pos.x, 0f, 0f);
                 }
                 else if (Mathf.Abs(pos.y) > 0f)
                 {
                     currentLine.transform.localScale = new Vector3(1f, Mathf.Abs(pos.y * 2f), 0.1f);
+                    leadDot.transform.position = currentLine.transform.position + new Vector3(0f, pos.y, 0f);
                 }
-                else currentLine.transform.localScale = new Vector3(0f, 0f, 0.1f);
+                else
+                {
+                    currentLine.transform.localScale = new Vector3(0f, 0f, 0.1f);
+                    leadDot.transform.position = currentLine.transform.position;
+                }
 
 
                 //creating new dot and line
@@ -195,6 +203,7 @@ public class ActivePath : MonoBehaviour
 
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().right);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             dots[dots.Count - 1].transform.parent = this.transform;
                             currentLine.transform.parent = this.transform;
@@ -215,6 +224,7 @@ public class ActivePath : MonoBehaviour
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().left);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             lines.Add(currentLine);
                             dots[dots.Count - 1].transform.parent = this.transform;
@@ -240,6 +250,7 @@ public class ActivePath : MonoBehaviour
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().up);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             lines.Add(currentLine);
                             dots[dots.Count - 1].transform.parent = this.transform;
@@ -259,6 +270,7 @@ public class ActivePath : MonoBehaviour
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().down);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             lines.Add(currentLine);
                             dots[dots.Count - 1].transform.parent = this.transform;
@@ -280,6 +292,7 @@ public class ActivePath : MonoBehaviour
                     //currentLine.transform.position = dotsOnPole[dotsOnPole.Count - 2].transform.position + 0.5f * (dotsOnPole[dotsOnPole.Count - 1].transform.position - dotsOnPole[dotsOnPole.Count - 2].transform.position) + stepz;
                     dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                     currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
+                    leadDot.transform.position = dots[dots.Count - 1].transform.position;
                     lines.Add(currentLine);
                     // TUT DOLZHEN BYT' BAGOSIK   
                     //linesOnPole.Add(pointer.GetComponent<follow>().currentLine);
@@ -322,6 +335,7 @@ public class ActivePath : MonoBehaviour
             else if ((Input.GetMouseButton(0) || Input.touchCount > 0) && !isStarted)
             {
                 dots.Add(Instantiate(PathStartPrefab, start.transform.position + stepz, PathStartPrefab.transform.rotation));
+                leadDot = Instantiate(PathDotPrefab, start.transform.position + stepz, PathDotPrefab.transform.rotation);
                 pointer = Instantiate(pointerPF, start.transform.position + stepz, pointerPF.transform.rotation);
                 pointer.transform.parent = this.transform;
                 if (Input.touchCount > 0)

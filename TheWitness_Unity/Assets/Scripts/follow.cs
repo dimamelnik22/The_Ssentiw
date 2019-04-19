@@ -140,7 +140,7 @@ public class follow : MonoBehaviour {
             {
                 if (moveHor)
                 {
-                    transform.Translate(new Vector3(dir.x, 0f, 0f));
+                    transform.Translate(new Vector3(dir.x /*+ Mathf.Sign(dir.x) * Mathf.Abs(dir.y)*/, 0f, 0f));
                 }
                 else
                 {
@@ -159,14 +159,14 @@ public class follow : MonoBehaviour {
                             moveHor = !moveHor;
                         }
                     }
-                    else transform.Translate(new Vector3(0f, dir.y, 0f));
+                    else transform.Translate(new Vector3(0f, dir.y + Mathf.Sign(nearestDot.transform.position.y - transform.position.y) * Mathf.Abs(dir.x), 0f));
                 }
             }
             else
             {
                 if (!moveHor)
                 {
-                    transform.Translate(new Vector3(0f, dir.y, 0f));
+                    transform.Translate(new Vector3(0f, dir.y /*+ Mathf.Sign(dir.y) * Mathf.Abs(dir.x)*/, 0f));
                 }
                 else
                 {
@@ -187,7 +187,7 @@ public class follow : MonoBehaviour {
                             moveHor = !moveHor;
                         }
                     }
-                    else transform.Translate(new Vector3(dir.x, 0f, 0f));
+                    else transform.Translate(new Vector3(dir.x + Mathf.Sign(nearestDot.transform.position.x - transform.position.x) * Mathf.Abs(dir.y), 0f, 0f));
                 }
             }
             

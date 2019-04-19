@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Pole : MonoBehaviour
 {
@@ -162,37 +163,30 @@ public class Pole : MonoBehaviour
             }
             if (size > 0 && size != zone.Count)
             {
-                Debug.Log(size + " " + zone.Count);
                 return false;
             }
+            
             List<List<bool>> zoneBoolList = ZoneToBoolList(zone);
             List<List<List<bool>>> shapesList = new List<List<List<bool>>>();
             for(int i = 0; i < shapes.Count; i++)
             {
-                Debug.Log(i + " " + shapes[i].transform.parent.GetComponent<PoleSquare>().indexI + " " + shapes[i].transform.parent.GetComponent<PoleSquare>().indexJ);
                 shapesList.Add(shapes[i].GetComponent<PoleEltShape>().boolList);
             }
-            Debug.Log("enter checkshapesplit");
             return FillShape(zoneBoolList, shapesList, 0);
         }
         public bool FillShape(List<List<bool>> zoneBoolList, List<List<List<bool>>> shapesList, int i)
         {
-            Debug.Log(i);
             if (i == shapesList.Count)
             {
                 if (i == 0) return true;
-                Debug.Log(" i==shapelist.count");
                 for (int y = 0; y < zoneBoolList.Count; y++)
                     for (int x = 0; x < zoneBoolList[0].Count; x++)
                         if (zoneBoolList[y][x])
                         {
-                            Debug.Log(y + " " + x);
                             return false;
                         }
-                Debug.Log("returned true on " + i);
                 return true;
             }
-            Debug.Log("still");
             
             bool fits = true;
             for (int k = 0; k < zoneBoolList.Count - shapesList[i].Count + 1; k++)
@@ -234,7 +228,6 @@ public class Pole : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log("RETURN TRUE");
                             return true;
                         }
                     }
@@ -334,6 +327,7 @@ public class Pole : MonoBehaviour
     public PolePath systemPath;
     public PolePath playerPath;
     List<List<List<GameObject>>> shapes = new List<List<List<GameObject>>>();
+    List<List<List<GameObject>>> activeShapes = new List<List<List<GameObject>>>();
 
     public GameObject ShapePF;
 	public GameObject ClrRingPrefab;
@@ -1096,8 +1090,83 @@ public class Pole : MonoBehaviour
                 if (obj.GetComponent<PoleLine>().isUsedBySolution) systemPath.lines.Add(obj);
         }
         SetZone();
+        SetShapes();
         
-        
+    }
+    public void GenerateShapes(int numOfShapes, int difficulty)
+    {
+        for (int i = 0; i < zone.Count; i++) activeShapes.Add(new List<List<GameObject>>());
+        if (difficulty == 0)
+        {
+            foreach (List<List<GameObject>> shlist in shapes)
+            {
+                if (shlist.Count < numOfShapes)
+                {
+                    foreach (List<GameObject> shape in shlist)
+                    {
+                        activeShapes[shapes.IndexOf(shlist)].Add(shape);
+                    }
+                    numOfShapes -= shlist.Count;
+                }
+            }
+        }
+        else
+        {
+            foreach (List<List<GameObject>> shlist in shapes)
+            {
+                if (shlist.Count < difficulty)
+                {
+                    foreach (List<GameObject> shape in shlist)
+                    {
+                        activeShapes[shapes.IndexOf(shlist)].Add(shape);
+                    }
+                    numOfShapes -= shlist.Count;
+                }
+            }
+        }
+        DrawShapes();
+        //foreach (List<List<GameObject>> shlist in shapes)
+        //{
+            
+        //    foreach (List<GameObject> shape in shlist)
+        //    {
+        //        GameObject shapeElt = Instantiate(ShapePF, shape[0].transform);
+        //        shape[0].GetComponent<PoleSquare>().hasElem = true;
+        //        shape[0].GetComponent<PoleSquare>().element = shapeElt;
+        //        shapeElt.GetComponent<PoleEltShape>().boolList = ZoneToBoolList(shape);
+        //        shapeElt.GetComponent<PoleEltShape>().Create();
+        //    }
+        //}
+    }
+
+    public void DrawShapes()
+    {
+        for (int i = 0; i < zone.Count; i++)
+        {
+            List<GameObject> sqList = new List<GameObject>(zone[i]);
+            var tmplist = new List<GameObject>(sqList);
+            foreach (GameObject sq in sqList)
+            {
+                if (sq.GetComponent<PoleSquare>().hasElem) tmplist.Remove(sq);
+            }
+            sqList = tmplist;
+            for (int j = 0; j < activeShapes[i].Count; j++)
+            {
+                if (sqList.Count == 0)
+                {
+                    Debug.Log("ILYA ZAEBAL");
+                    SceneManager.LoadScene("PoleLevel");
+                    break;
+                }
+                GameObject sq = sqList[Core.PolePreferences.MyRandom.GetRandom() % sqList.Count];
+                GameObject shapeElt = Instantiate(ShapePF, sq.transform);
+                sq.GetComponent<PoleSquare>().hasElem = true;
+                sq.GetComponent<PoleSquare>().element = shapeElt;
+                shapeElt.GetComponent<PoleEltShape>().boolList = ZoneToBoolList(activeShapes[i][j]);
+                shapeElt.GetComponent<PoleEltShape>().Create();
+                sqList.Remove(sq);
+            }
+        }
     }
 
     public void SetShapes()
@@ -1111,25 +1180,7 @@ public class Pole : MonoBehaviour
         }
         foreach (List<GameObject> z in set)
             shapes.Add(SplitZone(z));
-        foreach (List<List<GameObject>> shlist in shapes)
-        {
-            //if (shlist.Count ==1)
-            //{
-            //    GameObject shapeElt = Instantiate(ShapePF, shlist[0][0].transform);
-            //    shlist[0][0].GetComponent<PoleSquare>().hasElem = true;
-            //    shlist[0][0].GetComponent<PoleSquare>().element = shapeElt;
-            //    shapeElt.GetComponent<PoleEltShape>().boolList = ZoneToBoolList(shlist[0]);
-            //    shapeElt.GetComponent<PoleEltShape>().Create();
-            //}
-            foreach (List<GameObject> shape in shlist)
-            {
-                GameObject shapeElt = Instantiate(ShapePF, shape[0].transform);
-                shape[0].GetComponent<PoleSquare>().hasElem = true;
-                shape[0].GetComponent<PoleSquare>().element = shapeElt;
-                shapeElt.GetComponent<PoleEltShape>().boolList = ZoneToBoolList(shape);
-                shapeElt.GetComponent<PoleEltShape>().Create();
-            }
-        }
+        
         
     }
 

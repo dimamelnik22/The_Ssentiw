@@ -6,7 +6,7 @@ public class PoleLine : MonoBehaviour {
     public GameObject pole;
     public bool isHorizontal = false;
     public GameObject Line;
-    public readonly int speed = 8;
+    public readonly int speed = 20;
 	public GameObject up;
 	public GameObject down;
 	public GameObject left;
@@ -82,7 +82,7 @@ public class PoleLine : MonoBehaviour {
         {
             if (isHorizontal)
             {
-                if (Line.transform.localScale.x < 5f)
+                if (Line.transform.localScale.x + 2 * speed * Time.deltaTime < 5f)
                 {
                     Line.transform.localScale = new Vector3(Line.transform.localScale.x + 2 * speed * Time.deltaTime, 1f, 1f);
                     Line.transform.Translate(speed * Time.deltaTime * dir, 0f, 0f);
@@ -99,7 +99,7 @@ public class PoleLine : MonoBehaviour {
             }
             else
             {
-                if (Line.transform.localScale.y < 5f)
+                if (Line.transform.localScale.y + 2 * speed * Time.deltaTime < 5f)
                 {
                     Line.transform.localScale = new Vector3(1f, Line.transform.localScale.y + 2 * speed * Time.deltaTime, 1f);
                     Line.transform.Translate(0f, -speed * Time.deltaTime * dir, 0f);

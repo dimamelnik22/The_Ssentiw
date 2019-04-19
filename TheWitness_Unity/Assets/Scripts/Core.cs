@@ -45,12 +45,12 @@ public class Core : MonoBehaviour {
     public static class PolePreferences
     {
         
-        public static int poleSize = 5;
-        public static int numOfPoints = 5;
-        public static int numOfCircles = 5;
+        public static int poleSize = 9;
+        public static int numOfPoints = 7;
+        public static int numOfCircles = 10;
         public static int numOfStars = 5;
         public static int numOfShapes = 0;
-        public static float complexity =0.7f;
+        public static float complexity =0.8f;
         public static bool isFrozen = false;
         public static System.Random r = new System.Random();
         public static class MyRandom
@@ -189,14 +189,15 @@ public class Core : MonoBehaviour {
         } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
         myPole.GetComponent<Pole>().SetFinish(x, y);
         myPole.GetComponent<Pole>().CreateSolution();
-        myPole.GetComponent<Pole>().SetShapes();
+        
 
-        //if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
-        //{
+        if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
+        {
 
-        //    myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-        //}
-        //myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints); 
+            myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+        }
+        myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+        myPole.GetComponent<Pole>().GenerateShapes(10, 0);
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
@@ -386,7 +387,7 @@ public class Core : MonoBehaviour {
             }
             if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
             {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down)))
+                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
                 {
                     foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                     {
