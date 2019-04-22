@@ -294,10 +294,12 @@ public class MenuManager : MonoBehaviour {
                     }
                     break;
                 case 3:
-                    for (int j = 0; j < 5; j++)
-                    {
-                        funcList[j] = () => Core.PolePreferences.numOfShapes = j;
-                    }
+                    funcList = new MenuFunc[5];
+                    funcList[0] = () => Core.PolePreferences.numOfShapes = 0;
+                    funcList[1] = () => Core.PolePreferences.numOfShapes = 0.2f;
+                    funcList[2] = () => Core.PolePreferences.numOfShapes = 0.3f;
+                    funcList[3] = () => Core.PolePreferences.numOfShapes = 0.4f;
+                    funcList[4] = () => Core.PolePreferences.numOfShapes = 0.5f;
                     break;
             }
             switch (MainSettings.language)
