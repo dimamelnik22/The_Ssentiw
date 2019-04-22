@@ -49,7 +49,7 @@ public class Core : MonoBehaviour {
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;
         public static int numOfStars = 5;
-        public static int numOfShapes = 0;
+        public static float numOfShapes = 1f;
         public static float complexity =0.8f;
         public static bool isFrozen = false;
         public static System.Random r = new System.Random();
@@ -86,11 +86,15 @@ public class Core : MonoBehaviour {
         {
             if (point.GetComponent<PoleEltPoint>() != null)
             {
-                point.GetComponent<PoleEltPoint>().ShowNormalizeColor();
+                point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
             }
             if (point.GetComponent<EltClrRing>() != null)
             {
-                point.GetComponent<EltClrRing>().ShowNormalizeColor();
+                point.GetComponent<EltClrRing>().ShowNormalizedColor();
+            }
+            if (point.GetComponent<PoleEltShape>() != null)
+            {
+                point.GetComponent<PoleEltShape>().ShowNormalizedColor();
             }
         }
         foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
@@ -198,6 +202,8 @@ public class Core : MonoBehaviour {
         {
             myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
         }
+        myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+        myPole.GetComponent<Pole>().GenerateShapes(Mathf.RoundToInt(Core.PolePreferences.poleSize*Core.PolePreferences.poleSize*Core.PolePreferences.numOfShapes));
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
@@ -258,11 +264,15 @@ public class Core : MonoBehaviour {
             {
                 if (point.GetComponent<PoleEltPoint>() != null)
                 {
-                    point.GetComponent<PoleEltPoint>().ShowNormalizeColor();
+                    point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
                 }
                 if (point.GetComponent<EltClrRing>() != null)
                 {
-                    point.GetComponent<EltClrRing>().ShowNormalizeColor();
+                    point.GetComponent<EltClrRing>().ShowNormalizedColor();
+                }
+                if (point.GetComponent<PoleEltShape>() != null)
+                {
+                    point.GetComponent<PoleEltShape>().ShowNormalizedColor();
                 }
             }
             if (activePath == null)
@@ -318,6 +328,10 @@ public class Core : MonoBehaviour {
                         {
                             point.GetComponent<EltClrRing>().ShowUnsolvedColor();
                         }
+                        if (point.GetComponent<PoleEltShape>() != null)
+                        {
+                            point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
+                        }
                     }
                 }
             }
@@ -352,6 +366,10 @@ public class Core : MonoBehaviour {
                 if (point.GetComponent<EltClrRing>() != null)
                 {
                     point.GetComponent<EltClrRing>().ShowNormalizeColor();
+                }
+                if (point.GetComponent<PoleEltShape>() != null)
+                {
+                    point.GetComponent<PoleEltShape>().ShowNormalizedColor();
                 }
             }
             if (activePath == null)
@@ -409,6 +427,10 @@ public class Core : MonoBehaviour {
                         if (point.GetComponent<EltClrRing>() != null)
                         {
                             point.GetComponent<EltClrRing>().ShowUnsolvedColor();
+                        }
+                        if (point.GetComponent<PoleEltShape>() != null)
+                        {
+                            point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
                         }
                     }
                 }

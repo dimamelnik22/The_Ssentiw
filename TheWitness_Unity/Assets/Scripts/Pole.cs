@@ -271,7 +271,7 @@ public class Pole : MonoBehaviour
                         localShapes.Add(z.GetComponent<PoleSquare>().element);
                     }
                 }
-                localIsSolved = CheckShapeSplit(p, localShapes);
+                
                 if(localIsSolved == false)
                 {
                     foreach (GameObject z in p)
@@ -282,6 +282,12 @@ public class Pole : MonoBehaviour
                         }
                     }
                 }
+                if (!CheckShapeSplit(p, localShapes))
+                {
+                    foreach (GameObject sh in localShapes)
+                        unsolvedElts.Add(sh);
+                }
+                localIsSolved = localIsSolved && CheckShapeSplit(p, localShapes);
                 isSolved = localIsSolved && isSolved;
             }
             foreach (GameObject p in points)
@@ -1119,37 +1125,48 @@ public class Pole : MonoBehaviour
         SetShapes();
         
     }
-    public void GenerateShapes(int numOfShapes, int difficulty)
+    public void GenerateShapes(int zoneSize)
     {
         for (int i = 0; i < zone.Count; i++) activeShapes.Add(new List<List<GameObject>>());
-        if (difficulty == 0)
+        foreach(List<List<GameObject>> shlist in shapes)
         {
-            foreach (List<List<GameObject>> shlist in shapes)
+            if (zone[shapes.IndexOf(shlist)].Count < zoneSize)
             {
-                if (shlist.Count < numOfShapes)
+                foreach (List<GameObject> shape in shlist)
                 {
-                    foreach (List<GameObject> shape in shlist)
-                    {
-                        activeShapes[shapes.IndexOf(shlist)].Add(shape);
-                    }
-                    numOfShapes -= shlist.Count;
+                    activeShapes[shapes.IndexOf(shlist)].Add(shape);
                 }
+                zoneSize -= zone[shapes.IndexOf(shlist)].Count;
             }
         }
-        else
-        {
-            foreach (List<List<GameObject>> shlist in shapes)
-            {
-                if (shlist.Count < difficulty)
-                {
-                    foreach (List<GameObject> shape in shlist)
-                    {
-                        activeShapes[shapes.IndexOf(shlist)].Add(shape);
-                    }
-                    numOfShapes -= shlist.Count;
-                }
-            }
-        }
+        //if (difficulty == 0)
+        //{
+        //    foreach (List<List<GameObject>> shlist in shapes)
+        //    {
+        //        if (shlist.Count < numOfShapes)
+        //        {
+        //            foreach (List<GameObject> shape in shlist)
+        //            {
+        //                activeShapes[shapes.IndexOf(shlist)].Add(shape);
+        //            }
+        //            numOfShapes -= shlist.Count;
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    foreach (List<List<GameObject>> shlist in shapes)
+        //    {
+        //        if (shlist.Count < difficulty)
+        //        {
+        //            foreach (List<GameObject> shape in shlist)
+        //            {
+        //                activeShapes[shapes.IndexOf(shlist)].Add(shape);
+        //            }
+        //            numOfShapes -= shlist.Count;
+        //        }
+        //    }
+        //}
         DrawShapes();
         //foreach (List<List<GameObject>> shlist in shapes)
         //{
