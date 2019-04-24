@@ -102,7 +102,7 @@ public class Pole : MonoBehaviour
         }
         public void SetZone(GameObject square)
         {
-
+            checkZones = new int[Core.PolePreferences.poleSize - 1][];
             int size = Core.PolePreferences.poleSize - 1;
             for (int i = 0; i < size; ++i)
             {
@@ -811,7 +811,7 @@ public class Pole : MonoBehaviour
                             sq.GetComponent<PoleSquare>().hasElem = true;
                             sq.GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, sq.transform);
                             sq.GetComponent<PoleSquare>().element.GetComponent<Renderer>().material.color = this.color[color];
-                            sq.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = this.color[color];
+                            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = this.color[color];
                         }
                     }
                 }
