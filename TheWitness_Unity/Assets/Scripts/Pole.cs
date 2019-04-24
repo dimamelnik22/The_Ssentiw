@@ -1206,10 +1206,9 @@ public class Pole : MonoBehaviour
             pathList.Add(systemPath.lines[i]);
             pathList.Add(systemPath.dots[i + 1]);
         }
-        pathList.RemoveAt(0);
-        pathList.RemoveAt(0);
-        pathList.RemoveAt(pathList.Count - 1);
-        pathList.RemoveAt(pathList.Count - 1);
+        pathList.Remove(start);
+        
+        pathList.Remove(finish);
         for (int i = 0; i < numberOfPoints; i++)
         {
             if (pathList.Count == 0) break;
@@ -1260,16 +1259,38 @@ public class Pole : MonoBehaviour
     {
         List<List<GameObject>> coloredZones = new List<List<GameObject>>(zoneQuantity);
         List<int> quantityClrRingInZone = new List<int>();
-        ringQuantity -= zoneQuantity;
-        int quantityNotUsedSquare = -zoneQuantity;
-        for (int i = 0; i < zone.Count;++i)
+        List<List<GameObject>> localZone = zone;
+        for (int i = 0; i < localZone.Count; ++i)
         {
-            quantityNotUsedSquare += zone[i].Count;
+            for(int j = 0; j < localZone[i].Count; ++j)
+            {
+                if(localZone[i][j].GetComponent<PoleSquare>().hasElem == true)
+                {
+                    localZone[i].RemoveAt(j);
+                    --j;
+                }
+            }
+            if(localZone[i].Count == 0)
+            {
+                localZone.RemoveAt(i);
+                --i;
+            }
+        }
+        if(zoneQuantity > localZone.Count)
+        {
+            Debug.Log( "free zones less than need"+ "need:"+ zoneQuantity + " have:" + localZone.Count);
+            zoneQuantity = localZone.Count;
+        }
+        int quantityNotUsedSquare = -zoneQuantity;
+        ringQuantity -= zoneQuantity;
+        for (int i = 0; i < localZone.Count;++i)
+        {
+            quantityNotUsedSquare += localZone[i].Count;
             if (i < zoneQuantity)
             {
                 quantityClrRingInZone.Add(1);
                 coloredZones.Add(new List<GameObject>());
-                coloredZones[i].AddRange(zone[i]);
+                coloredZones[i].AddRange(localZone[i]);
             }
             else
             {
@@ -1284,11 +1305,15 @@ public class Pole : MonoBehaviour
                         mm = j;
                     }
                 }
-                coloredZones[mm].AddRange(zone[i]);
+                coloredZones[mm].AddRange(localZone[i]);
             }
         }
-        
-        while(ringQuantity > 0)
+        if (ringQuantity > quantityNotUsedSquare)
+        {
+            Debug.Log("square in zones less than need");
+            ringQuantity = quantityNotUsedSquare;
+        }
+        while (ringQuantity > 0)
         {
             int i = Core.PolePreferences.MyRandom.GetRandom() % (quantityNotUsedSquare)+1;
             int k = 0;

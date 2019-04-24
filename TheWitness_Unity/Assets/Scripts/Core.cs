@@ -35,7 +35,6 @@ public class Core : MonoBehaviour {
     private static Vector3 stepx = new Vector3(5f, 0f, 0f);
     private static Vector3 stepy = new Vector3(0f, -5f, 0f);
     private List<GameObject> finishes = new List<GameObject>();
-    public int seed = 95;
     public bool mode = true;
     public bool pathIsShown = false;
     public bool playerIsActive = false;
@@ -56,7 +55,11 @@ public class Core : MonoBehaviour {
         public static class MyRandom
         {
             public static int seed = 4323;
-            
+            public static void SetSeed(int s = 0)
+            {
+                seed = s;
+                r = new System.Random(seed);
+            }
             public static int GetRandom()
             {
                 //seed = (seed * 430 + 2531) % 11979;
