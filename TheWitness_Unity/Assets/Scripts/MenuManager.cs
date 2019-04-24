@@ -38,6 +38,11 @@ public class MenuManager : MonoBehaviour {
     {
         public static string language = "ENG";
         public static float speed = 1f;
+        public static float complexity = 0.5f;
+        public static float numOfPoints = 1f;
+        public static float numOfCircles = 1f;
+        public static float numOfStars = 1f;
+        public static float numOfShapes = 0.3f;
     }
     private MenuLinkedList menuMap;
 
@@ -139,22 +144,37 @@ public class MenuManager : MonoBehaviour {
         Core.PolePreferences.numOfStars = numOfStars;
         Core.PolePreferences.poleSize = poleSize;
     }
+    private void ConvertPreferences()
+    {
+        int p = Core.PolePreferences.poleSize * Core.PolePreferences.poleSize;
+        Core.PolePreferences.complexity = Mathf.RoundToInt(p * MainSettings.complexity);
+        Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize * MainSettings.numOfPoints + Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1) * MainSettings.numOfPoints);
+        Core.PolePreferences.numOfCircles = Mathf.RoundToInt(Core.PolePreferences.poleSize * MainSettings.numOfCircles + Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1) * MainSettings.numOfCircles);
+        Core.PolePreferences.numOfStars = Mathf.RoundToInt(Core.PolePreferences.poleSize * MainSettings.numOfStars + Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1) * MainSettings.numOfStars);
+        Core.PolePreferences.numOfShapes = Mathf.RoundToInt(p * MainSettings.numOfShapes);
+    }
     private void LoadPoleLevel()
     {
         //Debug.Log(Core.PolePreferences.poleSize + " " + Core.PolePreferences.complexity + " " + Core.PolePreferences.numOfPoints);
         Core.PolePreferences.MyRandom.SetSeed();
         Log();
+        ConvertPreferences();
         SceneManager.LoadScene("PoleLevel");
     }
-
+    private void LoadLevelWithString()
+    {
+        Core.PolePreferences.mode = "info";
+        SceneManager.LoadScene("PoleLevel");
+    }
     private void LoadRandomPoleLevel()
     {
         //Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
         Core.PolePreferences.MyRandom.SetSeed();
-        Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 3;
+        Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
         Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Log();
+        Core.PolePreferences.numOfShapes = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (1 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
     }
@@ -298,11 +318,11 @@ public class MenuManager : MonoBehaviour {
 
         menuMap.add(new MenuNode(names, funcList, 5), 1);
         funcList = new MenuFunc[5];
-        funcList[0] = () => Core.PolePreferences.complexity = 0.3f;
-        funcList[1] = () => Core.PolePreferences.complexity = 0.4f;
-        funcList[2] = () => Core.PolePreferences.complexity = 0.5f;
-        funcList[3] = () => Core.PolePreferences.complexity = 0.6f;
-        funcList[4] = () => Core.PolePreferences.complexity = 0.7f;
+        funcList[0] = () => MenuManager.MainSettings.complexity = 0.3f;
+        funcList[1] = () => MenuManager.MainSettings.complexity = 0.4f;
+        funcList[2] = () => MenuManager.MainSettings.complexity = 0.5f;
+        funcList[3] = () => MenuManager.MainSettings.complexity = 0.6f;
+        funcList[4] = () => MenuManager.MainSettings.complexity = 0.7f;
 
         menuMap.add(new MenuNode(names, funcList, 5), 2);
         menuMap.go2(3);
@@ -313,33 +333,35 @@ public class MenuManager : MonoBehaviour {
             {
                 case 0:
                     funcList = new MenuFunc[5];
-                    funcList[0] = () => Core.PolePreferences.numOfPoints = 0;
-                    funcList[1] = () => Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize*0.5f + Core.PolePreferences.MyRandom.GetRandom() %(Core.PolePreferences.poleSize-1));
-                    funcList[2] = () => Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1);
-                    funcList[3] = () => Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize * 1.5f+ Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1));
-                    funcList[4] = () => Core.PolePreferences.numOfPoints = Mathf.RoundToInt(Core.PolePreferences.poleSize * 2f+ Core.PolePreferences.MyRandom.GetRandom() % (Core.PolePreferences.poleSize - 1));
+                    funcList[0] = () => MenuManager.MainSettings.numOfPoints = 0;
+                    funcList[1] = () => MenuManager.MainSettings.numOfPoints = 0.5f;
+                    funcList[2] = () => MenuManager.MainSettings.numOfPoints = 1f;
+                    funcList[3] = () => MenuManager.MainSettings.numOfPoints = 1.5f;
+                    funcList[4] = () => MenuManager.MainSettings.numOfPoints = 2f;
                     break;
                 case 1:
                     funcList = new MenuFunc[5];
-                    funcList[0] = () => Core.PolePreferences.numOfCircles = 0;
-                    funcList[1] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize /2;
-                    funcList[2] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize;
-                    funcList[3] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize /2 + Core.PolePreferences.poleSize;
-                    funcList[4] = () => Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize * 2;
+                    funcList[0] = () => MenuManager.MainSettings.numOfCircles = 0;
+                    funcList[1] = () => MenuManager.MainSettings.numOfCircles = 0.5f;
+                    funcList[2] = () => MenuManager.MainSettings.numOfCircles = 1f;
+                    funcList[3] = () => MenuManager.MainSettings.numOfCircles = 1.5f;
+                    funcList[4] = () => MenuManager.MainSettings.numOfCircles = 2f;
                     break;
                 case 2:
-                    for (int j = 0; j < 5; j++)
-                    {
-                        funcList[j] = () => Core.PolePreferences.numOfStars = 2*j;
-                    }
+                    funcList = new MenuFunc[5];
+                    funcList[0] = () => MenuManager.MainSettings.numOfStars = 0;
+                    funcList[1] = () => MenuManager.MainSettings.numOfStars = 0.5f;
+                    funcList[2] = () => MenuManager.MainSettings.numOfStars = 1f;
+                    funcList[3] = () => MenuManager.MainSettings.numOfStars = 1.5f;
+                    funcList[4] = () => MenuManager.MainSettings.numOfStars = 2f;
                     break;
                 case 3:
                     funcList = new MenuFunc[5];
-                    funcList[0] = () => Core.PolePreferences.numOfShapes = 0;
-                    funcList[1] = () => Core.PolePreferences.numOfShapes = 0.2f;
-                    funcList[2] = () => Core.PolePreferences.numOfShapes = 0.3f;
-                    funcList[3] = () => Core.PolePreferences.numOfShapes = 0.4f;
-                    funcList[4] = () => Core.PolePreferences.numOfShapes = 0.5f;
+                    funcList[0] = () => MenuManager.MainSettings.numOfShapes = 0;
+                    funcList[1] = () => MenuManager.MainSettings.numOfShapes = 0.2f;
+                    funcList[2] = () => MenuManager.MainSettings.numOfShapes = 0.3f;
+                    funcList[3] = () => MenuManager.MainSettings.numOfShapes = 0.4f;
+                    funcList[4] = () => MenuManager.MainSettings.numOfShapes = 0.5f;
                     break;
             }
             switch (MainSettings.language)
@@ -367,6 +389,7 @@ public class MenuManager : MonoBehaviour {
         menuMap.back();
         names = new string[] { "1", "2" };
         funcList = new MenuFunc[2];
+        funcList[0] = () => LoadLevelWithString();
         menuMap.add(new MenuNode(names, funcList, 2),2);
 
 

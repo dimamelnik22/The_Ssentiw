@@ -14,6 +14,7 @@ TagManager:
   - PoleStart
   - PoleFinish
   - Pole
+  - PoleSquere
   layers:
   - Default
   - TransparentFX
