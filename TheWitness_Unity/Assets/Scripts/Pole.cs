@@ -542,12 +542,361 @@ public class Pole : MonoBehaviour
         }
 
     }
+
+    public void InitStr(string info)
+    {
+        playerPath = new PolePath();
+        
+        eltsManager = new PoleElts();
+        
+        int iter = 0;
+        if (info[iter].ToString() == "S")
+        {
+            iter++;
+            string tmp = "";
+            while(info[iter].ToString() != "s")
+            {
+                tmp += info[iter];
+                iter++;
+            }
+            poleSize = int.Parse(tmp);
+        }
+        Core.PolePreferences.poleSize = poleSize;
+        poleDots = new GameObject[poleSize][];
+        poleLines = new List<GameObject>();
+        for (int y = 0; y < poleSize; y++)
+        {
+            poleDots[y] = new GameObject[poleSize];
+            for (int x = 0; x < poleSize; x++)
+            {
+                poleDots[y][x] = Instantiate(DotPrefab, transform.position + stepx * x + stepy * y, DotPrefab.transform.rotation);
+                poleDots[y][x].GetComponent<PoleDot>().posX = x;
+                poleDots[y][x].GetComponent<PoleDot>().posY = y;
+                poleDots[y][x].transform.parent = this.transform;
+            }
+        }
+        for (int y = 0; y < poleSize; y++)
+        {
+            for (int x = 0; x < poleSize - 1; x++)
+            {
+                // horizontal line
+                GameObject lineH = Instantiate(HorizontalLinePrefab, transform.position + stepx * (x + 0.5f) + stepy * y, transform.rotation);
+                lineH.GetComponent<PoleLine>().left = poleDots[y][x];
+                lineH.GetComponent<PoleLine>().right = poleDots[y][x + 1];
+                poleDots[y][x].GetComponent<PoleDot>().AddLine(lineH, poleDots[y][x + 1]);
+                poleDots[y][x + 1].GetComponent<PoleDot>().AddLine(lineH, poleDots[y][x]);
+                poleLines.Add(lineH);
+                lineH.transform.parent = this.transform;
+                // vertical line
+                GameObject lineV = Instantiate(VerticalLinePrefab, transform.position + stepx * y + stepy * (x + 0.5f), transform.rotation);
+                lineV.GetComponent<PoleLine>().up = poleDots[x][y];
+                lineV.GetComponent<PoleLine>().down = poleDots[x + 1][y];
+                poleDots[x][y].GetComponent<PoleDot>().AddLine(lineV, poleDots[x + 1][y]);
+                poleDots[x + 1][y].GetComponent<PoleDot>().AddLine(lineV, poleDots[x][y]);
+                poleLines.Add(lineV);
+                lineV.transform.parent = this.transform;
+                if (y < poleSize - 1)
+                {
+                    GameObject Squere = Instantiate(SquerePrefab, transform.position + stepx * (x + 0.5f) + stepy * (y + 0.5f), SquerePrefab.transform.rotation);
+                    Squere.GetComponent<PoleSquare>().indexI = y;
+                    Squere.GetComponent<PoleSquare>().indexJ = x;
+                    Squere.GetComponent<PoleSquare>().up = lineH;
+                    lineH.GetComponent<PoleLine>().down = Squere;
+                    Squere.transform.parent = this.transform;
+                }
+
+            }
+
+        }
+        for (int y = 0; y < poleSize; y++)
+        {
+            for (int x = 0; x < poleSize; x++)
+            {
+                if (x > 0 && y > 0)
+                {
+                    GameObject Squere = poleDots[x - 1][y - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down;
+                    GameObject lineH = poleDots[x][y].GetComponent<PoleDot>().left;
+                    Squere.GetComponent<PoleSquare>().down = lineH;
+                    lineH.GetComponent<PoleLine>().up = Squere;
+                    GameObject lineVR = poleDots[x][y].GetComponent<PoleDot>().up;
+                    Squere.GetComponent<PoleSquare>().right = lineVR;
+                    lineVR.GetComponent<PoleLine>().left = Squere;
+                    GameObject lineVL = poleDots[x - 1][y - 1].GetComponent<PoleDot>().down;
+                    Squere.GetComponent<PoleSquare>().left = lineVL;
+                    lineVL.GetComponent<PoleLine>().right = Squere;
+                }
+            }
+        }
+        if (info[++iter].ToString() == "S")
+        {
+            if (info[++iter].ToString() == "T")
+            {
+                iter++;
+                string s = "";
+                while (info[iter].ToString() != "Y")
+                {
+                    s += info[iter];
+                    iter++;
+                }
+                int y = int.Parse(s);
+                iter++;
+                s = "";
+                while (info[iter].ToString() != "X")
+                {
+                    s += info[iter];
+                    iter++;
+                }
+                int x = int.Parse(s);
+                SetStart(x, y);
+            }
+        }
+        if (info[++iter].ToString() == "F")
+        {
+            if (info[++iter].ToString() == "H")
+            {
+                iter++;
+                string s = "";
+                while (info[iter].ToString() != "Y")
+                {
+                    s += info[iter];
+                    iter++;
+                }
+                int y = int.Parse(s);
+                iter++;
+                s = "";
+                while (info[iter].ToString() != "X")
+                {
+                    s += info[iter];
+                    iter++;
+                }
+                int x = int.Parse(s);
+                SetFinish(x, y);
+            }
+        }
+        if (info[++iter].ToString() == "P")
+        {
+            if (info[++iter].ToString() == "T")
+            {
+                iter++;
+                string tmp = "";
+                while (info[iter].ToString() != "p")
+                {
+                    tmp += info[iter];
+                    iter++;
+                }
+                int points = int.Parse(tmp);
+                for (int i = 0; i < points; i++)
+                {
+                    iter++;
+                    string s = "";
+                    while (info[iter].ToString() != "Y")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int y = int.Parse(s);
+                    iter++;
+                    s = "";
+                    while (info[iter].ToString() != "X")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int x = int.Parse(s);
+
+                    switch (info[++iter].ToString())
+                    {
+                        case "U":
+                            poleDots[y][x].GetComponent<PoleDot>().up.GetComponent<PoleLine>().hasPoint = true;
+                            break;
+                        case "D":
+                            poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().hasPoint = true;
+                            break;
+                        case "L":
+                            poleDots[y][x].GetComponent<PoleDot>().left.GetComponent<PoleLine>().hasPoint = true;
+                            break;
+                        case "R":
+                            poleDots[y][x].GetComponent<PoleDot>().right.GetComponent<PoleLine>().hasPoint = true;
+                            break;
+                        case "S":
+                            poleDots[y][x].GetComponent<PoleDot>().hasPoint = true;
+                            break;
+                    }
+
+                }
+            }
+                    
+        }
+        if (info[++iter].ToString() == "R")
+        {
+            if (info[++iter].ToString() == "G")
+            {
+                iter++;
+                string tmp = "";
+                while (info[iter].ToString() != "r")
+                {
+                    tmp += info[iter];
+                    iter++;
+                }
+                int rings = int.Parse(tmp);
+                iter++;
+                for (int k = 0; k < rings; k++)
+                {
+                    string s = "";
+                    while (info[iter].ToString() != "I")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int i = int.Parse(s);
+                    iter++;
+                    s = "";
+                    while (info[iter].ToString() != "J")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int j = int.Parse(s);
+                    int color = int.Parse(info[++iter].ToString());
+                    iter++;
+                    foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
+                    {
+                        if (sq.GetComponent<PoleSquare>().indexI == i && sq.GetComponent<PoleSquare>().indexJ == j)
+                        {
+                            sq.GetComponent<PoleSquare>().hasElem = true;
+                            sq.GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, sq.transform);
+                            sq.GetComponent<PoleSquare>().element.GetComponent<Renderer>().material.color = this.color[color];
+                            sq.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = this.color[color];
+                        }
+                    }
+                }
+            }
+        }
+        if (info[iter].ToString() == "S")
+        {
+            if (info[++iter].ToString() == "R")
+            {
+                iter++;
+                string tmp = "";
+                while (info[iter].ToString() != "s")
+                {
+                    tmp += info[iter];
+                    iter++;
+                }
+                int rings = int.Parse(tmp);
+                iter++;
+                for (int k = 0; k < rings; k++)
+                {
+                    string s = "";
+                    while (info[iter].ToString() != "I")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int i = int.Parse(s);
+                    iter++;
+                    s = "";
+                    while (info[iter].ToString() != "J")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int j = int.Parse(s);
+                    int color = int.Parse(info[++iter].ToString());
+                    iter++;
+                    foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
+                    {
+                        if (sq.GetComponent<PoleSquare>().indexI == i && sq.GetComponent<PoleSquare>().indexJ == j)
+                        {
+                            sq.GetComponent<PoleSquare>().hasElem = true;
+                            sq.GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, sq.transform);
+                            sq.GetComponent<PoleSquare>().element.GetComponent<Renderer>().material.color = this.color[color];
+                            sq.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = this.color[color];
+                        }
+                    }
+                }
+            }
+        }
+        if (info[iter].ToString() == "S")
+        {
+            if (info[++iter].ToString() == "P")
+            {
+                iter++;
+                string tmp = "";
+                while (info[iter].ToString() != "s")
+                {
+                    tmp += info[iter];
+                    iter++;
+                }
+                int rings = int.Parse(tmp);
+                iter++;
+                for (int k = 0; k < rings; k++)
+                {
+                    string s = "";
+                    while (info[iter].ToString() != "I")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int i = int.Parse(s);
+                    iter++;
+                    s = "";
+                    while (info[iter].ToString() != "J")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int j = int.Parse(s);
+                    iter++;
+                    s = "";
+                    while (info[iter].ToString() != "H")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int height = int.Parse(s);
+                    iter++;
+                    s = "";
+                    while (info[iter].ToString() != "W")
+                    {
+                        s += info[iter];
+                        iter++;
+                    }
+                    int width = int.Parse(s);
+                    iter++;
+                    List<List<bool>> bitmap = new List<List<bool>>();
+                    for (int y = 0; y < height; y++)
+                    {
+                        bitmap.Add(new List<bool>());
+                        for (int x = 0; x < width; x++)
+                        {
+                            if (int.Parse(info[iter].ToString()) == 1) bitmap[y].Add(true); else bitmap[y].Add(false);
+                            iter++;
+                        }
+                        
+                    }
+                    foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
+                    {
+                        if (sq.GetComponent<PoleSquare>().indexI == i && sq.GetComponent<PoleSquare>().indexJ == j)
+                        {
+                            sq.GetComponent<PoleSquare>().hasElem = true;
+                            sq.GetComponent<PoleSquare>().element = Instantiate(ShapePF, sq.transform);
+                            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().boolList = bitmap;
+                            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().Create();
+                        }
+                    }
+                    //Debug.Log(rings + " " + k + " " + height + " " + width);
+                }
+            }
+        }
+    }
+    // "S(size)sSTposyYposxXFHposyYposxXPT(num)p{posyYposxXdir}RG(num)r{indexIIindexJJcolor}SR(num)s{indexIIindexJJcolor}SP(num)s{indexIIindexJJheightHwidthWbitmap}
     public bool FindPath(GameObject begin, GameObject end, int[][] ways)
     {
         begin.GetComponent<PoleDot>().isUsedBySolution = true;
         if (begin == end)
         {
-            if (dotData.PathLength() <= poleSize * poleSize * Core.PolePreferences.complexity)
+            if (dotData.PathLength() <= Core.PolePreferences.complexity)
             {
                 return false;
             }
@@ -642,7 +991,7 @@ public class Pole : MonoBehaviour
         begin.GetComponent<PoleDot>().isUsedBySolution = true;
         if (begin == end)
         {
-            if (dotData.PathLength() < poleSize * poleSize * Core.PolePreferences.complexity)
+            if (dotData.PathLength() < Core.PolePreferences.complexity)
             {
                 return false;
             }
@@ -1104,7 +1453,7 @@ public class Pole : MonoBehaviour
         for (int i = 0; i < zone.Count; i++) activeShapes.Add(new List<List<GameObject>>());
         foreach(List<List<GameObject>> shlist in shapes)
         {
-            if (zone[shapes.IndexOf(shlist)].Count < zoneSize)
+            if (zone[shapes.IndexOf(shlist)].Count <= zoneSize)
             {
                 foreach (List<GameObject> shape in shlist)
                 {
@@ -1352,6 +1701,72 @@ public class Pole : MonoBehaviour
                 line.GetComponent<PoleLine>().StartScaling(dot);
 
         }
+    }
+
+    public string PathToStr()
+    {
+        string path = "S";
+        GameObject cur = start;
+        while (cur != finish)
+        {
+            //Debug.Log(path.Length + " " + path);
+            if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length-1].ToString() != "D")
+            {
+                path += "U";
+                cur = cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up;
+            }
+            else if (cur.GetComponent<PoleDot>().down != null && cur.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length - 1].ToString() != "U")
+            {
+                path += "D";
+                cur = cur.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down;
+            }
+            else if (cur.GetComponent<PoleDot>().left != null && cur.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length - 1].ToString() != "R")
+            {
+                path += "L";
+                cur = cur.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left;
+            }
+            else if (cur.GetComponent<PoleDot>().right != null && cur.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length - 1].ToString() != "L")
+            {
+                path += "R";
+                cur = cur.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right;
+            }
+        }
+        path += "F";
+        Debug.Log(path);
+        return path;
+    }
+
+    public string SysPathToStr()
+    {
+        string path = "S";
+        GameObject cur = start;
+        while (cur != finish)
+        {
+            //Debug.Log(path.Length + " " + path);
+            if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "D")
+            {
+                path += "U";
+                cur = cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up;
+            }
+            else if (cur.GetComponent<PoleDot>().down != null && cur.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "U")
+            {
+                path += "D";
+                cur = cur.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down;
+            }
+            else if (cur.GetComponent<PoleDot>().left != null && cur.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "R")
+            {
+                path += "L";
+                cur = cur.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left;
+            }
+            else if (cur.GetComponent<PoleDot>().right != null && cur.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "L")
+            {
+                path += "R";
+                cur = cur.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right;
+            }
+        }
+        path += "F";
+        Debug.Log(path);
+        return path;
     }
 
     // Start is called before the first frame update

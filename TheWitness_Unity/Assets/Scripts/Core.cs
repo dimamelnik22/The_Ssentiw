@@ -46,11 +46,11 @@ public class Core : MonoBehaviour {
     {
         
         public static int poleSize = 9;
+        public static int complexity = 40;
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;
         public static int numOfStars = 5;
-        public static float numOfShapes = 1f;
-        public static float complexity =0.8f;
+        public static int numOfShapes = 20;
         public static bool isFrozen = false;
         public static System.Random r = new System.Random();
         public static class MyRandom
@@ -65,7 +65,8 @@ public class Core : MonoBehaviour {
                 return r.Next();
             }
         }
-        
+        public static string info = "";
+        public static string mode = "normal";
     }
     
     public void ButtonMenu()
@@ -139,69 +140,75 @@ public class Core : MonoBehaviour {
 
         gentime = Time.realtimeSinceStartup;
         myPole = Instantiate(PolePrefab);
-        myPole.GetComponent<Pole>().Init(PolePreferences.poleSize);
-        
-        playerPathLinesOnScreen = new List<GameObject>();
-        playerPathDotsOnScreen = new List<GameObject>();
-
-        playerIsActive = false;
-
-        // START and FINISH creating
-        int x = 0;
-        int y = 0;
-        switch (PolePreferences.MyRandom.GetRandom() % 4)
+        switch (Core.PolePreferences.mode)
         {
-            case 0:
-                x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                y = 0;
+            case "normal":
+                myPole.GetComponent<Pole>().Init(PolePreferences.poleSize);
+                // START and FINISH creating
+                int x = 0;
+                int y = 0;
+                switch (PolePreferences.MyRandom.GetRandom() % 4)
+                {
+                    case 0:
+                        x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        y = 0;
+                        break;
+                    case 1:
+                        y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        x = PolePreferences.poleSize - 1;
+                        break;
+                    case 2:
+                        x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        y = PolePreferences.poleSize - 1;
+                        break;
+                    case 3:
+                        y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        x = 0;
+                        break;
+                }
+                myPole.GetComponent<Pole>().SetStart(x, y);
+                do
+                {
+                    switch (PolePreferences.MyRandom.GetRandom() % 4)
+                    {
+                        case 0:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = 0;
+                            break;
+                        case 1:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = PolePreferences.poleSize - 1;
+                            break;
+                        case 2:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = PolePreferences.poleSize - 1;
+                            break;
+                        case 3:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = 0;
+                            break;
+                    }
+                } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
+                myPole.GetComponent<Pole>().SetFinish(x, y);
+                myPole.GetComponent<Pole>().CreateSolution();
+                if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
+                {
+
+                    myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+                }
+                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
+                gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
+                gentime = Time.realtimeSinceStartup;
                 break;
-            case 1:
-                y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                x = PolePreferences.poleSize - 1;
-                break;
-            case 2:
-                x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                y = PolePreferences.poleSize - 1;
-                break;
-            case 3:
-                y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                x = 0;
+            case "info":
+                myPole.GetComponent<Pole>().InitStr("S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111");
+                gentimewin.text = "S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111";
                 break;
         }
-        myPole.GetComponent<Pole>().SetStart(x, y);
-        do
-        {
-            switch (PolePreferences.MyRandom.GetRandom() % 4)
-            {
-                case 0:
-                    x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    y = 0;
-                    break;
-                case 1:
-                    y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    x = PolePreferences.poleSize - 1;
-                    break;
-                case 2:
-                    x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    y = PolePreferences.poleSize - 1;
-                    break;
-                case 3:
-                    y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    x = 0;
-                    break;
-            }
-        } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
-        myPole.GetComponent<Pole>().SetFinish(x, y);
-        myPole.GetComponent<Pole>().CreateSolution();
+
         
 
-        if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
-        {
-
-            myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-        }
-        myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-        myPole.GetComponent<Pole>().GenerateShapes(Mathf.RoundToInt(Core.PolePreferences.poleSize*Core.PolePreferences.poleSize*Core.PolePreferences.numOfShapes));
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
@@ -246,10 +253,12 @@ public class Core : MonoBehaviour {
         finishes.Add(myPole.GetComponent<Pole>().finish);
         mode = !mode;
         pathIsShown = false;
-        
+        playerPathLinesOnScreen = new List<GameObject>();
+        playerPathDotsOnScreen = new List<GameObject>();
 
-        gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
-        gentime = Time.realtimeSinceStartup;
+        playerIsActive = false;
+
+       
     }
 
     void Update()
@@ -337,7 +346,7 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-            
+            gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
             playerIsActive = !playerIsActive;
         }
         if (Input.GetMouseButton(0) && PolePreferences.isFrozen && !pathIsShown)
@@ -359,11 +368,11 @@ public class Core : MonoBehaviour {
             {
                 if (point.GetComponent<PoleEltPoint>() != null)
                 {
-                    point.GetComponent<PoleEltPoint>().ShowNormalizeColor();
+                    point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
                 }
                 if (point.GetComponent<EltClrRing>() != null)
                 {
-                    point.GetComponent<EltClrRing>().ShowNormalizeColor();
+                    point.GetComponent<EltClrRing>().ShowNormalizedColor();
                 }
                 if (point.GetComponent<PoleEltShape>() != null)
                 {
