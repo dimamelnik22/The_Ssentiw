@@ -102,7 +102,7 @@ public class Pole : MonoBehaviour
         }
         public void SetZone(GameObject square)
         {
-
+            checkZones = new int[Core.PolePreferences.poleSize - 1][];
             int size = Core.PolePreferences.poleSize - 1;
             for (int i = 0; i < size; ++i)
             {
@@ -348,7 +348,7 @@ public class Pole : MonoBehaviour
     public int quantityColor = 3;
     public int quantityRing = 0;
     List<Color> colorStar = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
-    List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
+    List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.black };
     public void OnDestroy()
     {
         
@@ -811,7 +811,7 @@ public class Pole : MonoBehaviour
                             sq.GetComponent<PoleSquare>().hasElem = true;
                             sq.GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, sq.transform);
                             sq.GetComponent<PoleSquare>().element.GetComponent<Renderer>().material.color = this.color[color];
-                            sq.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = this.color[color];
+                            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = this.color[color];
                         }
                     }
                 }
@@ -1206,10 +1206,9 @@ public class Pole : MonoBehaviour
             pathList.Add(systemPath.lines[i]);
             pathList.Add(systemPath.dots[i + 1]);
         }
-        pathList.RemoveAt(0);
-        pathList.RemoveAt(0);
-        pathList.RemoveAt(pathList.Count - 1);
-        pathList.RemoveAt(pathList.Count - 1);
+        pathList.Remove(start);
+        
+        pathList.Remove(finish);
         for (int i = 0; i < numberOfPoints; i++)
         {
             if (pathList.Count == 0) break;
@@ -1260,16 +1259,40 @@ public class Pole : MonoBehaviour
     {
         List<List<GameObject>> coloredZones = new List<List<GameObject>>(zoneQuantity);
         List<int> quantityClrRingInZone = new List<int>();
-        ringQuantity -= zoneQuantity;
-        int quantityNotUsedSquare = -zoneQuantity;
-        for (int i = 0; i < zone.Count;++i)
+        List<List<GameObject>> localZone = zone;
+        for (int i = 0; i < localZone.Count; ++i)
         {
-            quantityNotUsedSquare += zone[i].Count;
+            for(int j = 0; j < localZone[i].Count; ++j)
+            {
+                if(localZone[i][j].GetComponent<PoleSquare>().hasElem == true)
+                {
+                    localZone[i].RemoveAt(j);
+                    --j;
+                }
+            }
+            if(localZone[i].Count == 0)
+            {
+                localZone.RemoveAt(i);
+                --i;
+            }
+        }
+        zoneQuantity = (Core.PolePreferences.MyRandom.GetRandom()) % (color.Count - zoneQuantity) + zoneQuantity;
+        if (zoneQuantity > localZone.Count)
+        {
+            Debug.Log( "free zones less than need"+ "need:"+ zoneQuantity + " have:" + localZone.Count);
+            zoneQuantity = localZone.Count;
+        }
+        ringQuantity = Mathf.RoundToInt(ringQuantity * 0.7f);
+        int quantityNotUsedSquare = -zoneQuantity;
+        ringQuantity -= zoneQuantity;
+        for (int i = 0; i < localZone.Count;++i)
+        {
+            quantityNotUsedSquare += localZone[i].Count;
             if (i < zoneQuantity)
             {
                 quantityClrRingInZone.Add(1);
                 coloredZones.Add(new List<GameObject>());
-                coloredZones[i].AddRange(zone[i]);
+                coloredZones[i].AddRange(localZone[i]);
             }
             else
             {
@@ -1284,11 +1307,15 @@ public class Pole : MonoBehaviour
                         mm = j;
                     }
                 }
-                coloredZones[mm].AddRange(zone[i]);
+                coloredZones[mm].AddRange(localZone[i]);
             }
         }
-        
-        while(ringQuantity > 0)
+        if (ringQuantity > quantityNotUsedSquare)
+        {
+            Debug.Log("square in zones less than need");
+            ringQuantity = quantityNotUsedSquare;
+        }
+        while (ringQuantity > 0)
         {
             int i = Core.PolePreferences.MyRandom.GetRandom() % (quantityNotUsedSquare)+1;
             int k = 0;

@@ -14,9 +14,38 @@ public class MenuManager : MonoBehaviour {
     public GameObject menuPole;
     public List<GameObject> prevPoles = new List<GameObject>();
     public List<GameObject> prevPaths = new List<GameObject>();
-
+    
     private Vector3 lastPos;
     private bool resumed = true;
+    public static class DebugMessage
+    {
+        private static int seed = new int();
+        private static string s;
+        private static string path;
+        public static void push2Buffer()
+        {
+            GUIUtility.systemCopyBuffer =":"+ seed + "\n" + s + ":" + path;
+        }
+        public static void savePath(string p)
+        {
+            path = p;
+        }
+        public static void saveSeed(int a)
+        {
+            seed = a;
+        }
+        public static void Log(string output)
+        {
+            Debug.Log(output);
+            s += output+"\n";
+        }
+        public static void clear()
+        {
+            path = "";
+            s = "";    
+            seed = new int();
+        }
+    }
     public static class MainSettings
     {
         public static string language = "ENG";
@@ -26,6 +55,7 @@ public class MenuManager : MonoBehaviour {
         public static float numOfCircles = 1f;
         public static float numOfStars = 1f;
         public static float numOfShapes = 0.3f;
+        public static List<string> levels = new List<string>();
     }
     private MenuLinkedList menuMap;
 
@@ -107,6 +137,25 @@ public class MenuManager : MonoBehaviour {
             }
         }
     }
+    private static void Log()
+    {
+        DebugMessage.saveSeed(Core.PolePreferences.MyRandom.seed);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfCircles);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfPoints);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfShapes);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfStars);
+        DebugMessage.Log(":" + Core.PolePreferences.poleSize);
+    }
+    private void DebugSetting() { }
+    private void DebugSetting(int seed, int numOfCircles, int numOfPoints, int numOfShapes, int numOfStars, int poleSize)
+    {
+        Core.PolePreferences.MyRandom.seed = seed;
+        Core.PolePreferences.numOfCircles = numOfCircles;
+        Core.PolePreferences.numOfPoints = numOfPoints;
+        Core.PolePreferences.numOfShapes = numOfShapes;
+        Core.PolePreferences.numOfStars = numOfStars;
+        Core.PolePreferences.poleSize = poleSize;
+    }
     private void ConvertPreferences()
     {
         int p = Core.PolePreferences.poleSize * Core.PolePreferences.poleSize;
@@ -118,21 +167,31 @@ public class MenuManager : MonoBehaviour {
     }
     private void LoadPoleLevel()
     {
+        Core.PolePreferences.mode = "normal";
         //Debug.Log(Core.PolePreferences.poleSize + " " + Core.PolePreferences.complexity + " " + Core.PolePreferences.numOfPoints);
+        Core.PolePreferences.MyRandom.SetSeed();
+        Log();
         ConvertPreferences();
         SceneManager.LoadScene("PoleLevel");
     }
     private void LoadLevelWithString()
     {
         Core.PolePreferences.mode = "info";
+        Core.PolePreferences.info = MainSettings.levels[0];
+        Debug.Log(Core.PolePreferences.info);
+        Debug.Log(MainSettings.levels[0]);
         SceneManager.LoadScene("PoleLevel");
     }
     private void LoadRandomPoleLevel()
     {
-        Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
+        Core.PolePreferences.mode = "normal";
+        //Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
+        Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
         Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
+        Core.PolePreferences.complexity = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (4 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
         Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
+        Log();
         Core.PolePreferences.numOfShapes = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (1 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
@@ -163,24 +222,47 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void deb() { Debug.Log("debug"); }
+
+    private void ParseLevels()
+    {
+        MainSettings.levels = new List<string>();
+        string rawlvls = (Resources.Load("levels") as TextAsset).text;
+        string lvl = "";
+        for (int i = 0; i < rawlvls.Length; i++)
+        {
+            if (rawlvls[i].ToString() == "L" && i > 0)
+            {
+                MainSettings.levels.Add(string.Copy(lvl));
+                lvl = "";
+            }
+            else if (i > 0)
+            {
+                lvl += rawlvls[i];
+            }
+        }
+        MainSettings.levels.Add(string.Copy(lvl));
+
+    }
+
+
     // Use this for initialization
     void Start () {
-
+        ParseLevels();
         // Menu structure Generation
         menuMap = new MenuLinkedList();
 
         MenuFunc[] funcList = new MenuFunc[5];
         funcList[0] = LoadRandomPoleLevel;
-        funcList[2] = LoadLevelSelect;
+        funcList[2] = () => LoadLevelWithString();
         funcList[4] = Application.Quit;
         string[] names;
         switch(MainSettings.language)
         {
             case "RUS":
-                names = new string[] { "Старт", "Пользовательская", "Для отладки", "Настройки", "Выход" };
+                names = new string[] { "Старт", "Пользовательская", "Примеры", "Настройки", "Выход" };
                 break;
             default:
-                names = new string[] { "Start random", "Custom", "Debug", "Settings", "Exit" };
+                names = new string[] { "Start random", "Custom", "Examples", "Settings", "Exit" };
                 break;
         }
         menuMap.add(new MenuNode(names, funcList, 5), 0);
@@ -250,10 +332,10 @@ public class MenuManager : MonoBehaviour {
         switch (MainSettings.language)
         {
             case "RUS":
-                names = new string[] { "Точки", "Круги", "Звезды", "Фигуры" };
+                names = new string[] { "Точки", "Круги", "Еще не готово", "Фигуры" };
                 break;
             default:
-                names = new string[] { "Points", "Circles", "Stars", "Shapes" };
+                names = new string[] { "Points", "Circles", "Not done yet", "Shapes" };
                 break;
         }
         menuMap.go2(1);
@@ -264,14 +346,14 @@ public class MenuManager : MonoBehaviour {
         funcList[2] = () => Core.PolePreferences.poleSize = 7;
         funcList[3] = () => Core.PolePreferences.poleSize = 8;
         funcList[4] = () => Core.PolePreferences.poleSize = 9;
-        names = new string[5] { "Easy", "Medium", "Hard", "Pro", "Developer" };
+        
         switch (MainSettings.language)
         {
             case "RUS":
-                names = new string[] { "Чайник", "Легко", "Средне", "Сложно", "Разработчик" };
+                names = new string[] { "Легко", "Средне", "Сложно", "Профессионал", "Невозможно" };
                 break;
             default:
-                names = new string[] { "Easy", "Medium", "Hard", "Pro", "Developer" };
+                names = new string[] { "Easy", "Medium", "Hard", "Pro", "Insane" };
                 break;
         }
 
@@ -282,7 +364,15 @@ public class MenuManager : MonoBehaviour {
         funcList[2] = () => MenuManager.MainSettings.complexity = 0.5f;
         funcList[3] = () => MenuManager.MainSettings.complexity = 0.6f;
         funcList[4] = () => MenuManager.MainSettings.complexity = 0.7f;
-
+        switch (MainSettings.language)
+        {
+            case "RUS":
+                names = new string[] { "Легко", "Средне", "Сложно", "Профессионал", "Невозможно" };
+                break;
+            default:
+                names = new string[] { "Easy", "Medium", "Hard", "Pro", "Insane" };
+                break;
+        }
         menuMap.add(new MenuNode(names, funcList, 5), 2);
         menuMap.go2(3);
         for (int i = 0; i < 4; i++)
@@ -326,10 +416,10 @@ public class MenuManager : MonoBehaviour {
             switch (MainSettings.language)
             {
                 case "RUS":
-                    names = new string[] { "Чайник", "Легко", "Средне", "Сложно", "Разработчик" };
+                    names = new string[] { "Нет", "Легко", "Средне", "Сложно", "Профессионал" };
                     break;
                 default:
-                    names = new string[] { "Easy", "Medium", "Hard", "Pro", "Developer" };
+                    names = new string[] { "Off", "Easy", "Medium", "Hard", "Pro" };
                     break;
             }
             menuMap.add(new MenuNode(names, funcList, 5), i);
@@ -346,10 +436,10 @@ public class MenuManager : MonoBehaviour {
         }
         menuMap.back();
         menuMap.back();
-        names = new string[] { "1", "2" };
-        funcList = new MenuFunc[2];
-        funcList[0] = () => LoadLevelWithString();
-        menuMap.add(new MenuNode(names, funcList, 2),2);
+        //names = new string[] { "1", "2" };
+        //funcList = new MenuFunc[2];
+        //funcList[0] = () => LoadLevelWithString();
+        //menuMap.add(new MenuNode(names, funcList, 2),2);
 
 
         //QualitySettings.vSyncCount = 0;

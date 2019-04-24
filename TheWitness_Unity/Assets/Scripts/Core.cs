@@ -35,7 +35,6 @@ public class Core : MonoBehaviour {
     private static Vector3 stepx = new Vector3(5f, 0f, 0f);
     private static Vector3 stepy = new Vector3(0f, -5f, 0f);
     private List<GameObject> finishes = new List<GameObject>();
-    public int seed = 95;
     public bool mode = true;
     public bool pathIsShown = false;
     public bool playerIsActive = false;
@@ -56,7 +55,11 @@ public class Core : MonoBehaviour {
         public static class MyRandom
         {
             public static int seed = 4323;
-            
+            public static void SetSeed(int s = 0)
+            {
+                seed = s;
+                r = new System.Random(seed);
+            }
             public static int GetRandom()
             {
                 //seed = (seed * 430 + 2531) % 11979;
@@ -68,19 +71,33 @@ public class Core : MonoBehaviour {
         public static string info = "";
         public static string mode = "normal";
     }
-    
+    public void ButtonReport()
+    {
+        MenuManager.DebugMessage.push2Buffer();
+    }
     public void ButtonMenu()
     {
         SceneManager.LoadScene("MainMenu");
+        MenuManager.DebugMessage.clear();
     }
     
     public void NextButton()
     {
+        if (Core.PolePreferences.mode =="info")
+        {
+            if (MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) < MenuManager.MainSettings.levels.Count - 1)
+                Core.PolePreferences.info = MenuManager.MainSettings.levels[MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) + 1];
+            else Core.PolePreferences.info = MenuManager.MainSettings.levels[0];
+        }
+
+        Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
+        MenuManager.DebugMessage.saveSeed(Core.PolePreferences.MyRandom.seed);
         SceneManager.LoadScene("PoleLevel");
     }
 
     public void ButtonShowSolution()
     {
+        if (Core.PolePreferences.mode == "info") return;
         PolePreferences.isFrozen = true;
         playerIsActive = false;
         foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
@@ -191,19 +208,15 @@ public class Core : MonoBehaviour {
                 } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
                 myPole.GetComponent<Pole>().SetFinish(x, y);
                 myPole.GetComponent<Pole>().CreateSolution();
-                if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
-                {
-
-                    myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-                }
-                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
                 myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
-                gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
+                myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                //gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
                 gentime = Time.realtimeSinceStartup;
                 break;
             case "info":
-                myPole.GetComponent<Pole>().InitStr("S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111");
-                gentimewin.text = "S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111";
+                myPole.GetComponent<Pole>().InitStr(Core.PolePreferences.info);
+                //gentimewin.text = Core.PolePreferences.info;
                 break;
         }
 
@@ -346,7 +359,8 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-            gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
+            MenuManager.DebugMessage.savePath(gentimewin.text);
+            //gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
             playerIsActive = !playerIsActive;
         }
         if (Input.GetMouseButton(0) && PolePreferences.isFrozen && !pathIsShown)
