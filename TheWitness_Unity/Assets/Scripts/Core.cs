@@ -71,14 +71,20 @@ public class Core : MonoBehaviour {
         public static string info = "";
         public static string mode = "normal";
     }
-    
+    public void ButtonReport()
+    {
+        MenuManager.DebugMessage.push2Buffer();
+    }
     public void ButtonMenu()
     {
         SceneManager.LoadScene("MainMenu");
+        MenuManager.DebugMessage.clear();
     }
     
     public void NextButton()
     {
+        Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
+        MenuManager.DebugMessage.saveSeed(Core.PolePreferences.MyRandom.seed);
         SceneManager.LoadScene("PoleLevel");
     }
 
@@ -194,13 +200,13 @@ public class Core : MonoBehaviour {
                 } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
                 myPole.GetComponent<Pole>().SetFinish(x, y);
                 myPole.GetComponent<Pole>().CreateSolution();
+                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
                 {
 
                     myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
                 }
                 myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
                 gentime = Time.realtimeSinceStartup;
                 break;
@@ -350,6 +356,7 @@ public class Core : MonoBehaviour {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
             gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
+            MenuManager.DebugMessage.savePath(gentimewin.text);
             playerIsActive = !playerIsActive;
         }
         if (Input.GetMouseButton(0) && PolePreferences.isFrozen && !pathIsShown)
