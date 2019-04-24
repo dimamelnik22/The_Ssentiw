@@ -1,14 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class Core : MonoBehaviour {
 
     public GameObject PolePrefab;
     public GameObject PointPrefab;
-    
+
+    public Text gentimewin;
+    public float gentime = 0f;
+
     public GameObject PathDotPrefab;
     public GameObject PathVerticalLinePrefab;
     public GameObject PathHorizontalLinePrefab;
@@ -39,106 +44,59 @@ public class Core : MonoBehaviour {
 
     public static class PolePreferences
     {
-        public static int poleSize = 7;
-        public static int numOfPoints = 13;
+        
+        public static int poleSize = 9;
+        public static int complexity = 40;
+        public static int numOfPoints = 7;
+        public static int numOfCircles = 10;
+        public static int numOfStars = 5;
+        public static int numOfShapes = 20;
         public static bool isFrozen = false;
+        public static System.Random r = new System.Random();
         public static class MyRandom
         {
             public static int seed = 4323;
-
+            
             public static int GetRandom()
             {
-                seed = (seed * 106 + 1283) % 6075;
-                return seed;
+                //seed = (seed * 430 + 2531) % 11979;
+                //return seed;
+
+                return r.Next();
             }
         }
+        public static string info = "";
+        public static string mode = "normal";
     }
     
     public void ButtonMenu()
     {
         SceneManager.LoadScene("MainMenu");
     }
-
-    public void ControllerStartFinish()
+    
+    public void NextButton()
     {
-        if (!playerIsActive)
-        {
-            PolePreferences.isFrozen = false;
-            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
-            {
-                point.GetComponent<PoleEltPoint>().NormalizeColor();
-            }
-            if (activePath == null)
-            {
-                activePath = Instantiate(ActivePathPF);
-                List<GameObject> finishes = new List<GameObject>();
-                finishes.Add(myPole.GetComponent<Pole>().finish);
-                activePath.GetComponent<ActivePath>().Init(myPole, myPole.GetComponent<Pole>().start, finishes);
-            }
-            else
-            {
-                List<GameObject> finishes = new List<GameObject>();
-                finishes.Add(myPole.GetComponent<Pole>().finish);
-                activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
-            }
-            playerIsActive = !playerIsActive;
-        }
-        else
-        {
-            PolePreferences.isFrozen = true;
-            myPole.GetComponent<Pole>().playerPath.Clear();
-            activePath.GetComponent<ActivePath>().EndSolution();
-            foreach (GameObject dot in activePath.GetComponent<ActivePath>().dotsOnPole)
-            {
-                dot.GetComponent<PoleDot>().isUsedByPlayer = true;
-                myPole.GetComponent<Pole>().playerPath.dots.Add(dot);
-            }
-            foreach (GameObject line in activePath.GetComponent<ActivePath>().linesOnPole)
-            {
-                line.GetComponent<PoleLine>().isUsedByPlayer = true;
-                myPole.GetComponent<Pole>().playerPath.lines.Add(line);
-            }
-            if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
-            {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution())
-                {
-                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                    {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
-                    }
-                }
-                else
-                {
-                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                    {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
-                    }
-                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
-                    {
-                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
-                    }
-                }
-            }
-            else foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                {
-                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
-                }
-            foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
-                dot.GetComponent<PoleDot>().isUsedByPlayer = false;
-            foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
-                line.GetComponent<PoleLine>().isUsedByPlayer = false;
-            playerIsActive = !playerIsActive;
-        }
+        SceneManager.LoadScene("PoleLevel");
     }
-    
-    
+
     public void ButtonShowSolution()
     {
-        PolePreferences.isFrozen = !PolePreferences.isFrozen;
+        PolePreferences.isFrozen = true;
         playerIsActive = false;
-        foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+        foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
         {
-            point.GetComponent<PoleEltPoint>().NormalizeColor();
+            if (point.GetComponent<PoleEltPoint>() != null)
+            {
+                point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
+            }
+            if (point.GetComponent<EltClrRing>() != null)
+            {
+                point.GetComponent<EltClrRing>().ShowNormalizedColor();
+            }
+            if (point.GetComponent<PoleEltShape>() != null)
+            {
+                point.GetComponent<PoleEltShape>().ShowNormalizedColor();
+            }
         }
         foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
             dot.GetComponent<PoleDot>().isUsedByPlayer = false;
@@ -150,6 +108,7 @@ public class Core : MonoBehaviour {
         myPole.GetComponent<Pole>().playerPath.lines.Clear();
         playerPathDotsOnScreen.Clear();
         playerPathLinesOnScreen.Clear();
+       
         if (pathIsShown)
         {
             foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
@@ -159,18 +118,17 @@ public class Core : MonoBehaviour {
         {
             foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
                 Destroy(gameObject);
-            for (int i = 0; i < myPole.GetComponent<Pole>().systemPath.dots.Count; i++)
+            foreach (GameObject dot in myPole.GetComponent<Pole>().systemPath.dots)
             {
-                if (i < myPole.GetComponent<Pole>().systemPath.dots.Count - 1)
-                {
-                    if (i == 0) Instantiate(PathStartPrefab, transform.position + stepx * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posX + stepy * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posY + pathstepz, PathDotPrefab.transform.rotation);
-                    else Instantiate(PathDotPrefab, transform.position + stepx * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posX + stepy * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posY + pathstepz, PathDotPrefab.transform.rotation);
-                    if (myPole.GetComponent<Pole>().systemPath.lines[i] == myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().up) Instantiate(PathVerticalLinePrefab, transform.position - stepy * 0.5f + stepx * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posX + stepy * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posY + pathstepz, PathVerticalLinePrefab.transform.rotation);
-                    else if (myPole.GetComponent<Pole>().systemPath.lines[i] == myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().down) Instantiate(PathVerticalLinePrefab, transform.position + stepy * 0.5f + stepx * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posX + stepy * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posY + pathstepz, PathVerticalLinePrefab.transform.rotation);
-                    else if (myPole.GetComponent<Pole>().systemPath.lines[i] == myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().left) Instantiate(PathHorizontalLinePrefab, transform.position - stepx * 0.5f + stepx * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posX + stepy * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posY + pathstepz, PathHorizontalLinePrefab.transform.rotation);
-                    else if (myPole.GetComponent<Pole>().systemPath.lines[i] == myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().right) Instantiate(PathHorizontalLinePrefab, transform.position + stepx * 0.5f + stepx * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posX + stepy * myPole.GetComponent<Pole>().systemPath.dots[i].GetComponent<PoleDot>().posY + pathstepz, PathHorizontalLinePrefab.transform.rotation);
-                }
+                if (dot == myPole.GetComponent<Pole>().start) Instantiate(PathStartPrefab, dot.transform.position + pathstepz, PathStartPrefab.transform.rotation);
+                else Instantiate(PathDotPrefab, dot.transform.position + pathstepz, PathDotPrefab.transform.rotation);
             }
+            foreach (GameObject line in myPole.GetComponent<Pole>().systemPath.lines)
+            {
+                if (line.GetComponent<PoleLine>().isHorizontal) Instantiate(PathHorizontalLinePrefab, line.transform.position + pathstepz, PathHorizontalLinePrefab.transform.rotation);
+                else Instantiate(PathVerticalLinePrefab, line.transform.position + pathstepz, PathVerticalLinePrefab.transform.rotation);
+            }
+            
             Instantiate(PathFinishPrefab, transform.position + stepx * myPole.GetComponent<Pole>().finish.GetComponent<PoleDot>().posX + stepy * myPole.GetComponent<Pole>().finish.GetComponent<PoleDot>().posY + pathstepz, PathFinishPrefab.transform.rotation);
         }
         pathIsShown = !pathIsShown;
@@ -180,77 +138,77 @@ public class Core : MonoBehaviour {
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
 
-
+        gentime = Time.realtimeSinceStartup;
         myPole = Instantiate(PolePrefab);
-        myPole.GetComponent<Pole>().Init(PolePreferences.poleSize);
-        //GameObject.FindGameObjectWithTag("Player").GetComponent<follow>().dot = myPole.poleDots[0][0];
-        playerPathLinesOnScreen = new List<GameObject>();
-        playerPathDotsOnScreen = new List<GameObject>();
-
-        playerIsActive = false;
-
-        //int index = PolePreferences.MyRandom.GetRandom() % (PolePreferences.poleSize * PolePreferences.poleSize);
-        //int x = index % PolePreferences.poleSize;
-        //int y = index / PolePreferences.poleSize;
-        //myPole.GetComponent<Pole>().SetStart(x, y);
-        //index = PolePreferences.MyRandom.GetRandom() % (PolePreferences.poleSize * PolePreferences.poleSize);
-        //x = index % PolePreferences.poleSize;
-        //y = index / PolePreferences.poleSize;
-        //while (myPole.GetComponent<Pole>().start.GetComponent<PoleDot>().posX == x && myPole.GetComponent<Pole>().start.GetComponent<PoleDot>().posY == y)
-        //{
-        //    index = PolePreferences.MyRandom.GetRandom() % (PolePreferences.poleSize * PolePreferences.poleSize);
-        //    x = index % PolePreferences.poleSize;
-        //    y = index / PolePreferences.poleSize;
-        //}
-        //myPole.GetComponent<Pole>().SetFinish(x, y);
-        int x = 0;
-        int y = 0;
-        switch (PolePreferences.MyRandom.GetRandom() % 4)
+        switch (Core.PolePreferences.mode)
         {
-            case 0:
-                x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                y = 0;
+            case "normal":
+                myPole.GetComponent<Pole>().Init(PolePreferences.poleSize);
+                // START and FINISH creating
+                int x = 0;
+                int y = 0;
+                switch (PolePreferences.MyRandom.GetRandom() % 4)
+                {
+                    case 0:
+                        x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        y = 0;
+                        break;
+                    case 1:
+                        y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        x = PolePreferences.poleSize - 1;
+                        break;
+                    case 2:
+                        x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        y = PolePreferences.poleSize - 1;
+                        break;
+                    case 3:
+                        y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                        x = 0;
+                        break;
+                }
+                myPole.GetComponent<Pole>().SetStart(x, y);
+                do
+                {
+                    switch (PolePreferences.MyRandom.GetRandom() % 4)
+                    {
+                        case 0:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = 0;
+                            break;
+                        case 1:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = PolePreferences.poleSize - 1;
+                            break;
+                        case 2:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = PolePreferences.poleSize - 1;
+                            break;
+                        case 3:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = 0;
+                            break;
+                    }
+                } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
+                myPole.GetComponent<Pole>().SetFinish(x, y);
+                myPole.GetComponent<Pole>().CreateSolution();
+                if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
+                {
+
+                    myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+                }
+                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
+                gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
+                gentime = Time.realtimeSinceStartup;
                 break;
-            case 1:
-                y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                x = PolePreferences.poleSize - 1;
-                break;
-            case 2:
-                x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                y = PolePreferences.poleSize - 1;
-                break;
-            case 3:
-                y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                x = 0;
+            case "info":
+                myPole.GetComponent<Pole>().InitStr("S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111");
+                gentimewin.text = "S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111";
                 break;
         }
-        myPole.GetComponent<Pole>().SetStart(x, y);
-        do
-        {
-            switch (PolePreferences.MyRandom.GetRandom() % 4)
-            {
-                case 0:
-                    x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    y = 0;
-                    break;
-                case 1:
-                    y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    x = PolePreferences.poleSize - 1;
-                    break;
-                case 2:
-                    x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    y = PolePreferences.poleSize - 1;
-                    break;
-                case 3:
-                    y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                    x = 0;
-                    break;
-            }
-        } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
-        myPole.GetComponent<Pole>().SetFinish(x, y);
 
-        myPole.GetComponent<Pole>().CreateSolution();
-        myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints); 
+        
+
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
@@ -295,6 +253,12 @@ public class Core : MonoBehaviour {
         finishes.Add(myPole.GetComponent<Pole>().finish);
         mode = !mode;
         pathIsShown = false;
+        playerPathLinesOnScreen = new List<GameObject>();
+        playerPathDotsOnScreen = new List<GameObject>();
+
+        playerIsActive = false;
+
+       
     }
 
     void Update()
@@ -303,9 +267,20 @@ public class Core : MonoBehaviour {
         if (!playerIsActive && PolePreferences.isFrozen == false)
         {
 
-            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
             {
-                point.GetComponent<PoleEltPoint>().NormalizeColor();
+                if (point.GetComponent<PoleEltPoint>() != null)
+                {
+                    point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
+                }
+                if (point.GetComponent<EltClrRing>() != null)
+                {
+                    point.GetComponent<EltClrRing>().ShowNormalizedColor();
+                }
+                if (point.GetComponent<PoleEltShape>() != null)
+                {
+                    point.GetComponent<PoleEltShape>().ShowNormalizedColor();
+                }
             }
             if (activePath == null)
             {
@@ -316,13 +291,11 @@ public class Core : MonoBehaviour {
             }
             else
             {
-                
-                
                 activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
             }
             playerIsActive = !playerIsActive;
         }
-        if (activePath.GetComponent<ActivePath>().isFinished && !Input.GetMouseButton(0))
+        else if (!PolePreferences.isFrozen && activePath.GetComponent<ActivePath>().isFinished && !Input.GetMouseButton(0))
         {
             PolePreferences.isFrozen = true;
             myPole.GetComponent<Pole>().playerPath.Clear();
@@ -339,7 +312,7 @@ public class Core : MonoBehaviour {
             }
             if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
             {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution())
+                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
                 {
                     foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                     {
@@ -352,9 +325,20 @@ public class Core : MonoBehaviour {
                     {
                         path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                     }
-                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                     {
-                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
+                        if (point.GetComponent<PoleEltPoint>() != null)
+                        {
+                            point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
+                        }
+                        if (point.GetComponent<EltClrRing>() != null)
+                        {
+                            point.GetComponent<EltClrRing>().ShowUnsolvedColor();
+                        }
+                        if (point.GetComponent<PoleEltShape>() != null)
+                        {
+                            point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
+                        }
                     }
                 }
             }
@@ -362,24 +346,38 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
+            gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
+            playerIsActive = !playerIsActive;
+        }
+        if (Input.GetMouseButton(0) && PolePreferences.isFrozen && !pathIsShown)
+        {
             foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
                 dot.GetComponent<PoleDot>().isUsedByPlayer = false;
             foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
                 line.GetComponent<PoleLine>().isUsedByPlayer = false;
-            playerIsActive = !playerIsActive;
-        }
-        if (Input.GetMouseButton(0) && PolePreferences.isFrozen)
-        {
+            //playerIsActive = !playerIsActive;
             PolePreferences.isFrozen = false;
-            activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
+            //activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
         }
-#endif
+#else
+
         if (!playerIsActive && PolePreferences.isFrozen == false)
         {
 
-            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
             {
-                point.GetComponent<PoleEltPoint>().NormalizeColor();
+                if (point.GetComponent<PoleEltPoint>() != null)
+                {
+                    point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
+                }
+                if (point.GetComponent<EltClrRing>() != null)
+                {
+                    point.GetComponent<EltClrRing>().ShowNormalizedColor();
+                }
+                if (point.GetComponent<PoleEltShape>() != null)
+                {
+                    point.GetComponent<PoleEltShape>().ShowNormalizedColor();
+                }
             }
             if (activePath == null)
             {
@@ -397,7 +395,7 @@ public class Core : MonoBehaviour {
             }
             playerIsActive = !playerIsActive;
         }
-        if (activePath.GetComponent<ActivePath>().isFinished && Input.touchCount == 0)
+        else if (!PolePreferences.isFrozen && activePath.GetComponent<ActivePath>().isFinished && Input.touchCount == 0)
         {
             PolePreferences.isFrozen = true;
             myPole.GetComponent<Pole>().playerPath.Clear();
@@ -414,7 +412,7 @@ public class Core : MonoBehaviour {
             }
             if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
             {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution())
+                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
                 {
                     foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                     {
@@ -427,9 +425,20 @@ public class Core : MonoBehaviour {
                     {
                         path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                     }
-                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedPoints)
+                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                     {
-                        point.GetComponent<PoleEltPoint>().ShowUnsolved();
+                        if (point.GetComponent<PoleEltPoint>() != null)
+                        {
+                            point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
+                        }
+                        if (point.GetComponent<EltClrRing>() != null)
+                        {
+                            point.GetComponent<EltClrRing>().ShowUnsolvedColor();
+                        }
+                        if (point.GetComponent<PoleEltShape>() != null)
+                        {
+                            point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
+                        }
                     }
                 }
             }
@@ -437,17 +446,19 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
+            
+            playerIsActive = !playerIsActive;
+        }
+        if (Input.touchCount > 0 && PolePreferences.isFrozen && !pathIsShown)
+        {
             foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
                 dot.GetComponent<PoleDot>().isUsedByPlayer = false;
             foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
                 line.GetComponent<PoleLine>().isUsedByPlayer = false;
-            playerIsActive = !playerIsActive;
-        }
-        if (Input.touchCount > 0 && PolePreferences.isFrozen)
-        {
             PolePreferences.isFrozen = false;
-            activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
+            
         }
+#endif
     }
 
 }

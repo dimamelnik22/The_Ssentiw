@@ -11,6 +11,9 @@ public class PoleSquare : MonoBehaviour {
 	public bool hasElem = false;
 	public GameObject element;
 
+    public int indexI;
+    public int indexJ;
+
 	// Use this for initialization
 	void Start () {
 		

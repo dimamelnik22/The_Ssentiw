@@ -2,28 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoleEltPoint : MonoBehaviour {
-
-    GameObject attachedDot;
-    GameObject attachedLine;
-    public Material NormalColor;
-    Color c;
+public class PoleEltStar : MonoBehaviour
+{
+    public Color c;
     public float countdown = 0f;
     public bool colorlerping = false;
     public bool tored = true;
-    public void SetDot(GameObject dot)
-    {
-        attachedDot = dot;
-    }
-    public void SetLine(GameObject line)
-    {
-        attachedLine = line;
-    }
-    public bool IsSolvedByPlayer()
-    {
-        if (attachedDot != null) return attachedDot.GetComponent<PoleDot>().isUsedByPlayer;
-        else return attachedLine.GetComponent<PoleLine>().isUsedByPlayer;
-    }
     public void ShowUnsolvedColor()
     {
         colorlerping = true;
@@ -34,12 +18,16 @@ public class PoleEltPoint : MonoBehaviour {
         colorlerping = false;
         GetComponent<Renderer>().material.color = c;
     }
-    private void Start()
+
+    // Start is called before the first frame update
+    void Start()
     {
-        c = NormalColor.color;
+        
     }
+
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         if (colorlerping)
         {
             if (countdown > 0f)

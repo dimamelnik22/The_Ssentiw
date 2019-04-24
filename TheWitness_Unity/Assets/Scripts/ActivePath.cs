@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActivePath : MonoBehaviour {
+public class ActivePath : MonoBehaviour
+{
     public GameObject pointerPF;
-    
+
 
     public List<GameObject> dots = new List<GameObject>();
     public List<GameObject> lines = new List<GameObject>();
@@ -13,6 +14,7 @@ public class ActivePath : MonoBehaviour {
     public List<GameObject> finishes = new List<GameObject>();
     public GameObject start;
     public GameObject pointer;
+    public GameObject leadDot;
     public GameObject currentLine;
     public GameObject currentFinish;
     public GameObject currentFinishOnPole;
@@ -33,33 +35,34 @@ public class ActivePath : MonoBehaviour {
         //foreach (GameObject dot in dots) Destroy(dot);
         //foreach (GameObject line in lines) Destroy(line);
         //Destroy(pointer);
-        for (int i = transform.childCount - 1; i >=0; --i)
+        for (int i = transform.childCount - 1; i >= 0; --i)
         {
             Destroy(transform.GetChild(i));
         }
+        Destroy(leadDot);
     }
 
-    public void Init(GameObject _pole, GameObject _start,List<GameObject> _finishes)
+    public void Init(GameObject _pole, GameObject _start, List<GameObject> _finishes)
     {
         pole = _pole;
         finishes = _finishes;
         start = _start;
         dotsOnPole.Add(start);
-        
+
     }
 
     public void Restart(GameObject start, List<GameObject> _finishes)
     {
 
         isStarted = !isStarted;
-        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Path")) Destroy(obj);
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Path")) Destroy(obj);
         Destroy(pointer);
         dots.Clear();
         lines.Clear();
 
         dotsOnPole.Clear();
         linesOnPole.Clear();
-        Init(pole,start,_finishes);
+        Init(pole, start, _finishes);
     }
 
     private void lineScaleDestroy()
@@ -90,35 +93,54 @@ public class ActivePath : MonoBehaviour {
     {
         if (isFinished)
         {
-            if (dotsOnPole[dotsOnPole.Count-1] != currentFinishOnPole)
+            if (dotsOnPole[dotsOnPole.Count - 1] != currentFinishOnPole)
             {
                 GameObject dot = dotsOnPole[dotsOnPole.Count - 1];
                 dotsOnPole.Add(currentFinishOnPole);
-                if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().right);
-                else if (dot.GetComponent<PoleDot>().posX > currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().left);
-                else if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().down);
-                else if (dot.GetComponent<PoleDot>().posX > currentFinishOnPole.GetComponent<PoleDot>().posX) linesOnPole.Add(dot.GetComponent<PoleDot>().up);
+
+                if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().right);
+                    currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
+                }
+                else if (dot.GetComponent<PoleDot>().posX > currentFinishOnPole.GetComponent<PoleDot>().posX)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().left);
+                    currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
+                }
+                else if (dot.GetComponent<PoleDot>().posY < currentFinishOnPole.GetComponent<PoleDot>().posY)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().down);
+                    currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
+                }
+                else if (dot.GetComponent<PoleDot>().posY > currentFinishOnPole.GetComponent<PoleDot>().posY)
+                {
+                    linesOnPole.Add(dot.GetComponent<PoleDot>().up);
+                    currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
+                }
+                currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+
             }
         }
     }
 
-    private bool CheckBorder()
-    {
-        GameObject lastDot = dotsOnPole[dotsOnPole.Count - 1];
-        if (transform.position.x > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToRight()
-            || transform.position.x < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToLeft()
-            || transform.position.y > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToUp()
-            || transform.position.y < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToDown())
-            return false;
-        else return true;
+    //private bool CheckBorder()
+    //{
+    //    GameObject lastDot = dotsOnPole[dotsOnPole.Count - 1];
+    //    if (transform.position.x > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToRight()
+    //        || transform.position.x < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToLeft()
+    //        || transform.position.y > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToUp()
+    //        || transform.position.y < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToDown())
+    //        return false;
+    //    else return true;
 
-    }
+    //}
 
     void Update()
     {
         if (!Core.PolePreferences.isFrozen)
         {
-            
+
             if (isStarted)
             {
                 if (!isFinished)
@@ -148,17 +170,23 @@ public class ActivePath : MonoBehaviour {
                 if (Mathf.Abs(pos.x) > 0f)
                 {
                     currentLine.transform.localScale = new Vector3(Mathf.Abs(pos.x * 2f), 1f, 0.1f);
+                    leadDot.transform.position = currentLine.transform.position + new Vector3(pos.x, 0f, 0f);
                 }
                 else if (Mathf.Abs(pos.y) > 0f)
                 {
                     currentLine.transform.localScale = new Vector3(1f, Mathf.Abs(pos.y * 2f), 0.1f);
+                    leadDot.transform.position = currentLine.transform.position + new Vector3(0f, pos.y, 0f);
                 }
-                else currentLine.transform.localScale = new Vector3(0f, 0f, 0.1f);
+                else
+                {
+                    currentLine.transform.localScale = new Vector3(0f, 0f, 0.1f);
+                    leadDot.transform.position = currentLine.transform.position;
+                }
 
 
                 //creating new dot and line
                 float dist = pointer.transform.position.x - dots[dots.Count - 1].transform.position.x;
-                while (Mathf.Abs(dist) > 5f && CheckBorder())
+                while (Mathf.Abs(dist) > 5f /*&& CheckBorder()*/)
                 {
                     //Debug.Log("auto new by x "+ lines.Count);
                     if (dist > 0)
@@ -172,9 +200,10 @@ public class ActivePath : MonoBehaviour {
                             currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
                             dotsOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
-                            
+
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().right);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             dots[dots.Count - 1].transform.parent = this.transform;
                             currentLine.transform.parent = this.transform;
@@ -195,6 +224,7 @@ public class ActivePath : MonoBehaviour {
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().left);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             lines.Add(currentLine);
                             dots[dots.Count - 1].transform.parent = this.transform;
@@ -204,7 +234,7 @@ public class ActivePath : MonoBehaviour {
                     dist = pointer.transform.position.x - dots[dots.Count - 1].transform.position.x;
                 }
                 dist = pointer.transform.position.y - dots[dots.Count - 1].transform.position.y;
-                while (Mathf.Abs(dist) > 5f && CheckBorder())
+                while (Mathf.Abs(dist) > 5f /*&& CheckBorder()*/)
                 {
                     //Debug.Log("auto new  by y "+ lines.Count);
                     if (dist > 0)
@@ -220,6 +250,7 @@ public class ActivePath : MonoBehaviour {
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().up);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             lines.Add(currentLine);
                             dots[dots.Count - 1].transform.parent = this.transform;
@@ -239,6 +270,7 @@ public class ActivePath : MonoBehaviour {
                             dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                             linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 2].GetComponent<PoleDot>().down);
                             currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+                            leadDot.transform.position = dots[dots.Count - 1].transform.position;
                             currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
                             lines.Add(currentLine);
                             dots[dots.Count - 1].transform.parent = this.transform;
@@ -250,17 +282,39 @@ public class ActivePath : MonoBehaviour {
 
                 //pointer.GetComponent<follow>().nearestDot = dotsOnPole[dotsOnPole.Count - 1];
 
-                if (Mathf.Abs(currentLine.transform.localScale.x) >= 5f || Mathf.Abs(currentLine.transform.localScale.y) >= 5f)
+                if ((Mathf.Abs(currentLine.transform.localScale.x) >= 5f || Mathf.Abs(currentLine.transform.localScale.y) >= 5f) && dotsOnPole[dotsOnPole.Count-1] !=pointer.GetComponent<follow>().nearestDot)
                 {
                     //Debug.Log("new by scale" + lines.Count);
                     dotsOnPole.Add(pointer.GetComponent<follow>().nearestDot);
 
-                    currentLine.transform.position = dotsOnPole[dotsOnPole.Count - 2].transform.position + 0.5f * (dotsOnPole[dotsOnPole.Count - 1].transform.position - dotsOnPole[dotsOnPole.Count - 2].transform.position) + stepz;
+                    if (Mathf.Abs(currentLine.transform.localScale.x) >= 5f) currentLine.transform.localScale = new Vector3(5f, 1f, 0.1f);
+                    else currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
+                    //currentLine.transform.position = dotsOnPole[dotsOnPole.Count - 2].transform.position + 0.5f * (dotsOnPole[dotsOnPole.Count - 1].transform.position - dotsOnPole[dotsOnPole.Count - 2].transform.position) + stepz;
                     dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
                     currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
+                    leadDot.transform.position = dots[dots.Count - 1].transform.position;
                     lines.Add(currentLine);
-                    linesOnPole.Add(pointer.GetComponent<follow>().currentLine);
-                    
+                    // TUT DOLZHEN BYT' BAGOSIK   
+                    //linesOnPole.Add(pointer.GetComponent<follow>().currentLine);
+                    // TUT DOLZHEN BYT' BAGOSIK                    
+
+                    if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().right == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right);
+                    }
+                    else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left.GetComponent<PoleLine>().left == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left);
+                    }
+                    else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up.GetComponent<PoleLine>().up == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up);
+                    }
+                    else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down.GetComponent<PoleLine>().down == dotsOnPole[dotsOnPole.Count - 2])
+                    {
+                        linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down);
+                    }
+                    lines[lines.Count - 2].transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
                     dots[dots.Count - 1].transform.parent = this.transform;
                     currentLine.transform.parent = this.transform;
                 }
@@ -281,6 +335,7 @@ public class ActivePath : MonoBehaviour {
             else if ((Input.GetMouseButton(0) || Input.touchCount > 0) && !isStarted)
             {
                 dots.Add(Instantiate(PathStartPrefab, start.transform.position + stepz, PathStartPrefab.transform.rotation));
+                leadDot = Instantiate(PathDotPrefab, start.transform.position + stepz, PathDotPrefab.transform.rotation);
                 pointer = Instantiate(pointerPF, start.transform.position + stepz, pointerPF.transform.rotation);
                 pointer.transform.parent = this.transform;
                 if (Input.touchCount > 0)
@@ -311,6 +366,6 @@ public class ActivePath : MonoBehaviour {
         //}
     }
 
-	
-	
+
+
 }

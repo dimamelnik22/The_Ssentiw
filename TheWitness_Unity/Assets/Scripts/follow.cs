@@ -91,7 +91,7 @@ public class follow : MonoBehaviour {
             #if UNITY_EDITOR
             if (Input.GetMouseButton(0))
             {
-                dir = 0.03f * new Vector2(Input.mousePosition.x - lastpos.x, Input.mousePosition.y - lastpos.y);
+                dir = 0.03f * MenuManager.MainSettings.speed * new Vector2(Input.mousePosition.x - lastpos.x, Input.mousePosition.y - lastpos.y);
                 lastpos = Input.mousePosition;
             }
             else
@@ -109,7 +109,7 @@ public class follow : MonoBehaviour {
                         lastpos = touch.position;
                         break;
                     case TouchPhase.Moved:
-                        dir = 0.02f * (touch.position - lastpos);
+                        dir = 0.02f * MenuManager.MainSettings.speed * (touch.position - lastpos);
                         lastpos = touch.position;
                         break;
                 }
@@ -140,7 +140,7 @@ public class follow : MonoBehaviour {
             {
                 if (moveHor)
                 {
-                    transform.Translate(new Vector3(dir.x, 0f, 0f));
+                    transform.Translate(new Vector3(dir.x /*+ Mathf.Sign(dir.x) * Mathf.Abs(dir.y)*/, 0f, 0f));
                 }
                 else
                 {
@@ -159,14 +159,14 @@ public class follow : MonoBehaviour {
                             moveHor = !moveHor;
                         }
                     }
-                    else transform.Translate(new Vector3(0f, dir.y, 0f));
+                    else transform.Translate(new Vector3(0f, dir.y + Mathf.Sign(nearestDot.transform.position.y - transform.position.y) * Mathf.Abs(dir.x), 0f));
                 }
             }
             else
             {
                 if (!moveHor)
                 {
-                    transform.Translate(new Vector3(0f, dir.y, 0f));
+                    transform.Translate(new Vector3(0f, dir.y /*+ Mathf.Sign(dir.y) * Mathf.Abs(dir.x)*/, 0f));
                 }
                 else
                 {
@@ -187,9 +187,10 @@ public class follow : MonoBehaviour {
                             moveHor = !moveHor;
                         }
                     }
-                    else transform.Translate(new Vector3(dir.x, 0f, 0f));
+                    else transform.Translate(new Vector3(dir.x + Mathf.Sign(nearestDot.transform.position.x - transform.position.x) * Mathf.Abs(dir.y), 0f, 0f));
                 }
             }
+            
             transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.y)), 0f) + stepz;
         }
     }
