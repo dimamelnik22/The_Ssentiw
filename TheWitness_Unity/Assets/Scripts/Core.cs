@@ -201,11 +201,7 @@ public class Core : MonoBehaviour {
                 myPole.GetComponent<Pole>().SetFinish(x, y);
                 myPole.GetComponent<Pole>().CreateSolution();
                 myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
-                if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
-                {
-
-                    myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-                }
+                myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
                 myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
                 gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
                 gentime = Time.realtimeSinceStartup;

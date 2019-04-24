@@ -348,7 +348,7 @@ public class Pole : MonoBehaviour
     public int quantityColor = 3;
     public int quantityRing = 0;
     List<Color> colorStar = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
-    List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
+    List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.black };
     public void OnDestroy()
     {
         
@@ -1276,11 +1276,13 @@ public class Pole : MonoBehaviour
                 --i;
             }
         }
-        if(zoneQuantity > localZone.Count)
+        zoneQuantity = (Core.PolePreferences.MyRandom.GetRandom()) % (color.Count - zoneQuantity) + zoneQuantity;
+        if (zoneQuantity > localZone.Count)
         {
             Debug.Log( "free zones less than need"+ "need:"+ zoneQuantity + " have:" + localZone.Count);
             zoneQuantity = localZone.Count;
         }
+        ringQuantity = Mathf.RoundToInt(ringQuantity * 0.7f);
         int quantityNotUsedSquare = -zoneQuantity;
         ringQuantity -= zoneQuantity;
         for (int i = 0; i < localZone.Count;++i)
