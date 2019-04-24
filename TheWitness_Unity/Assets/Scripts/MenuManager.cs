@@ -19,10 +19,20 @@ public class MenuManager : MonoBehaviour {
     private bool resumed = true;
     public static class DebugMessage
     {
-        public static string s;
+        private static int seed = new int();
+        private static string s;
+        private static string path;
         public static void push2Buffer()
         {
-            GUIUtility.systemCopyBuffer = s;
+            GUIUtility.systemCopyBuffer =":"+ seed + "\n" + s + ":" + path;
+        }
+        public static void savePath(string p)
+        {
+            path = p;
+        }
+        public static void saveSeed(int a)
+        {
+            seed = a;
         }
         public static void Log(string output)
         {
@@ -31,7 +41,9 @@ public class MenuManager : MonoBehaviour {
         }
         public static void clear()
         {
-            s.Remove(0);
+            path = "";
+            s = "";    
+            seed = new int();
         }
     }
     public static class MainSettings
@@ -127,13 +139,12 @@ public class MenuManager : MonoBehaviour {
     }
     private static void Log()
     {
-        DebugMessage.Log("seed: "         + Core.PolePreferences.MyRandom.seed);
-        DebugMessage.Log("numOfCircles: " + Core.PolePreferences.numOfCircles);
-        DebugMessage.Log("numOfPoints: "  + Core.PolePreferences.numOfPoints);
-        DebugMessage.Log("numOfShapes: "  + Core.PolePreferences.numOfShapes);
-        DebugMessage.Log("numOfStars: "   + Core.PolePreferences.numOfStars);
-        DebugMessage.Log("poleSize: "     + Core.PolePreferences.poleSize);
-        DebugMessage.push2Buffer();
+        DebugMessage.saveSeed(Core.PolePreferences.MyRandom.seed);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfCircles);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfPoints);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfShapes);
+        DebugMessage.Log(":" + Core.PolePreferences.numOfStars);
+        DebugMessage.Log(":" + Core.PolePreferences.poleSize);
     }
     private void DebugSetting() { }
     private void DebugSetting(int seed, int numOfCircles, int numOfPoints, int numOfShapes, int numOfStars, int poleSize)
@@ -175,7 +186,7 @@ public class MenuManager : MonoBehaviour {
     {
         Core.PolePreferences.mode = "normal";
         //Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
-        Core.PolePreferences.MyRandom.SetSeed();
+        Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
         Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
         Core.PolePreferences.complexity = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (4 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
         Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
