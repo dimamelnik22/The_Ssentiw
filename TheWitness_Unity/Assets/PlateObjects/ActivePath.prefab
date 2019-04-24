@@ -51,13 +51,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f52d5303244cc47815a8ea56199af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointerPF: {fileID: 1139783259174092, guid: 1a4663c79a3dc554e96787e5fb203a8b, type: 2}
+  pointerPF: {fileID: 1945388496061064, guid: 99908ccd48e4c0b439bf03a2488d92e5, type: 2}
   dots: []
   lines: []
+  dotsOnPole: []
+  linesOnPole: []
+  finishes: []
+  start: {fileID: 0}
   pointer: {fileID: 0}
   currentLine: {fileID: 0}
-  isScaling: 0
+  currentFinish: {fileID: 0}
+  currentFinishOnPole: {fileID: 0}
+  isStarted: 0
+  isFinished: 0
   PathDotPrefab: {fileID: 1884500734980538, guid: ca5f7509993161547a5a63729fa5d23c,
     type: 2}
   PathLinePrefab: {fileID: 1505668001413860, guid: 5da70a9755ce0f34281be4d4a7cfe762,
     type: 2}
+  PathStartPrefab: {fileID: 1803471697624522, guid: 4283d15c93f7a2c42b8954d338b3bb8d,
+    type: 2}
+  PathFinishPrefab: {fileID: 1296926916115352, guid: babcc577bfbd52041ad61103a91073ad,
+    type: 2}
+  pole: {fileID: 0}
