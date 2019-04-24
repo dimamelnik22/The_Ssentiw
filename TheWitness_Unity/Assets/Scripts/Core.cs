@@ -35,7 +35,6 @@ public class Core : MonoBehaviour {
     private static Vector3 stepx = new Vector3(5f, 0f, 0f);
     private static Vector3 stepy = new Vector3(0f, -5f, 0f);
     private List<GameObject> finishes = new List<GameObject>();
-    public int seed = 95;
     public bool mode = true;
     public bool pathIsShown = false;
     public bool playerIsActive = false;
@@ -49,14 +48,18 @@ public class Core : MonoBehaviour {
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;
         public static int numOfStars = 5;
-        public static float numOfShapes = 1f;
+        public static float numOfShapes = 0.5f;
         public static float complexity =0.8f;
         public static bool isFrozen = false;
         public static System.Random r = new System.Random();
         public static class MyRandom
         {
             public static int seed = 4323;
-            
+            public static void SetSeed(int s = 0)
+            {
+                seed = s;
+                r = new System.Random(seed);
+            }
             public static int GetRandom()
             {
                 //seed = (seed * 430 + 2531) % 11979;
@@ -193,17 +196,14 @@ public class Core : MonoBehaviour {
         } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
         myPole.GetComponent<Pole>().SetFinish(x, y);
         myPole.GetComponent<Pole>().CreateSolution();
-        
 
-        
+
         myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-        myPole.GetComponent<Pole>().GenerateShapes(10, 0);
+        myPole.GetComponent<Pole>().GenerateShapes(Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * Core.PolePreferences.numOfShapes));
         if (myPole.GetComponent<Pole>().quantityZones >= myPole.GetComponent<Pole>().quantityColor)
         {
             myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
         }
-        myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-        myPole.GetComponent<Pole>().GenerateShapes(Mathf.RoundToInt(Core.PolePreferences.poleSize*Core.PolePreferences.poleSize*Core.PolePreferences.numOfShapes));
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)

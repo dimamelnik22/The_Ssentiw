@@ -857,10 +857,9 @@ public class Pole : MonoBehaviour
             pathList.Add(systemPath.lines[i]);
             pathList.Add(systemPath.dots[i + 1]);
         }
-        pathList.RemoveAt(0);
-        pathList.RemoveAt(0);
-        pathList.RemoveAt(pathList.Count - 1);
-        pathList.RemoveAt(pathList.Count - 1);
+        pathList.Remove(start);
+        
+        pathList.Remove(finish);
         for (int i = 0; i < numberOfPoints; i++)
         {
             if (pathList.Count == 0) break;

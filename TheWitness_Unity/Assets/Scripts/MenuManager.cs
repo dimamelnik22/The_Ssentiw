@@ -17,6 +17,23 @@ public class MenuManager : MonoBehaviour {
 
     private Vector3 lastPos;
     private bool resumed = true;
+    public static class DebugMessage
+    {
+        public static string s;
+        public static void push2Buffer()
+        {
+            GUIUtility.systemCopyBuffer = s;
+        }
+        public static void Log(string output)
+        {
+            Debug.Log(output);
+            s += output+"\n";
+        }
+        public static void clear()
+        {
+            s.Remove(0);
+        }
+    }
     public static class MainSettings
     {
         public static string language = "ENG";
@@ -102,19 +119,42 @@ public class MenuManager : MonoBehaviour {
             }
         }
     }
-
+    private static void Log()
+    {
+        DebugMessage.Log("seed: "         + Core.PolePreferences.MyRandom.seed);
+        DebugMessage.Log("numOfCircles: " + Core.PolePreferences.numOfCircles);
+        DebugMessage.Log("numOfPoints: "  + Core.PolePreferences.numOfPoints);
+        DebugMessage.Log("numOfShapes: "  + Core.PolePreferences.numOfShapes);
+        DebugMessage.Log("numOfStars: "   + Core.PolePreferences.numOfStars);
+        DebugMessage.Log("poleSize: "     + Core.PolePreferences.poleSize);
+        DebugMessage.push2Buffer();
+    }
+    private void DebugSetting() { }
+    private void DebugSetting(int seed, int numOfCircles, int numOfPoints, int numOfShapes, int numOfStars, int poleSize)
+    {
+        Core.PolePreferences.MyRandom.seed = seed;
+        Core.PolePreferences.numOfCircles = numOfCircles;
+        Core.PolePreferences.numOfPoints = numOfPoints;
+        Core.PolePreferences.numOfShapes = numOfShapes;
+        Core.PolePreferences.numOfStars = numOfStars;
+        Core.PolePreferences.poleSize = poleSize;
+    }
     private void LoadPoleLevel()
     {
         //Debug.Log(Core.PolePreferences.poleSize + " " + Core.PolePreferences.complexity + " " + Core.PolePreferences.numOfPoints);
+        Core.PolePreferences.MyRandom.SetSeed();
+        Log();
         SceneManager.LoadScene("PoleLevel");
     }
 
     private void LoadRandomPoleLevel()
     {
-        Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
+        //Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
+        Core.PolePreferences.MyRandom.SetSeed();
         Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 3;
         Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
+        Log();
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
     }
