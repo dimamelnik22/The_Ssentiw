@@ -200,14 +200,14 @@ public class Core : MonoBehaviour {
                 } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
                 myPole.GetComponent<Pole>().SetFinish(x, y);
                 myPole.GetComponent<Pole>().CreateSolution();
-                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
-                myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize);
+                //myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+                //myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
                 gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
                 gentime = Time.realtimeSinceStartup;
                 break;
             case "info":
-                myPole.GetComponent<Pole>().InitStr("S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111");
+                myPole.GetComponent<Pole>().InitStr("S9sST0Y0XFH8Y8XPT0pRG0rSR0sSP16s0I0J2H2W11110I1J2H2W11110I2J2H2W11110I3J2H2W11110I4J2H2W11110I5J2H2W11110I6J2H2W11110I7J2H2W11111I0J2H2W11111I1J2H2W11111I2J2H2W11111I3J2H2W11111I4J2H2W11111I5J2H2W11111I6J2H2W11111I7J2H2W1111");
                 gentimewin.text = "S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111";
                 break;
         }
