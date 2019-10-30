@@ -83,6 +83,13 @@ public class Core : MonoBehaviour {
     
     public void NextButton()
     {
+        if (Core.PolePreferences.mode =="info")
+        {
+            if (MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) < MenuManager.MainSettings.levels.Count - 1)
+                Core.PolePreferences.info = MenuManager.MainSettings.levels[MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) + 1];
+            else Core.PolePreferences.info = MenuManager.MainSettings.levels[0];
+        }
+
         Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
         MenuManager.DebugMessage.saveSeed(Core.PolePreferences.MyRandom.seed);
         SceneManager.LoadScene("PoleLevel");
@@ -90,6 +97,7 @@ public class Core : MonoBehaviour {
 
     public void ButtonShowSolution()
     {
+        if (Core.PolePreferences.mode == "info") return;
         PolePreferences.isFrozen = true;
         playerIsActive = false;
         foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
@@ -200,15 +208,15 @@ public class Core : MonoBehaviour {
                 } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().start);
                 myPole.GetComponent<Pole>().SetFinish(x, y);
                 myPole.GetComponent<Pole>().CreateSolution();
-                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize);
-                //myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-                //myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-                gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
+                myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
+                myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                //gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
                 gentime = Time.realtimeSinceStartup;
                 break;
             case "info":
-                myPole.GetComponent<Pole>().InitStr("S4sST0Y0XFH3Y3XPT0pRG0rSR0sSP3s0I0J3H2W1011100I1J3H2W0101110I2J1H1W1");
-                gentimewin.text = "S5sST0Y0XFH4Y4XPT3p1Y1XS2Y2XS3Y3XURG2r3I0J11I3J2SR0sSP3s0I0J2H3W1001111I1J2H3W1001112I3J2H3W100111";
+                myPole.GetComponent<Pole>().InitStr(Core.PolePreferences.info);
+                //gentimewin.text = Core.PolePreferences.info;
                 break;
         }
 
@@ -351,8 +359,8 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-            gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
             MenuManager.DebugMessage.savePath(gentimewin.text);
+            //gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
             playerIsActive = !playerIsActive;
         }
         if (Input.GetMouseButton(0) && PolePreferences.isFrozen && !pathIsShown)
