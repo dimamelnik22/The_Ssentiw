@@ -38,6 +38,7 @@ public class follow : MonoBehaviour {
 	void Update () {
         if (!Core.PolePreferences.isFrozen && !notActive)
         {
+            GetComponent<ParticleSystem>().Play();
             float upLimit = transform.position.y;
             float downLimit = transform.position.y;
             float leftLimit = transform.position.x;
@@ -193,5 +194,11 @@ public class follow : MonoBehaviour {
             
             transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.y)), 0f) + stepz;
         }
+        else
+        {
+
+            gameObject.GetComponent<ParticleSystem>().Pause();
+        }
     }
+
 }
