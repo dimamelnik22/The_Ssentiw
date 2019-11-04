@@ -407,6 +407,7 @@ public class Pole : MonoBehaviour
         opline.GetComponent<PoleLine>().right = poleDots[1][1];
         start = poleDots[1][0];
         tempStart = Instantiate(StartPrefab, poleDots[1][0].transform.position, StartPrefab.transform.rotation);
+        tempStart.GetComponent<StartDot>().LinkDot(start);
         tempStart.transform.parent = this.transform;
     }
 
@@ -463,10 +464,29 @@ public class Pole : MonoBehaviour
         opline.GetComponent<PoleLine>().right = poleDots[0][1];
         start = poleDots[0][0];
         tempStart = Instantiate(StartPrefab, poleDots[0][0].transform.position, StartPrefab.transform.rotation);
+        tempStart.GetComponent<StartDot>().LinkDot(start);
         tempStart.transform.parent = this.transform;
         StartScaling(start);
     }
 
+    public void NormalizeColors()
+    {
+        foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
+        {
+            point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
+            
+        }
+        foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltClrRing"))
+        {
+            point.GetComponent<EltClrRing>().ShowNormalizedColor();
+
+        }
+        foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltShape"))
+        {
+            point.GetComponent<PoleEltShape>().ShowNormalizedColor();
+
+        }
+    }
     public void Init(int size)
     {
         quantityRing = Core.PolePreferences.numOfCircles;
@@ -1185,9 +1205,12 @@ public class Pole : MonoBehaviour
 
     public void SetStart(int x, int y)
     {
-        Instantiate(StartPrefab, stepx * x + stepy * y, StartPrefab.transform.rotation);
+        tempStart = Instantiate(StartPrefab, stepx * x + stepy * y, StartPrefab.transform.rotation);
+        
         start = poleDots[y][x];
         start.GetComponent<PoleDot>().CreateDot();
+        tempStart.GetComponent<StartDot>().LinkDot(start);
+        tempStart.transform.parent = this.transform;
         StartScaling(start);
     }
     public void SetFinish(int x, int y)
@@ -1478,16 +1501,30 @@ public class Pole : MonoBehaviour
     public void GenerateShapes(int zoneSize)
     {
         for (int i = 0; i < zone.Count; i++) activeShapes.Add(new List<List<GameObject>>());
-        foreach(List<List<GameObject>> shlist in shapes)
+        //foreach(List<List<GameObject>> shlist in shapes)
+        //{
+        //    if (zone[shapes.IndexOf(shlist)].Count <= zoneSize)
+        //    {
+        //        foreach (List<GameObject> shape in shlist)
+        //        {
+        //            activeShapes[shapes.IndexOf(shlist)].Add(shape);
+        //        }
+        //        zoneSize -= zone[shapes.IndexOf(shlist)].Count;
+        //    }
+        //}
+        var list = new List<List<List<GameObject>>>(shapes);
+        for (int i = 0; i < shapes.Count;i++)
         {
-            if (zone[shapes.IndexOf(shlist)].Count <= zoneSize)
+            int k = Core.PolePreferences.MyRandom.GetRandom() % shapes.Count;
+            if (zone[shapes.IndexOf(shapes[k])].Count <= zoneSize)
             {
-                foreach (List<GameObject> shape in shlist)
+                foreach (List<GameObject> shape in shapes[k])
                 {
-                    activeShapes[shapes.IndexOf(shlist)].Add(shape);
+                    activeShapes[shapes.IndexOf(shapes[k])].Add(shape);
                 }
-                zoneSize -= zone[shapes.IndexOf(shlist)].Count;
+                zoneSize -= zone[shapes.IndexOf(shapes[k])].Count;
             }
+            shapes.Remove(shapes[k]);
         }
         //if (difficulty == 0)
         //{

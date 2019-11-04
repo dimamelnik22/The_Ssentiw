@@ -53,9 +53,12 @@ public class ActivePath : MonoBehaviour
 
     public void Restart(GameObject start, List<GameObject> _finishes)
     {
-
+        
+        pole.GetComponent<Pole>().NormalizeColors();
         isStarted = !isStarted;
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Path")) Destroy(obj);
+        foreach (GameObject obj in dots) Destroy(obj);
+        foreach (GameObject obj in lines) Destroy(obj);
+        Destroy(leadDot);
         Destroy(pointer);
         dots.Clear();
         lines.Clear();
@@ -63,6 +66,37 @@ public class ActivePath : MonoBehaviour
         dotsOnPole.Clear();
         linesOnPole.Clear();
         Init(pole, start, _finishes);
+    }
+
+    public void NewStart(GameObject _start)
+    {
+        
+        Restart(start, finishes);
+        
+        dots.Add(Instantiate(PathStartPrefab, _start.transform.position + stepz, PathStartPrefab.transform.rotation));
+        leadDot = Instantiate(PathDotPrefab, _start.transform.position + stepz, PathDotPrefab.transform.rotation);
+        pointer = Instantiate(pointerPF, _start.transform.position + stepz, pointerPF.transform.rotation);
+        pointer.transform.parent = this.transform;
+        //if (Input.touchCount > 0)
+        //    pointer.GetComponent<follow>().lastpos = Input.GetTouch(0).position;
+        pointer.GetComponent<follow>().poleDots = pole.GetComponent<Pole>().poleDots;
+        pointer.GetComponent<follow>().path = this;
+        pointer.GetComponent<follow>().nearestDot = _start;
+        if (_start.GetComponent<PoleDot>().left != null)
+            pointer.GetComponent<follow>().currentLine = _start.GetComponent<PoleDot>().left;
+        else if (_start.GetComponent<PoleDot>().right != null)
+            pointer.GetComponent<follow>().currentLine = _start.GetComponent<PoleDot>().right;
+        else if (_start.GetComponent<PoleDot>().up != null)
+            pointer.GetComponent<follow>().currentLine = _start.GetComponent<PoleDot>().up;
+        else if (_start.GetComponent<PoleDot>().down != null)
+            pointer.GetComponent<follow>().currentLine = _start.GetComponent<PoleDot>().down;
+        pointer.GetComponent<follow>().pathDots = dots;
+        Vector3 pos = dots[dots.Count - 1].transform.position + 0.5f * (pointer.transform.position - dots[dots.Count - 1].transform.position);
+        currentLine = Instantiate(PathLinePrefab, pos, PathLinePrefab.transform.rotation);
+        dots[dots.Count - 1].transform.parent = this.transform;
+        currentLine.transform.parent = this.transform;
+        lines.Add(currentLine);
+        isStarted = true;
     }
 
     private void lineScaleDestroy()
@@ -136,7 +170,7 @@ public class ActivePath : MonoBehaviour
 
     //}
 
-    void Update()
+    public void Update()
     {
         if (!Core.PolePreferences.isFrozen)
         {
@@ -332,33 +366,7 @@ public class ActivePath : MonoBehaviour
                 }
 
             }
-            else if ((Input.GetMouseButton(0) || Input.touchCount > 0) && !isStarted)
-            {
-                dots.Add(Instantiate(PathStartPrefab, start.transform.position + stepz, PathStartPrefab.transform.rotation));
-                leadDot = Instantiate(PathDotPrefab, start.transform.position + stepz, PathDotPrefab.transform.rotation);
-                pointer = Instantiate(pointerPF, start.transform.position + stepz, pointerPF.transform.rotation);
-                pointer.transform.parent = this.transform;
-                if (Input.touchCount > 0)
-                    pointer.GetComponent<follow>().lastpos = Input.GetTouch(0).position;
-                pointer.GetComponent<follow>().poleDots = pole.GetComponent<Pole>().poleDots;
-                pointer.GetComponent<follow>().path = this;
-                pointer.GetComponent<follow>().nearestDot = start;
-                if (start.GetComponent<PoleDot>().left != null)
-                    pointer.GetComponent<follow>().currentLine = start.GetComponent<PoleDot>().left;
-                else if (start.GetComponent<PoleDot>().right != null)
-                    pointer.GetComponent<follow>().currentLine = start.GetComponent<PoleDot>().right;
-                else if (start.GetComponent<PoleDot>().up != null)
-                    pointer.GetComponent<follow>().currentLine = start.GetComponent<PoleDot>().up;
-                else if (start.GetComponent<PoleDot>().down != null)
-                    pointer.GetComponent<follow>().currentLine = start.GetComponent<PoleDot>().down;
-                pointer.GetComponent<follow>().pathDots = dots;
-                Vector3 pos = dots[dots.Count - 1].transform.position + 0.5f * (pointer.transform.position - dots[dots.Count - 1].transform.position);
-                currentLine = Instantiate(PathLinePrefab, pos, PathLinePrefab.transform.rotation);
-                dots[dots.Count - 1].transform.parent = this.transform;
-                currentLine.transform.parent = this.transform;
-                lines.Add(currentLine);
-                isStarted = true;
-            }
+            
         }
         //foreach(GameObject g in dotsOnPole)
         //{
