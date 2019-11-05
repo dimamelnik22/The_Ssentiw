@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 23722535576671198}
   - component: {fileID: 136703880600868298}
   - component: {fileID: 114170847949322714}
+  - component: {fileID: 5476998651420877679}
   m_Layer: 0
   m_Name: PoleStart
   m_TagString: PoleStart
@@ -105,6 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 153457becdc980b4eafafd502130fd65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DotPF: {fileID: 0}
   up: {fileID: 0}
   down: {fileID: 0}
   left: {fileID: 0}
@@ -115,3 +117,15 @@ MonoBehaviour:
   point: {fileID: 0}
   posX: 0
   posY: 0
+--- !u!114 &5476998651420877679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222575531240192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8d07b5c04592e4d9cbbee506b0d369, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

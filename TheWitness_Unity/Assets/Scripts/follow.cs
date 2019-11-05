@@ -14,7 +14,6 @@ public class follow : MonoBehaviour {
     public ActivePath path;
     public bool onDot = true;
     public bool moveHor = true;
-    public bool notActive = false;
     public Vector2 lastpos;
     Vector3 dista = new Vector3(10f,10f,10f);
     private float distanceToDot;
@@ -36,7 +35,7 @@ public class follow : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!Core.PolePreferences.isFrozen && !notActive)
+        if (!Core.PolePreferences.isFrozen)
         {
             float upLimit = transform.position.y;
             float downLimit = transform.position.y;
