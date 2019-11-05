@@ -1623,19 +1623,38 @@ public class Pole : MonoBehaviour
         //    }
         //}
         var list = new List<List<List<GameObject>>>(shapes);
-        for (int i = 0; i < shapes.Count;i++)
+        
+        for (int i = 0; i < shapes.Count; i++)
         {
-            int k = Core.PolePreferences.MyRandom.GetRandom() % shapes.Count;
-            if (zone[shapes.IndexOf(shapes[k])].Count <= zoneSize)
+            int k = Core.PolePreferences.MyRandom.GetRandom() % list.Count;
+            if (zone[shapes.IndexOf(list[k])].Count <= zoneSize)
             {
-                foreach (List<GameObject> shape in shapes[k])
+                
+                foreach (List<GameObject> shape in list[k])
                 {
-                    activeShapes[shapes.IndexOf(shapes[k])].Add(shape);
+                    activeShapes[shapes.IndexOf(list[k])].Add(shape);
                 }
-                zoneSize -= zone[shapes.IndexOf(shapes[k])].Count;
+                zoneSize -= zone[shapes.IndexOf(list[k])].Count;
             }
-            shapes.Remove(shapes[k]);
+            list.Remove(list[k]);
         }
+        //for (int i = 0; i < shapes.Count; i++)
+        //{
+        //    int k = i;
+        //    if (zone[shapes.IndexOf(shapes[k])].Count <= zoneSize)
+        //    {
+
+        //        foreach (List<GameObject> shape in shapes[k])
+        //        {
+        //            activeShapes[shapes.IndexOf(shapes[k])].Add(shape);
+        //        }
+        //        zoneSize -= zone[shapes.IndexOf(shapes[k])].Count;
+        //    }
+        //    Debug.Log(zoneSize);
+        //    Debug.Log(zone[shapes.IndexOf(shapes[k])].Count);
+        //    shapes.Remove(shapes[k]);
+        //}
+
         //if (difficulty == 0)
         //{
         //    foreach (List<List<GameObject>> shlist in shapes)
@@ -1694,9 +1713,9 @@ public class Pole : MonoBehaviour
             {
                 if (sqList.Count == 0)
                 {
-                    Debug.Log("ILYA ZAEBAL");
-                    SceneManager.LoadScene("PoleLevel");
-                    break;
+                    //Debug.Log("ILYA ZAEBAL");
+                    //SceneManager.LoadScene("PoleLevel");
+                    continue;
                 }
                 GameObject sq = sqList[Core.PolePreferences.MyRandom.GetRandom() % sqList.Count];
                 GameObject shapeElt = Instantiate(ShapePF, sq.transform);
@@ -1719,8 +1738,9 @@ public class Pole : MonoBehaviour
             set[i] = new List<GameObject>(zone[i]);
         }
         foreach (List<GameObject> z in set)
+        {
             shapes.Add(SplitZone(z));
-        
+        }
         
     }
 
@@ -1732,7 +1752,7 @@ public class Pole : MonoBehaviour
         while (zone.Count > 0)
         {
             currentShape = new List<GameObject>();
-            currentShape.Add(zone[0]);
+            currentShape.Add(zone[Core.PolePreferences.MyRandom.GetRandom() % zone.Count]);
             while (currentShape.Count < 4)
             {
                 foreach (GameObject currentSquere in currentShape)
@@ -1759,7 +1779,9 @@ public class Pole : MonoBehaviour
                 squeresToCheck.Clear();
             }
             foreach (GameObject squere in currentShape)
+            {
                 zone.Remove(squere);
+            }
             zoneShapes.Add(currentShape);
         }
         return zoneShapes;

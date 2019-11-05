@@ -36,7 +36,7 @@ public class MenuManager : MonoBehaviour {
         }
         public static void Log(string output)
         {
-            Debug.Log(output);
+            //Debug.Log(output);
             s += output+"\n";
         }
         public static void clear()
