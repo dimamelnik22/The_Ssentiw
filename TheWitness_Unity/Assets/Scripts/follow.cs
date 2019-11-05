@@ -14,7 +14,6 @@ public class follow : MonoBehaviour {
     public ActivePath path;
     public bool onDot = true;
     public bool moveHor = true;
-    public bool notActive = false;
     public Vector2 lastpos;
     Vector3 dista = new Vector3(10f,10f,10f);
     private float distanceToDot;
@@ -36,7 +35,7 @@ public class follow : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!Core.PolePreferences.isFrozen && !notActive)
+        if (!Core.PolePreferences.isFrozen)
         {
             float upLimit = transform.position.y;
             float downLimit = transform.position.y;
@@ -91,17 +90,23 @@ public class follow : MonoBehaviour {
             #if UNITY_EDITOR
             if (Input.GetMouseButton(0))
             {
+
+                GetComponent<ParticleSystem>().Play();
                 dir = 0.03f * MenuManager.MainSettings.speed * new Vector2(Input.mousePosition.x - lastpos.x, Input.mousePosition.y - lastpos.y);
                 lastpos = Input.mousePosition;
             }
             else
             {
+                GetComponent<ParticleSystem>().Stop();
                 lastpos = Input.mousePosition;
             }
             #endif
 
+            #if !UNITY_EDITOR
             if (Input.touchCount > 0)
             {
+
+                GetComponent<ParticleSystem>().Play();
                 var touch = Input.GetTouch(0);
                 switch (touch.phase)
                 {
@@ -112,10 +117,14 @@ public class follow : MonoBehaviour {
                         dir = 0.02f * MenuManager.MainSettings.speed * (touch.position - lastpos);
                         lastpos = touch.position;
                         break;
-                }
-
-                
+                }   
             }
+            else
+            {
+                GetComponent<ParticleSystem>().Stop();
+            }
+            #endif
+
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("PoleDot"))
             {
                 if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.y - transform.position.y) * Mathf.Abs(go.transform.position.y - transform.position.y)) <
@@ -193,5 +202,7 @@ public class follow : MonoBehaviour {
             
             transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.y)), 0f) + stepz;
         }
+        
     }
+
 }
