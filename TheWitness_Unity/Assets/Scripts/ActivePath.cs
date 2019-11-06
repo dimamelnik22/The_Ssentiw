@@ -131,7 +131,7 @@ public class ActivePath : MonoBehaviour
             {
                 GameObject dot = dotsOnPole[dotsOnPole.Count - 1];
                 dotsOnPole.Add(currentFinishOnPole);
-
+                
                 if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX)
                 {
                     linesOnPole.Add(dot.GetComponent<PoleDot>().right);
@@ -153,7 +153,11 @@ public class ActivePath : MonoBehaviour
                     currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
                 }
                 currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
-
+                pointer.transform.position = currentFinishOnPole.transform.position + stepz;
+                dots.Add(Instantiate(PathDotPrefab, currentFinishOnPole.transform.position + stepz, PathDotPrefab.transform.rotation));
+                currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
+                currentLine.transform.parent = this.transform;
+                lines.Add(currentLine);
             }
         }
     }
@@ -195,6 +199,7 @@ public class ActivePath : MonoBehaviour
                     if (Mathf.Abs(pointer.transform.position.x - currentFinishOnPole.transform.position.x) + Mathf.Abs(pointer.transform.position.y - currentFinishOnPole.transform.position.y) > eps)
                     {
                         isFinished = false;
+                        //if (lines.Count < dots.Count) dotsOnPole.Remove(currentFinishOnPole);
                         Destroy(currentFinish);
                     }
                 }

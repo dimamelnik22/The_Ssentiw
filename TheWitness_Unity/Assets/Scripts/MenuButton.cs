@@ -7,6 +7,6 @@ public class MenuButton : MonoBehaviour
    
     void OnMouseDown()
     {
-        
+        Debug.Log("pressed");
     }
 }

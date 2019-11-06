@@ -1016,6 +1016,7 @@ public class Pole : MonoBehaviour
                 }
             }
         }
+        foreach (GameObject start in starts) StartScaling(start);
     }
     // "S(size)sSTposyYposxXFHposyYposxXPT(num)p{posyYposxXdir}RG(num)r{indexIIindexJJcolor}SR(num)s{indexIIindexJJcolor}SP(num)s{indexIIindexJJheightHwidthWbitmap}
     public bool FindPath(GameObject begin, GameObject end, int[][] ways)
@@ -1896,11 +1897,11 @@ public class Pole : MonoBehaviour
         }
     }
 
-    public string PathToStr()
+    public string PathToStr(GameObject start)
     {
         string path = "S";
-        GameObject cur = starts[0]; /////////////////////////////////
-        while (cur != finishes[0])
+        GameObject cur = start;
+        while (!finishes.Contains(cur))
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length-1].ToString() != "D")
@@ -1929,11 +1930,11 @@ public class Pole : MonoBehaviour
         return path;
     }
 
-    public string SysPathToStr()
+    public string SysPathToStr(GameObject start)
     {
         string path = "S";
-        GameObject cur = starts[0];
-        while (cur != finishes[0])
+        GameObject cur = start;
+        while (!finishes.Contains(cur))
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "D")

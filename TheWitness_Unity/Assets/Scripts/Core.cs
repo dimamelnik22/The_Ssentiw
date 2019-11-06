@@ -182,25 +182,56 @@ public class Core : MonoBehaviour {
                         break;
                 }
                 myPole.GetComponent<Pole>().AddStart(x, y);
-                switch (PolePreferences.MyRandom.GetRandom() % 4)
+                
+                do
                 {
-                    case 0:
-                        x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                        y = 0;
-                        break;
-                    case 1:
-                        y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                        x = PolePreferences.poleSize - 1;
-                        break;
-                    case 2:
-                        x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                        y = PolePreferences.poleSize - 1;
-                        break;
-                    case 3:
-                        y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
-                        x = 0;
-                        break;
-                }
+                    switch (PolePreferences.MyRandom.GetRandom() % 4)
+                    {
+                        case 0:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = 0;
+                            break;
+                        case 1:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = PolePreferences.poleSize - 1;
+                            break;
+                        case 2:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = PolePreferences.poleSize - 1;
+                            break;
+                        case 3:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = 0;
+                            break;
+                    }
+                } while (myPole.GetComponent<Pole>().starts.Contains(myPole.GetComponent<Pole>().poleDots[y][x]) || myPole.GetComponent<Pole>().finishes.Contains(myPole.GetComponent<Pole>().poleDots[y][x]));
+                myPole.GetComponent<Pole>().AddFinish(x, y);
+                finishes = myPole.GetComponent<Pole>().finishes;
+                foreach (GameObject start in myPole.GetComponent<Pole>().starts)
+                    myPole.GetComponent<Pole>().StartScaling(start);
+                myPole.GetComponent<Pole>().CreateSolution();
+                do
+                {
+                    switch (PolePreferences.MyRandom.GetRandom() % 4)
+                    {
+                        case 0:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = 0;
+                            break;
+                        case 1:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = PolePreferences.poleSize - 1;
+                            break;
+                        case 2:
+                            x = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            y = PolePreferences.poleSize - 1;
+                            break;
+                        case 3:
+                            y = PolePreferences.MyRandom.GetRandom() % PolePreferences.poleSize;
+                            x = 0;
+                            break;
+                    }
+                } while (myPole.GetComponent<Pole>().starts.Contains(myPole.GetComponent<Pole>().poleDots[y][x]) || myPole.GetComponent<Pole>().finishes.Contains(myPole.GetComponent<Pole>().poleDots[y][x]));
                 myPole.GetComponent<Pole>().AddStart(x, y);
                 do
                 {
@@ -223,13 +254,8 @@ public class Core : MonoBehaviour {
                             x = 0;
                             break;
                     }
-                } while (myPole.GetComponent<Pole>().poleDots[y][x] == myPole.GetComponent<Pole>().starts[0]);
+                } while (myPole.GetComponent<Pole>().starts.Contains(myPole.GetComponent<Pole>().poleDots[y][x]) || myPole.GetComponent<Pole>().finishes.Contains(myPole.GetComponent<Pole>().poleDots[y][x]));
                 myPole.GetComponent<Pole>().AddFinish(x, y);
-                finishes = myPole.GetComponent<Pole>().finishes;
-                foreach (GameObject start in myPole.GetComponent<Pole>().starts)
-                    myPole.GetComponent<Pole>().StartScaling(start);
-                myPole.GetComponent<Pole>().CreateSolution();
-                
                 myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 //myPole.GetComponent<Pole>().GenerateShapes(100);
                 //myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
@@ -330,43 +356,38 @@ public class Core : MonoBehaviour {
                 line.GetComponent<PoleLine>().isUsedByPlayer = true;
                 myPole.GetComponent<Pole>().playerPath.lines.Add(line);
             }
-            if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finishes[0] && activePath.GetComponent<ActivePath>().isFinished)
+
+            if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
             {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
+                foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                 {
-                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                    {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
-                    }
-                }
-                else
-                {
-                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                    {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
-                    }
-                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
-                    {
-                        if (point.GetComponent<PoleEltPoint>() != null)
-                        {
-                            point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
-                        }
-                        if (point.GetComponent<EltClrRing>() != null)
-                        {
-                            point.GetComponent<EltClrRing>().ShowUnsolvedColor();
-                        }
-                        if (point.GetComponent<PoleEltShape>() != null)
-                        {
-                            point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
-                        }
-                    }
+                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
                 }
             }
-            else foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
+            else
+            {
+                foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-            MenuManager.DebugMessage.savePath(myPole.GetComponent<Pole>().PathToStr());
+                foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
+                {
+                    if (point.GetComponent<PoleEltPoint>() != null)
+                    {
+                        point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
+                    }
+                    if (point.GetComponent<EltClrRing>() != null)
+                    {
+                        point.GetComponent<EltClrRing>().ShowUnsolvedColor();
+                    }
+                    if (point.GetComponent<PoleEltShape>() != null)
+                    {
+                        point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
+                    }
+                }
+            }
+
+            MenuManager.DebugMessage.savePath(myPole.GetComponent<Pole>().PathToStr(activePath.GetComponent<ActivePath>().dotsOnPole[0]));
             foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
                 dot.GetComponent<PoleDot>().isUsedByPlayer = false;
             foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
@@ -374,7 +395,7 @@ public class Core : MonoBehaviour {
             activePath.GetComponent<ActivePath>().pointer.SetActive(false);
             //gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
             //playerIsActive = !playerIsActive;
-            
+
         }
         //if (Input.GetMouseButton(0) && PolePreferences.isFrozen && !pathIsShown)
         //{
