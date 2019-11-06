@@ -12,7 +12,7 @@ public class ActivePath : MonoBehaviour
     public List<GameObject> dotsOnPole = new List<GameObject>();
     public List<GameObject> linesOnPole = new List<GameObject>();
     public List<GameObject> finishes = new List<GameObject>();
-    public GameObject start;
+    public List<GameObject> starts;
     public GameObject pointer;
     public GameObject leadDot;
     public GameObject currentLine;
@@ -42,16 +42,16 @@ public class ActivePath : MonoBehaviour
         Destroy(leadDot);
     }
 
-    public void Init(GameObject _pole, GameObject _start, List<GameObject> _finishes)
+    public void Init(GameObject _pole, List<GameObject> _start, List<GameObject> _finishes)
     {
         pole = _pole;
         finishes = _finishes;
-        start = _start;
-        dotsOnPole.Add(start);
+        starts = _start;
+        //dotsOnPole.Add(starts);
 
     }
 
-    public void Restart(GameObject start, List<GameObject> _finishes)
+    public void Restart(List<GameObject> start, List<GameObject> _finishes)
     {
         
         pole.GetComponent<Pole>().NormalizeColors();
@@ -71,8 +71,8 @@ public class ActivePath : MonoBehaviour
     public void NewStart(GameObject _start)
     {
         
-        Restart(start, finishes);
-        
+        Restart(starts, finishes);
+        dotsOnPole.Add(_start);
         dots.Add(Instantiate(PathStartPrefab, _start.transform.position + stepz, PathStartPrefab.transform.rotation));
         leadDot = Instantiate(PathDotPrefab, _start.transform.position + stepz, PathDotPrefab.transform.rotation);
         pointer = Instantiate(pointerPF, _start.transform.position + stepz, pointerPF.transform.rotation);
