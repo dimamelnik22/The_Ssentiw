@@ -58,7 +58,7 @@ public class Core : MonoBehaviour {
             public static void SetSeed(int s = 0)
             {
                 seed = s;
-                r = new System.Random(seed);
+                r = s== 0 ? new System.Random():new System.Random(seed);
             }
             public static int GetRandom()
             {
@@ -70,6 +70,41 @@ public class Core : MonoBehaviour {
         }
         public static string info = "";
         public static string mode = "normal";
+    }
+    public void ButtonSavePazzl()
+    {
+        String str = "";
+        foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
+        {
+            var now = sq.GetComponent<PoleSquare>();
+            string cod = "";
+            if (now.hasElem)
+            {
+                if (now.element.GetComponentInParent<Elements>().Type == 'R')
+                {
+                    //now = now.element.GetComponent<EltClrRing>();
+
+                }
+                byte[] bytes;
+                //bytes = BitConverter.GetBytes(n.x);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.y);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.c.r);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.c.g);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.c.b);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.Type);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.rotate);
+                //cod += BitConverter.ToString(bytes);
+                Debug.Log(cod);
+                //if(now.element.) ;//!!! сделать все элементы наследованными от род класса
+
+            }
+        }
     }
     public void ButtonReport()
     {
@@ -207,8 +242,8 @@ public class Core : MonoBehaviour {
                 myPole.GetComponent<Pole>().SetFinish(x, y);
                 myPole.GetComponent<Pole>().CreateSolution();
                 myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
-                //myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-                //myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
                 //gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
                 gentime = Time.realtimeSinceStartup;
                 break;

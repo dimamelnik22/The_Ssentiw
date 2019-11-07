@@ -2,37 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EltClrRing : MonoBehaviour {
-    public Color c;
-    public float countdown = 0f;
+public class EltClrRing : Elements {
     public bool colorlerping = false;
-    public bool tored = true;
     public void ShowUnsolvedColor()
     {
         colorlerping = true;
-        countdown = 0.5f;
+        StartCoroutine(Do());
     }
     public void ShowNormalizedColor()
     {
         colorlerping = false;
         GetComponent<Renderer>().material.color = c;
     }
-
-    // Use this for initialization
-    void Start () {
-
+    
+    void Start ()
+    {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        if (colorlerping)
+	void Update ()
+    {
+
+    }
+    IEnumerator Do()
+    {
+        float countdown = 0.5f;
+        bool tored = true;
+        while (colorlerping)
         {
             if (countdown > 0f)
             {
                 if (tored)
-                    GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c,2* countdown);
+                    GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c, 2 * countdown);
                 else
-                    GetComponent<Renderer>().material.color = Color.Lerp(c, Color.red,2* countdown);
+                    GetComponent<Renderer>().material.color = Color.Lerp(c, Color.red, 2 * countdown);
             }
             else
             {
@@ -40,8 +43,7 @@ public class EltClrRing : MonoBehaviour {
                 tored = !tored;
             }
             countdown -= Time.deltaTime;
+            yield return null;
         }
-        
-
     }
 }

@@ -836,14 +836,8 @@ public class Pole : MonoBehaviour
 
                     switch (info[++iter].ToString())
                     {
-                        case "U":
-                            poleDots[y][x].GetComponent<PoleDot>().up.GetComponent<PoleLine>().hasPoint = true;
-                            break;
                         case "D":
                             poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().hasPoint = true;
-                            break;
-                        case "L":
-                            poleDots[y][x].GetComponent<PoleDot>().left.GetComponent<PoleLine>().hasPoint = true;
                             break;
                         case "R":
                             poleDots[y][x].GetComponent<PoleDot>().right.GetComponent<PoleLine>().hasPoint = true;
@@ -897,6 +891,7 @@ public class Pole : MonoBehaviour
                             sq.GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, sq.transform);
                             sq.GetComponent<PoleSquare>().element.GetComponent<Renderer>().material.color = this.color[color];
                             sq.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = this.color[color];
+                            
                         }
                     }
                 }
@@ -1694,7 +1689,6 @@ public class Pole : MonoBehaviour
             {
                 if (sqList.Count == 0)
                 {
-                    Debug.Log("ILYA ZAEBAL");
                     SceneManager.LoadScene("PoleLevel");
                     break;
                 }

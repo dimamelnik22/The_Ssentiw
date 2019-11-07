@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoleEltShape : MonoBehaviour
+public class PoleEltShape : Elements
 {
     public GameObject BlockPF;
     public List<List<bool>> boolList = new List<List<bool>>();
