@@ -8,10 +8,6 @@ public class PoleEltShape : Elements
     public List<List<bool>> boolList = new List<List<bool>>();
     public int size = 0;
     public List<GameObject> blocks = new List<GameObject>();
-    Color c;
-    public float countdown = 0f;
-    public bool colorlerping = false;
-    public bool tored = true;
 
 
 
@@ -35,7 +31,7 @@ public class PoleEltShape : Elements
     public void ShowUnsolvedColor()
     {
         colorlerping = true;
-        countdown = 0.5f;
+        StartCoroutine(Do());
     }
     public void ShowNormalizedColor()
     {
@@ -52,15 +48,20 @@ public class PoleEltShape : Elements
     // Update is called once per frame
     void Update()
     {
-        if (colorlerping)
+        
+    }
+    public IEnumerator Do()
+    {
+        bool tored = true;
+        while (colorlerping)
         {
             if (countdown > 0f)
             {
-                foreach(GameObject block in blocks)
-                if (tored)
-                    block.GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c, 2 * countdown);
-                else
-                    block.GetComponent<Renderer>().material.color = Color.Lerp(c, Color.red, 2 * countdown);
+                foreach (GameObject block in blocks)
+                    if (tored)
+                        block.GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c, 2 * countdown);
+                    else
+                        block.GetComponent<Renderer>().material.color = Color.Lerp(c, Color.red, 2 * countdown);
             }
             else
             {
@@ -68,6 +69,7 @@ public class PoleEltShape : Elements
                 tored = !tored;
             }
             countdown -= Time.deltaTime;
+            yield return null;
         }
     }
 }

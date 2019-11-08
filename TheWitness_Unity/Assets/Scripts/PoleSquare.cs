@@ -9,7 +9,7 @@ public class PoleSquare : MonoBehaviour {
 	public GameObject left;
 	public GameObject right;
 	public bool hasElem = false;
-	public GameObject element;
+	public Elements element;
 
     public int indexI;
     public int indexJ;
