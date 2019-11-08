@@ -404,7 +404,7 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-                foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
+                foreach (var point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                 {
                     if (point.GetComponent<PoleEltPoint>() != null)
                     {

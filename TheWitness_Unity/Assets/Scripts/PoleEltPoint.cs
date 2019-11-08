@@ -24,8 +24,6 @@ public class PoleEltPoint : Elements {
     {
         c = new Color(45/255,104/255,1);
         GetComponent<Renderer>().material.color = c;
-        Debug.Log(GetComponent<Renderer>().material.color);
-        Debug.Log(c);
     }
 
     void Update () {
