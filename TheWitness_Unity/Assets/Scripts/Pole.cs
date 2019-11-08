@@ -428,10 +428,9 @@ public class Pole : MonoBehaviour
     }
     
     public PoleElts eltsManager;
-    public GameObject start;
-    public GameObject tempStart;
-    public GameObject finish;
-    public List<GameObject> tempFins = new List<GameObject>();
+    public List<GameObject> startDots = new List<GameObject>();
+    public List<GameObject> starts = new List<GameObject>();
+    public List<GameObject> finishDots = new List<GameObject>();
     public List<GameObject> finishes = new List<GameObject>();
     private int poleSize;
     PathDotStack dotData;
@@ -499,8 +498,8 @@ public class Pole : MonoBehaviour
         for (int x = 1; x < size; x++)
         {
             finishes.Add(poleDots[0][x]);
-            tempFins.Add(Instantiate(FinishPrefab, poleDots[0][x].transform.position, FinishPrefab.transform.rotation));
-            tempFins[tempFins.Count - 1].transform.parent = this.transform;
+            finishDots.Add(Instantiate(FinishPrefab, poleDots[0][x].transform.position, FinishPrefab.transform.rotation));
+            finishDots[finishDots.Count - 1].transform.parent = this.transform;
         }
         poleDots[1][0] = Instantiate(DotPrefab, transform.position, DotPrefab.transform.rotation);
         poleDots[1][0].transform.parent = this.transform;
@@ -513,10 +512,10 @@ public class Pole : MonoBehaviour
         poleDots[1][1].GetComponent<PoleDot>().AddLine(opline, poleDots[1][0]);
         opline.GetComponent<PoleLine>().left = poleDots[1][0];
         opline.GetComponent<PoleLine>().right = poleDots[1][1];
-        start = poleDots[1][0];
-        tempStart = Instantiate(StartPrefab, poleDots[1][0].transform.position, StartPrefab.transform.rotation);
-        tempStart.GetComponent<StartDot>().LinkDot(start);
-        tempStart.transform.parent = this.transform;
+        starts[0] = poleDots[1][0];
+        startDots[0] = Instantiate(StartPrefab, poleDots[1][0].transform.position, StartPrefab.transform.rotation);
+        startDots[0].GetComponent<StartDot>().LinkDot(starts[0]);
+        startDots[0].transform.parent = this.transform;
     }
 
     public void InitMenuItem(int numOfParams)
@@ -556,8 +555,8 @@ public class Pole : MonoBehaviour
         for (int y = 0; y < numOfParams; y++)
         {
             finishes.Add(poleDots[y][2]);
-            tempFins.Add( Instantiate(FinishPrefab, poleDots[y][2].transform.position, FinishPrefab.transform.rotation));
-            tempFins[tempFins.Count - 1].transform.parent = this.transform;
+            finishDots.Add( Instantiate(FinishPrefab, poleDots[y][2].transform.position, FinishPrefab.transform.rotation));
+            finishDots[finishDots.Count - 1].transform.parent = this.transform;
         }
         poleDots[0][0] = Instantiate(DotPrefab, transform.position, DotPrefab.transform.rotation);
         poleDots[0][0].transform.parent = this.transform;
@@ -570,11 +569,9 @@ public class Pole : MonoBehaviour
         poleDots[0][1].GetComponent<PoleDot>().AddLine(opline, poleDots[0][0]);
         opline.GetComponent<PoleLine>().left = poleDots[0][0];
         opline.GetComponent<PoleLine>().right = poleDots[0][1];
-        start = poleDots[0][0];
-        tempStart = Instantiate(StartPrefab, poleDots[0][0].transform.position, StartPrefab.transform.rotation);
-        tempStart.GetComponent<StartDot>().LinkDot(start);
-        tempStart.transform.parent = this.transform;
-        StartScaling(start);
+        AddStart(0,0);
+        
+        StartScaling(starts[0]);
     }
 
     public void NormalizeColors()
@@ -775,7 +772,7 @@ public class Pole : MonoBehaviour
                     iter++;
                 }
                 int x = int.Parse(s);
-                SetStart(x, y);
+                AddStart(x, y);
             }
         }
         if (info[++iter].ToString() == "F")
@@ -798,7 +795,7 @@ public class Pole : MonoBehaviour
                     iter++;
                 }
                 int x = int.Parse(s);
-                SetFinish(x, y);
+                AddFinish(x, y);
             }
         }
         if (info[++iter].ToString() == "P")
@@ -1012,6 +1009,7 @@ public class Pole : MonoBehaviour
                 }
             }
         }
+        foreach (GameObject start in starts) StartScaling(start);
     }
     // "S(size)sSTposyYposxXFHposyYposxXPT(num)p{posyYposxXdir}RG(num)r{indexIIindexJJcolor}SR(num)s{indexIIindexJJcolor}SP(num)s{indexIIindexJJheightHwidthWbitmap}
     public bool FindPath(GameObject begin, GameObject end, int[][] ways)
@@ -1204,9 +1202,10 @@ public class Pole : MonoBehaviour
              begin.GetComponent<PoleDot>().posY == 0 ||
              begin.GetComponent<PoleDot>().posY == poleSize - 1))
         {
-            finish.GetComponent<PoleDot>().isUsedBySolution = false;
+            finishes[0].GetComponent<PoleDot>().isUsedBySolution = false;
+            finishes.Clear();
             Destroy(GameObject.FindGameObjectWithTag("PoleFinish"));
-            SetFinish(begin.GetComponent<PoleDot>().posX, begin.GetComponent<PoleDot>().posY);
+            AddFinish(begin.GetComponent<PoleDot>().posX, begin.GetComponent<PoleDot>().posY);
             return true;
         }
         //ways[begin.GetComponent<PoleDot>().posY][begin.GetComponent<PoleDot>().posX] = 0;
@@ -1306,20 +1305,18 @@ public class Pole : MonoBehaviour
     }
     
 
-    public void SetStart(int x, int y)
+    public void AddStart(int x, int y)
     {
-        tempStart = Instantiate(StartPrefab, stepx * x + stepy * y, StartPrefab.transform.rotation);
-        
-        start = poleDots[y][x];
-        start.GetComponent<PoleDot>().CreateDot();
-        tempStart.GetComponent<StartDot>().LinkDot(start);
-        tempStart.transform.parent = this.transform;
-        StartScaling(start);
+        startDots.Add(Instantiate(StartPrefab, stepx * x + stepy * y, StartPrefab.transform.rotation));
+
+        starts.Add(poleDots[y][x]);
+        startDots[startDots.Count - 1].GetComponent<StartDot>().LinkDot(starts[starts.Count - 1]);
+        startDots[startDots.Count - 1].transform.parent = this.transform;
     }
-    public void SetFinish(int x, int y)
+    public void AddFinish(int x, int y)
     {
-        Instantiate(FinishPrefab, stepx * x + stepy * y, FinishPrefab.transform.rotation);
-        finish = poleDots[y][x];
+        finishDots.Add(Instantiate(FinishPrefab, stepx * x + stepy * y, FinishPrefab.transform.rotation));
+        finishes.Add(poleDots[y][x]);
     }
     public void GeneratePoints(int numberOfPoints)
     {
@@ -1332,9 +1329,10 @@ public class Pole : MonoBehaviour
             pathList.Add(systemPath.lines[i]);
             pathList.Add(systemPath.dots[i + 1]);
         }
-        pathList.Remove(start);
-        
-        pathList.Remove(finish);
+        foreach(GameObject start in starts)
+            pathList.Remove(start);
+        foreach (GameObject finish in finishes)
+            pathList.Remove(finish);
         for (int i = 0; i < numberOfPoints; i++)
         {
             if (pathList.Count == 0) break;
@@ -1572,10 +1570,10 @@ public class Pole : MonoBehaviour
                 ways[i][j] = 0;
             }
         }
-        ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
+        ways[starts[0].GetComponent<PoleDot>().posY][starts[0].GetComponent<PoleDot>().posX] = 1;
         dotData = new PathDotStack();
         //bool isFound = FindPath(start, finish, ways);
-        bool isFound = FindPathQuick(start, finish, ways);
+        bool isFound = FindPathQuick(starts[0], finishes[0], ways);
         while (!isFound)
         {
             for (int i = 0; i < poleSize; i++)
@@ -1585,9 +1583,9 @@ public class Pole : MonoBehaviour
                     ways[i][j] = 0;
                 }
             }
-            ways[start.GetComponent<PoleDot>().posY][start.GetComponent<PoleDot>().posX] = 1;
+            ways[starts[0].GetComponent<PoleDot>().posY][starts[0].GetComponent<PoleDot>().posX] = 1;
             dotData = new PathDotStack();
-            isFound = FindPathQuick(start, finish, ways);
+            isFound = FindPathQuick(starts[0], finishes[0], ways);
         }
         if (isFound)
         {
@@ -1616,19 +1614,38 @@ public class Pole : MonoBehaviour
         //    }
         //}
         var list = new List<List<List<GameObject>>>(shapes);
-        for (int i = 0; i < shapes.Count;i++)
+        
+        for (int i = 0; i < shapes.Count; i++)
         {
-            int k = Core.PolePreferences.MyRandom.GetRandom() % shapes.Count;
-            if (zone[shapes.IndexOf(shapes[k])].Count <= zoneSize)
+            int k = Core.PolePreferences.MyRandom.GetRandom() % list.Count;
+            if (zone[shapes.IndexOf(list[k])].Count <= zoneSize)
             {
-                foreach (List<GameObject> shape in shapes[k])
+                
+                foreach (List<GameObject> shape in list[k])
                 {
-                    activeShapes[shapes.IndexOf(shapes[k])].Add(shape);
+                    activeShapes[shapes.IndexOf(list[k])].Add(shape);
                 }
-                zoneSize -= zone[shapes.IndexOf(shapes[k])].Count;
+                zoneSize -= zone[shapes.IndexOf(list[k])].Count;
             }
-            shapes.Remove(shapes[k]);
+            list.Remove(list[k]);
         }
+        //for (int i = 0; i < shapes.Count; i++)
+        //{
+        //    int k = i;
+        //    if (zone[shapes.IndexOf(shapes[k])].Count <= zoneSize)
+        //    {
+
+        //        foreach (List<GameObject> shape in shapes[k])
+        //        {
+        //            activeShapes[shapes.IndexOf(shapes[k])].Add(shape);
+        //        }
+        //        zoneSize -= zone[shapes.IndexOf(shapes[k])].Count;
+        //    }
+        //    Debug.Log(zoneSize);
+        //    Debug.Log(zone[shapes.IndexOf(shapes[k])].Count);
+        //    shapes.Remove(shapes[k]);
+        //}
+
         //if (difficulty == 0)
         //{
         //    foreach (List<List<GameObject>> shlist in shapes)
@@ -1687,8 +1704,9 @@ public class Pole : MonoBehaviour
             {
                 if (sqList.Count == 0)
                 {
-                    SceneManager.LoadScene("PoleLevel");
-                    break;
+                    //Debug.Log("ILYA ZAEBAL");
+                    //SceneManager.LoadScene("PoleLevel");
+                    continue;
                 }
                 GameObject sq = sqList[Core.PolePreferences.MyRandom.GetRandom() % sqList.Count];
                 Elements shapeElt = Instantiate(ShapePF, sq.transform).GetComponent<Elements>();
@@ -1711,8 +1729,9 @@ public class Pole : MonoBehaviour
             set[i] = new List<GameObject>(zone[i]);
         }
         foreach (List<GameObject> z in set)
+        {
             shapes.Add(SplitZone(z));
-        
+        }
         
     }
 
@@ -1724,7 +1743,7 @@ public class Pole : MonoBehaviour
         while (zone.Count > 0)
         {
             currentShape = new List<GameObject>();
-            currentShape.Add(zone[0]);
+            currentShape.Add(zone[Core.PolePreferences.MyRandom.GetRandom() % zone.Count]);
             while (currentShape.Count < 4)
             {
                 foreach (GameObject currentSquere in currentShape)
@@ -1751,7 +1770,9 @@ public class Pole : MonoBehaviour
                 squeresToCheck.Clear();
             }
             foreach (GameObject squere in currentShape)
+            {
                 zone.Remove(squere);
+            }
             zoneShapes.Add(currentShape);
         }
         return zoneShapes;
@@ -1869,11 +1890,11 @@ public class Pole : MonoBehaviour
         }
     }
 
-    public string PathToStr()
+    public string PathToStr(GameObject start)
     {
         string path = "S";
         GameObject cur = start;
-        while (cur != finish)
+        while (!finishes.Contains(cur))
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length-1].ToString() != "D")
@@ -1902,11 +1923,11 @@ public class Pole : MonoBehaviour
         return path;
     }
 
-    public string SysPathToStr()
+    public string SysPathToStr(GameObject start)
     {
         string path = "S";
         GameObject cur = start;
-        while (cur != finish)
+        while (!finishes.Contains(cur))
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "D")
