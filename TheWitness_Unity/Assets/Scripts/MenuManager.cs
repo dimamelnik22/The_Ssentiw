@@ -16,7 +16,6 @@ public class MenuManager : MonoBehaviour {
     public List<GameObject> prevPaths = new List<GameObject>();
     
     private Vector3 lastPos;
-    private bool resumed = true;
     public static class DebugMessage
     {
         private static int seed = new int();
@@ -36,7 +35,7 @@ public class MenuManager : MonoBehaviour {
         }
         public static void Log(string output)
         {
-            Debug.Log(output);
+            //Debug.Log(output);
             s += output+"\n";
         }
         public static void clear()
@@ -186,13 +185,16 @@ public class MenuManager : MonoBehaviour {
     {
         Core.PolePreferences.mode = "normal";
         //Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
-        Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
+        //Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
+        Core.PolePreferences.MyRandom.SetSeed();
         Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
+        //Core.PolePreferences.poleSize = 8;
         Core.PolePreferences.complexity = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (4 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
         Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Log();
         Core.PolePreferences.numOfShapes = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (1 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
+        //Core.PolePreferences.numOfShapes = 50;
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
     }
@@ -203,22 +205,24 @@ public class MenuManager : MonoBehaviour {
     public void CreateNewPole(int size)
     {
         prevPaths.Add(activePath);
-        activePath.GetComponent<ActivePath>().pointer.GetComponent<follow>().notActive = true;
+        activePath.GetComponent<ActivePath>().pointer.SetActive(false);
         prevPoles.Add(menuPole);
         menuPole = Instantiate(PolePF, activePath.GetComponent<ActivePath>().currentFinish.transform.position + new Vector3(0f, 0f, 0.5f), transform.rotation);
         menuPole.GetComponent<Pole>().InitMenuItem(size);
         activePath = Instantiate(ActivePathPF, activePath.GetComponent<ActivePath>().currentFinish.transform.position + new Vector3(0f, 0f, 0.5f), transform.rotation);
-        activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().start, menuPole.GetComponent<Pole>().finishes);
+        activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().starts, menuPole.GetComponent<Pole>().finishes);
+        activePath.GetComponent<ActivePath>().NewStart(menuPole.GetComponent<Pole>().starts[0]);
     }
     public void CreateNewSlider(int size)
     {
         prevPaths.Add(activePath);
-        activePath.GetComponent<ActivePath>().pointer.GetComponent<follow>().notActive = true;
+        activePath.GetComponent<ActivePath>().pointer.SetActive(false);
         prevPoles.Add(menuPole);
         menuPole = Instantiate(PolePF, activePath.GetComponent<ActivePath>().currentFinish.transform.position + new Vector3(0f, 0f, 0.5f), transform.rotation);
         menuPole.GetComponent<Pole>().InitMenuSlider(size);
         activePath = Instantiate(ActivePathPF, activePath.GetComponent<ActivePath>().currentFinish.transform.position + new Vector3(0f, 0f, 0.5f), transform.rotation);
-        activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().start, menuPole.GetComponent<Pole>().finishes);
+        activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().starts, menuPole.GetComponent<Pole>().finishes);
+        activePath.GetComponent<ActivePath>().NewStart(menuPole.GetComponent<Pole>().starts[0]);
     }
 
     public void deb() { Debug.Log("debug"); }
@@ -244,7 +248,90 @@ public class MenuManager : MonoBehaviour {
 
     }
 
+    public void PressButton(int indexOfMenuItem)
+    {
+        if (indexOfMenuItem == -1)
+        {
+            if (prevPaths.Count > 0)
+            {
 
+                Destroy(menuPole);
+                Destroy(activePath);
+
+                activePath = prevPaths[prevPaths.Count - 1];
+
+                menuPole = prevPoles[prevPoles.Count - 1];
+                prevPaths.RemoveAt(prevPaths.Count - 1);
+                prevPoles.RemoveAt(prevPoles.Count - 1);
+                activePath.GetComponent<ActivePath>().pointer.SetActive(true);
+                menuMap.back();
+                foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
+                {
+                    Destroy(finish);
+                }
+                foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
+                {
+                    int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
+                    var item = Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation);
+                    item.GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    item.GetComponentInChildren<MenuButton>().index = index;
+                }
+                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+
+                activePath.GetComponent<ActivePath>().NewStart(menuPole.GetComponent<Pole>().starts[0]);
+
+
+            }
+        }
+        else if (indexOfMenuItem < menuPole.GetComponent<Pole>().finishes.Count)
+        {
+            if (menuMap.go2(indexOfMenuItem))
+            {
+                menuMap.back();
+                activePath.GetComponent<ActivePath>().NewStart(menuPole.GetComponent<Pole>().starts[0]);
+                activePath.GetComponent<ActivePath>().SystemStep(menuPole.GetComponent<Pole>().poleDots[0][1]);
+                
+                for (int i = 0; i < indexOfMenuItem; ++i)
+                {
+                    Debug.Log(indexOfMenuItem);
+                    activePath.GetComponent<ActivePath>().SystemStep(menuPole.GetComponent<Pole>().poleDots[i + 1][1]);
+                }
+                activePath.GetComponent<ActivePath>().SystemStep(menuPole.GetComponent<Pole>().poleDots[indexOfMenuItem][2]);
+                
+            }
+            else if (prevPaths.Count > 0)
+            {
+                foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
+                {
+                    Destroy(finish);
+                }
+                Destroy(menuPole);
+                Destroy(activePath);
+
+                activePath = prevPaths[prevPaths.Count - 1];
+
+                menuPole = prevPoles[prevPoles.Count - 1];
+                prevPaths.RemoveAt(prevPaths.Count - 1);
+                prevPoles.RemoveAt(prevPoles.Count - 1);
+                activePath.GetComponent<ActivePath>().pointer.SetActive(true);
+                menuMap.back();
+                foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
+                {
+                    Destroy(finish);
+                }
+                foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
+                {
+                    int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
+                    var item = Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation);
+                    item.GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    item.GetComponentInChildren<MenuButton>().index = index;
+                }
+                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+                activePath.GetComponent<ActivePath>().NewStart(menuPole.GetComponent<Pole>().starts[0]);
+            }
+        }
+        else Debug.Log("smth is wrong");
+    }
     // Use this for initialization
     void Start () {
         ParseLevels();
@@ -444,35 +531,34 @@ public class MenuManager : MonoBehaviour {
 
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
-        Core.PolePreferences.isFrozen = false;
         lastPos = Input.mousePosition;
         menuPole = Instantiate(PolePF, transform);
         menuPole.GetComponent<Pole>().InitMenuItem(menuMap.pointer.size);
         foreach(GameObject finish in menuPole.GetComponent<Pole>().finishes)
         {
             int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-            Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
-            
+            var item = Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation);
+            item.GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+            item.GetComponentInChildren<MenuButton>().index = index;
         }
-        Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+        Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+        Debug.Log(11);
         activePath = Instantiate(ActivePathPF, transform);
-        activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().start, menuPole.GetComponent<Pole>().finishes);
+        activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().starts, menuPole.GetComponent<Pole>().finishes);
     }
 	
 	// Update is called once per frame
 	void Update () {
 
         
-
-
-
         Vector3 dist = Input.mousePosition - lastPos;
         lastPos = Input.mousePosition;
-        if (activePath.GetComponent<ActivePath>().isFinished && resumed)
+        if (activePath.GetComponent<ActivePath>().isFinished && (Input.GetMouseButton(0) == false) && (Input.touchCount == 0))
         {
 
             if (menuMap.go2(activePath.GetComponent<ActivePath>().finishes.IndexOf(activePath.GetComponent<ActivePath>().currentFinishOnPole)))
             {
+                Debug.Log("qwjdoiwasd");
 
                 foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
                 {
@@ -482,11 +568,13 @@ public class MenuManager : MonoBehaviour {
                 foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
                 {
                     int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    var item = Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation);
+                    item.GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    item.GetComponentInChildren<MenuButton>().index = index;
 
                 }
-                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
-            
+                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+
             }
             else  if (prevPaths.Count>0)
             {
@@ -502,7 +590,7 @@ public class MenuManager : MonoBehaviour {
                 menuPole = prevPoles[prevPoles.Count - 1];
                 prevPaths.RemoveAt(prevPaths.Count - 1);
                 prevPoles.RemoveAt(prevPoles.Count - 1);
-                activePath.GetComponent<ActivePath>().pointer.GetComponent<follow>().notActive = false;
+                activePath.GetComponent<ActivePath>().pointer.SetActive(true);
                 menuMap.back();
                 foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
                 {
@@ -511,18 +599,21 @@ public class MenuManager : MonoBehaviour {
                 foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
                 {
                     int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
-
+                    var item = Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation);
+                    item.GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    item.GetComponentInChildren<MenuButton>().index = index;
                 }
-                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
-                resumed = false;
+                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+                activePath.GetComponent<ActivePath>().pointer.transform.Translate(-4f, 0f, 0f);
+                activePath.GetComponent<ActivePath>().Update();
             }
         }
-        else if (prevPaths.Count > 0 && resumed)
+        else if (prevPaths.Count > 0 )
         {
             
-            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().start.transform.position.x && dist.x < 0)
+            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().starts[0].transform.position.x && dist.x < 0 && ((Input.GetMouseButton(0) == true) || (Input.touchCount > 0)))
             {
+                Debug.Log(222);
                 Destroy(menuPole);
                 Destroy(activePath);
                 
@@ -531,7 +622,7 @@ public class MenuManager : MonoBehaviour {
                 menuPole = prevPoles[prevPoles.Count - 1];
                 prevPaths.RemoveAt(prevPaths.Count - 1);
                 prevPoles.RemoveAt(prevPoles.Count - 1);
-                activePath.GetComponent<ActivePath>().pointer.GetComponent<follow>().notActive = false;
+                activePath.GetComponent<ActivePath>().pointer.SetActive(true);
                 menuMap.back();
                 foreach (GameObject finish in GameObject.FindGameObjectsWithTag("MenuItem"))
                 {
@@ -540,14 +631,17 @@ public class MenuManager : MonoBehaviour {
                 foreach (GameObject finish in menuPole.GetComponent<Pole>().finishes)
                 {
                     int index = menuPole.GetComponent<Pole>().finishes.IndexOf(finish);
-                    Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
-
+                    var item = Instantiate(MenuItemPF, finish.transform.position + new Vector3(10f, 0f, 0f), MenuItemPF.transform.rotation);
+                    item.GetComponent<MenuItem>().SetName(menuMap.pointer.Name[index]);
+                    item.GetComponentInChildren<MenuButton>().index = index;
                 }
-                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().start.transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
-        
-                resumed = false;
+                Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+       
+                activePath.GetComponent<ActivePath>().pointer.transform.Translate(-4f, 0f, 0f);
+                activePath.GetComponent<ActivePath>().Update();
+
             }
         }
-        if (!activePath.GetComponent<ActivePath>().isFinished) resumed = true;
+        
     }
 }

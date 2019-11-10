@@ -14,7 +14,7 @@ public class PoleLine : MonoBehaviour {
     public bool isUsedBySolution = false;
     public bool isUsedByPlayer = false;
     public bool hasPoint = false;
-    public GameObject point;
+    public Elements point;
     private int dir = 1;
     private bool isScaling = false;
     public bool scalingIsFinished = false;
