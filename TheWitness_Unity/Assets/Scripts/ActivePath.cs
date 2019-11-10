@@ -12,7 +12,7 @@ public class ActivePath : MonoBehaviour
     public List<GameObject> dotsOnPole = new List<GameObject>();
     public List<GameObject> linesOnPole = new List<GameObject>();
     public List<GameObject> finishes = new List<GameObject>();
-    public GameObject start;
+    public List<GameObject> starts;
     public GameObject pointer;
     public GameObject leadDot;
     public GameObject currentLine;
@@ -42,16 +42,16 @@ public class ActivePath : MonoBehaviour
         Destroy(leadDot);
     }
 
-    public void Init(GameObject _pole, GameObject _start, List<GameObject> _finishes)
+    public void Init(GameObject _pole, List<GameObject> _start, List<GameObject> _finishes)
     {
         pole = _pole;
         finishes = _finishes;
-        start = _start;
-        dotsOnPole.Add(start);
+        starts = _start;
+        //dotsOnPole.Add(starts);
 
     }
 
-    public void Restart(GameObject start, List<GameObject> _finishes)
+    public void Restart(List<GameObject> start, List<GameObject> _finishes)
     {
         
         pole.GetComponent<Pole>().NormalizeColors();
@@ -71,8 +71,8 @@ public class ActivePath : MonoBehaviour
     public void NewStart(GameObject _start)
     {
         
-        Restart(start, finishes);
-        
+        Restart(starts, finishes);
+        dotsOnPole.Add(_start);
         dots.Add(Instantiate(PathStartPrefab, _start.transform.position + stepz, PathStartPrefab.transform.rotation));
         leadDot = Instantiate(PathDotPrefab, _start.transform.position + stepz, PathDotPrefab.transform.rotation);
         pointer = Instantiate(pointerPF, _start.transform.position + stepz, pointerPF.transform.rotation);
@@ -131,7 +131,7 @@ public class ActivePath : MonoBehaviour
             {
                 GameObject dot = dotsOnPole[dotsOnPole.Count - 1];
                 dotsOnPole.Add(currentFinishOnPole);
-
+                
                 if (dot.GetComponent<PoleDot>().posX < currentFinishOnPole.GetComponent<PoleDot>().posX)
                 {
                     linesOnPole.Add(dot.GetComponent<PoleDot>().right);
@@ -153,23 +153,51 @@ public class ActivePath : MonoBehaviour
                     currentLine.transform.localScale = new Vector3(1f, 5f, 0.1f);
                 }
                 currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
-
+                pointer.transform.position = currentFinishOnPole.transform.position + stepz;
+                dots.Add(Instantiate(PathDotPrefab, currentFinishOnPole.transform.position + stepz, PathDotPrefab.transform.rotation));
+                currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
+                currentLine.transform.parent = this.transform;
+                lines.Add(currentLine);
             }
         }
     }
 
-    //private bool CheckBorder()
-    //{
-    //    GameObject lastDot = dotsOnPole[dotsOnPole.Count - 1];
-    //    if (transform.position.x > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToRight()
-    //        || transform.position.x < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToLeft()
-    //        || transform.position.y > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToUp()
-    //        || transform.position.y < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToDown())
-    //        return false;
-    //    else return true;
+    public void move()
+    {
+        pointer.transform.Translate(0f, -5f, 0f);
+        Update();
+    }
+    public void SystemStep(GameObject dot)
+    {
+        dotsOnPole.Add(dot);
+        dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
+        if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().right == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right);
+        }
+        else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left.GetComponent<PoleLine>().left == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left);
+        }
+        else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up.GetComponent<PoleLine>().up == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up);
+        }
+        else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down.GetComponent<PoleLine>().down == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down);
+        }
 
-    //}
+        currentLine.transform.localScale = new Vector3(linesOnPole[linesOnPole.Count - 1].GetComponent<PoleLine>().Line.transform.localScale.x, linesOnPole[linesOnPole.Count - 1].GetComponent<PoleLine>().Line.transform.localScale.y, 0.1f);
+        currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+        leadDot.transform.position = dots[dots.Count - 1].transform.position;
+        currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
+        dots[dots.Count - 1].transform.parent = this.transform;
+        currentLine.transform.parent = this.transform;
+        lines.Add(currentLine);
+        pointer.transform.position = leadDot.transform.position;
 
+    }
     public void Update()
     {
         if (!Core.PolePreferences.isFrozen)
@@ -195,6 +223,7 @@ public class ActivePath : MonoBehaviour
                     if (Mathf.Abs(pointer.transform.position.x - currentFinishOnPole.transform.position.x) + Mathf.Abs(pointer.transform.position.y - currentFinishOnPole.transform.position.y) > eps)
                     {
                         isFinished = false;
+                        //if (lines.Count < dots.Count) dotsOnPole.Remove(currentFinishOnPole);
                         Destroy(currentFinish);
                     }
                 }
