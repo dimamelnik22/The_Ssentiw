@@ -38,7 +38,7 @@ public class Core : MonoBehaviour {
     public bool mode = true;
     public bool pathIsShown = false;
     public bool playerIsActive = false;
-    public GameObject myPole;
+    public GameObject myPole; 
     public GameObject activePath;
 
     public static class PolePreferences
@@ -74,17 +74,19 @@ public class Core : MonoBehaviour {
     public void ButtonSavePazzl()
     {
         String str = "";
-        foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
+        foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
+        {
+            Debug.Log(point.x);
+            Debug.Log(point.y);
+            Debug.Log(point.down);
+            Debug.Log(point.right);
+        }
+        /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
         {
             var now = sq.GetComponent<PoleSquare>();
             string cod = "";
             if (now.hasElem)
             {
-                if (now.element.GetComponentInParent<Elements>().Type == 'R')
-                {
-                    //now = now.element.GetComponent<EltClrRing>();
-
-                }
                 byte[] bytes;
                 //bytes = BitConverter.GetBytes(n.x);
                 //cod += BitConverter.ToString(bytes);
@@ -104,7 +106,7 @@ public class Core : MonoBehaviour {
                 //if(now.element.) ;//!!! сделать все элементы наследованными от род класса
 
             }
-        }
+        }*/
     }
     public void ButtonReport()
     {
@@ -304,7 +306,7 @@ public class Core : MonoBehaviour {
         }
 
         
-
+        //rework
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
@@ -316,9 +318,6 @@ public class Core : MonoBehaviour {
                     myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point);
                 }
             }
-        }
-        for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
-        {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
             {
                 if (j < myPole.GetComponent<Pole>().GetSize() - 1)

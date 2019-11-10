@@ -3,17 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PoleEltPoint : Elements {
-
+    public bool down = false;
+    public bool right = false;
     GameObject attachedDot;
     GameObject attachedLine;
     public bool tored = true;
     public void SetDot(GameObject dot)
     {
         attachedDot = dot;
+        x = dot.GetComponent<PoleDot>().posX;
+        y = dot.GetComponent<PoleDot>().posY;
+
     }
     public void SetLine(GameObject line)
     {
         attachedLine = line;
+        if(line.GetComponent<PoleLine>().isHorizontal)
+        {
+            right = true;
+            x = line.GetComponent<PoleLine>().left.GetComponent<PoleDot>().posX;
+            y = line.GetComponent<PoleLine>().left.GetComponent<PoleDot>().posY;
+        }
+        else
+        {
+            down  = true;
+            x = line.GetComponent<PoleLine>().up.GetComponent<PoleDot>().posX;
+            y = line.GetComponent<PoleLine>().up.GetComponent<PoleDot>().posY;
+        }
     }
     public bool IsSolvedByPlayer()
     {

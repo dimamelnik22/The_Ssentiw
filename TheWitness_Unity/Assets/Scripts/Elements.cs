@@ -6,7 +6,7 @@ public class Elements : MonoBehaviour
 {
     //SP(num)s{indexIIindexJJheightHwidthWbitmap}
 
-    const string t = "SRP";
+    //const string t = "SRP";
 
 
 
@@ -16,7 +16,7 @@ public class Elements : MonoBehaviour
     public int y;
     public Color c;
     public bool rotate = false;
-    private char type;
+    /*private char type;
     public char Type
     {
         set
@@ -32,7 +32,7 @@ public class Elements : MonoBehaviour
             Debug.Log("wrong type!!!");
         }
         get { return type; }
-    }
+    }*/
     public void ShowUnsolvedColor()
     {
         colorlerping = true;
