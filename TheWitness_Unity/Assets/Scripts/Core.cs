@@ -7,7 +7,10 @@ using UnityEngine.UI;
 
 
 public class Core : MonoBehaviour {
-
+    public void move()
+    {
+        activePath.GetComponent<ActivePath>().move();
+    }
     public GameObject PolePrefab;
     public GameObject PointPrefab;
 
@@ -258,8 +261,8 @@ public class Core : MonoBehaviour {
                 myPole.GetComponent<Pole>().AddFinish(x, y);
                 myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 //myPole.GetComponent<Pole>().GenerateShapes(100);
-                //myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-                //myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
+                myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
                 //gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
                 gentime = Time.realtimeSinceStartup;
                 break;
@@ -328,22 +331,18 @@ public class Core : MonoBehaviour {
 
     void Update()
     {
-#if UNITY_EDITOR
         
         if (activePath == null)
         {
             activePath = Instantiate(ActivePathPF);
-
-
             activePath.GetComponent<ActivePath>().Init(myPole, myPole.GetComponent<Pole>().starts, finishes);
         }
-        //if (!activePath.GetComponent<ActivePath>().isFinished && activePath.GetComponent<ActivePath>().pointer.activeSelf)
-        //{
-
-        //}
+#if UNITY_EDITOR
         if (activePath.GetComponent<ActivePath>().isFinished && !Input.GetMouseButton(0) && activePath.GetComponent<ActivePath>().pointer.activeSelf)
+#else
+        if (activePath.GetComponent<ActivePath>().isFinished && Input.touchCount == 0 && activePath.GetComponent<ActivePath>().pointer.activeSelf)
+#endif
         {
-            //PolePreferences.isFrozen = true;
             myPole.GetComponent<Pole>().playerPath.Clear();
             activePath.GetComponent<ActivePath>().EndSolution();
             foreach (GameObject dot in activePath.GetComponent<ActivePath>().dotsOnPole)
@@ -393,117 +392,10 @@ public class Core : MonoBehaviour {
             foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
                 line.GetComponent<PoleLine>().isUsedByPlayer = false;
             activePath.GetComponent<ActivePath>().pointer.SetActive(false);
-            //gentimewin.text = myPole.GetComponent<Pole>().PathToStr();
-            //playerIsActive = !playerIsActive;
-
-        }
-        //if (Input.GetMouseButton(0) && PolePreferences.isFrozen && !pathIsShown)
-        //{
-            
-        //    //playerIsActive = !playerIsActive;
-        //    PolePreferences.isFrozen = false;
-        //    //activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().starts[0], finishes);
-        //}
-#else
-
-        if (!playerIsActive && PolePreferences.isFrozen == false)
-        {
-
-            foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
-            {
-                if (point.GetComponent<PoleEltPoint>() != null)
-                {
-                    point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
-                }
-                if (point.GetComponent<EltClrRing>() != null)
-                {
-                    point.GetComponent<EltClrRing>().ShowNormalizedColor();
-                }
-                if (point.GetComponent<PoleEltShape>() != null)
-                {
-                    point.GetComponent<PoleEltShape>().ShowNormalizedColor();
-                }
-            }
-            if (activePath == null)
-            {
-                activePath = Instantiate(ActivePathPF);
-
-
-                activePath.GetComponent<ActivePath>().Init(myPole, myPole.GetComponent<Pole>().start, finishes);
-                
-            }
-            else
-            {
-
-
-                activePath.GetComponent<ActivePath>().Restart(myPole.GetComponent<Pole>().start, finishes);
-            }
-            playerIsActive = !playerIsActive;
-        }
-        else if (!PolePreferences.isFrozen && activePath.GetComponent<ActivePath>().isFinished && Input.touchCount == 0)
-        {
-            PolePreferences.isFrozen = true;
-            myPole.GetComponent<Pole>().playerPath.Clear();
-            activePath.GetComponent<ActivePath>().EndSolution();
-            foreach (GameObject dot in activePath.GetComponent<ActivePath>().dotsOnPole)
-            {
-                dot.GetComponent<PoleDot>().isUsedByPlayer = true;
-                myPole.GetComponent<Pole>().playerPath.dots.Add(dot);
-            }
-            foreach (GameObject line in activePath.GetComponent<ActivePath>().linesOnPole)
-            {
-                line.GetComponent<PoleLine>().isUsedByPlayer = true;
-                myPole.GetComponent<Pole>().playerPath.lines.Add(line);
-            }
-            if (myPole.GetComponent<Pole>().playerPath.dots[myPole.GetComponent<Pole>().playerPath.dots.Count - 1] == myPole.GetComponent<Pole>().finish && activePath.GetComponent<ActivePath>().isFinished)
-            {
-                if (myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
-                {
-                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                    {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
-                    }
-                }
-                else
-                {
-                    foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                    {
-                        path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
-                    }
-                    foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
-                    {
-                        if (point.GetComponent<PoleEltPoint>() != null)
-                        {
-                            point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
-                        }
-                        if (point.GetComponent<EltClrRing>() != null)
-                        {
-                            point.GetComponent<EltClrRing>().ShowUnsolvedColor();
-                        }
-                        if (point.GetComponent<PoleEltShape>() != null)
-                        {
-                            point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
-                        }
-                    }
-                }
-            }
-            else foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
-                {
-                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
-                }
-            MenuManager.DebugMessage.savePath(myPole.GetComponent<Pole>().PathToStr());
-            playerIsActive = !playerIsActive;
-        }
-        if (Input.touchCount > 0 && PolePreferences.isFrozen && !pathIsShown)
-        {
-            foreach (GameObject dot in myPole.GetComponent<Pole>().playerPath.dots)
-                dot.GetComponent<PoleDot>().isUsedByPlayer = false;
-            foreach (GameObject line in myPole.GetComponent<Pole>().playerPath.lines)
-                line.GetComponent<PoleLine>().isUsedByPlayer = false;
-            PolePreferences.isFrozen = false;
             
         }
-#endif
+
+
     }
 
 }

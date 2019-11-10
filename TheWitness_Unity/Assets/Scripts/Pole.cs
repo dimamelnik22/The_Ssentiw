@@ -1901,7 +1901,7 @@ public class Pole : MonoBehaviour
     {
         string path = "S";
         GameObject cur = start;
-        while (!finishes.Contains(cur))
+        while (cur != playerPath.dots[playerPath.dots.Count - 1])
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length-1].ToString() != "D")
@@ -1934,7 +1934,7 @@ public class Pole : MonoBehaviour
     {
         string path = "S";
         GameObject cur = start;
-        while (!finishes.Contains(cur))
+        while (cur != systemPath.dots[systemPath.dots.Count - 1])
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "D")

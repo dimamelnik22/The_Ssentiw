@@ -15,6 +15,7 @@ public class EltClrRing : MonoBehaviour {
     public void ShowNormalizedColor()
     {
         colorlerping = false;
+		tored = true;
         GetComponent<Renderer>().material.color = c;
     }
 

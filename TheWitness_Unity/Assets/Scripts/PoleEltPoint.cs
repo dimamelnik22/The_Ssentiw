@@ -32,6 +32,7 @@ public class PoleEltPoint : MonoBehaviour {
     public void ShowNormalizedColor()
     {
         colorlerping = false;
+		tored = true;
         GetComponent<Renderer>().material.color = c;
     }
     private void Start()
