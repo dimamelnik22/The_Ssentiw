@@ -50,7 +50,7 @@ public class PoleEltShape : Elements
     {
         
     }
-    public IEnumerator Do()
+    public override IEnumerator Do()
     {
         bool tored = true;
         while (colorlerping)

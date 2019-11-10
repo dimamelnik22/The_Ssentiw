@@ -43,9 +43,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8b218ac65826d44b1a282d01956e97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colorlerping: 0
+  countdown: 0.5
+  x: 0
+  y: 0
+  c: {r: 0, g: 0, b: 0, a: 0}
+  rotate: 0
   BlockPF: {fileID: 6661360437687080269, guid: eb23d85c9f73834478a4317f044a386b, type: 3}
   size: 0
   blocks: []
-  countdown: 0
-  colorlerping: 0
-  tored: 1

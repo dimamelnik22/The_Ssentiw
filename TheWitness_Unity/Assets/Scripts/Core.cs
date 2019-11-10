@@ -316,6 +316,9 @@ public class Core : MonoBehaviour {
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point = Instantiate(PointPrefab, transform.position + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<PoleEltPoint>().SetDot(myPole.GetComponent<Pole>().poleDots[i][j]);
                     myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point);
+
+                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.c = new Color(45 / 255, 104 / 255, 1);
+                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                 }
             }
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
@@ -328,6 +331,8 @@ public class Core : MonoBehaviour {
                             myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepx * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
                             myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right);
                             myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.c = new Color(45 / 255, 104 / 255, 1);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                         }
                     }
             }
@@ -341,6 +346,9 @@ public class Core : MonoBehaviour {
                             myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepy * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
                             myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down);
                             myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.c = new Color(45 / 255, 104 / 255, 1);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
+
                         }
                     }
                 }
@@ -403,20 +411,9 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-                foreach (var point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
+                foreach (Elements point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                 {
-                    if (point.GetComponent<PoleEltPoint>() != null)
-                    {
-                        point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
-                    }
-                    if (point.GetComponent<EltClrRing>() != null)
-                    {
-                        point.GetComponent<EltClrRing>().ShowUnsolvedColor();
-                    }
-                    if (point.GetComponent<PoleEltShape>() != null)
-                    {
-                        point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
-                    }
+                    point.ShowUnsolvedColor();
                 }
             }
 

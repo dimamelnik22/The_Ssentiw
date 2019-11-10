@@ -16,6 +16,7 @@ public class Elements : MonoBehaviour
     public int y;
     public Color c;
     public bool rotate = false;
+    bool tored = true;
     /*private char type;
     public char Type
     {
@@ -35,6 +36,7 @@ public class Elements : MonoBehaviour
     }*/
     public void ShowUnsolvedColor()
     {
+        tored = true;
         colorlerping = true;
         StartCoroutine(Do());
     }
@@ -43,9 +45,9 @@ public class Elements : MonoBehaviour
         colorlerping = false;
         GetComponent<Renderer>().material.color = c;
     }
-    public IEnumerator Do()
+    public virtual IEnumerator Do()
     {
-        bool tored = true;
+        
         while (colorlerping)
         {
             if (countdown > 0f)

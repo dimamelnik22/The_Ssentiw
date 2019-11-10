@@ -7,7 +7,6 @@ public class PoleEltPoint : Elements {
     public bool right = false;
     GameObject attachedDot;
     GameObject attachedLine;
-    public bool tored = true;
     public void SetDot(GameObject dot)
     {
         attachedDot = dot;
@@ -38,8 +37,6 @@ public class PoleEltPoint : Elements {
     }
     void Start()
     {
-        c = new Color(45/255,104/255,1);
-        GetComponent<Renderer>().material.color = c;
     }
 
     void Update () {
