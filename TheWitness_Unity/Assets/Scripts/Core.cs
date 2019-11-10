@@ -35,7 +35,6 @@ public class Core : MonoBehaviour {
     private static Vector3 stepx = new Vector3(5f, 0f, 0f);
     private static Vector3 stepy = new Vector3(0f, -5f, 0f);
     private List<GameObject> finishes = new List<GameObject>();
-    public bool mode = true;
     public bool pathIsShown = false;
     public bool playerIsActive = false;
     public GameObject myPole; 
@@ -50,7 +49,6 @@ public class Core : MonoBehaviour {
         public static int numOfCircles = 10;
         public static int numOfStars = 5;
         public static int numOfShapes = 20;
-        public static bool isFrozen = false;
         public static System.Random r = new System.Random();
         public static class MyRandom
         {
@@ -62,7 +60,6 @@ public class Core : MonoBehaviour {
             }
             public static int GetRandom()
             {
-                //seed = (seed * 430 + 2531) % 11979;
                 //return seed;
 
                 return r.Next();
@@ -76,6 +73,7 @@ public class Core : MonoBehaviour {
         String str = "";
         foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
         {
+
             Debug.Log(point.x);
             Debug.Log(point.y);
             Debug.Log(point.down);
@@ -320,10 +318,8 @@ public class Core : MonoBehaviour {
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.c = new Color(45 / 255, 104 / 255, 1);
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                 }
-            }
-            for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
-            {
                 if (j < myPole.GetComponent<Pole>().GetSize() - 1)
+                {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right != null)
                     {
                         if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().hasPoint)
@@ -335,9 +331,8 @@ public class Core : MonoBehaviour {
                             myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                         }
                     }
-            }
-            if (i < myPole.GetComponent<Pole>().GetSize() - 1)
-                for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
+                }
+                if (i < myPole.GetComponent<Pole>().GetSize() - 1)
                 {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down != null)
                     {
@@ -352,9 +347,9 @@ public class Core : MonoBehaviour {
                         }
                     }
                 }
+            }
         }
         //finishes.Add(myPole.GetComponent<Pole>().finish);
-        mode = !mode;
         pathIsShown = false;
         playerPathLinesOnScreen = new List<GameObject>();
         playerPathDotsOnScreen = new List<GameObject>();

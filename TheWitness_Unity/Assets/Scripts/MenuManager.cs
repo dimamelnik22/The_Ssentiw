@@ -449,7 +449,6 @@ public class MenuManager : MonoBehaviour {
 
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
-        Core.PolePreferences.isFrozen = false;
         lastPos = Input.mousePosition;
         menuPole = Instantiate(PolePF, transform);
         menuPole.GetComponent<Pole>().InitMenuItem(menuMap.pointer.size);
