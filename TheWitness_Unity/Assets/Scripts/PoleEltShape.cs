@@ -36,7 +36,6 @@ public class PoleEltShape : Elements
     public void ShowNormalizedColor()
     {
         colorlerping = false;
-		tored = true;
         foreach (GameObject block in blocks)
             block.GetComponent<Renderer>().material.color = c;
     }

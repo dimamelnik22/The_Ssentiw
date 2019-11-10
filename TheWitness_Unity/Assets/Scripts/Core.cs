@@ -245,8 +245,7 @@ public class Core : MonoBehaviour {
                 } while (myPole.GetComponent<Pole>().starts.Contains(myPole.GetComponent<Pole>().poleDots[y][x]) || myPole.GetComponent<Pole>().finishes.Contains(myPole.GetComponent<Pole>().poleDots[y][x]));
                 myPole.GetComponent<Pole>().AddFinish(x, y);
                 finishes = myPole.GetComponent<Pole>().finishes;
-                foreach (GameObject start in myPole.GetComponent<Pole>().starts)
-                    myPole.GetComponent<Pole>().StartScaling(start);
+                
                 myPole.GetComponent<Pole>().CreateSolution();
                 do
                 {
@@ -294,6 +293,8 @@ public class Core : MonoBehaviour {
                     }
                 } while (myPole.GetComponent<Pole>().starts.Contains(myPole.GetComponent<Pole>().poleDots[y][x]) || myPole.GetComponent<Pole>().finishes.Contains(myPole.GetComponent<Pole>().poleDots[y][x]));
                 myPole.GetComponent<Pole>().AddFinish(x, y);
+                foreach (GameObject start in myPole.GetComponent<Pole>().starts)
+                    myPole.GetComponent<Pole>().StartScaling(start);
                 myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 //myPole.GetComponent<Pole>().GenerateShapes(100);
                 myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);

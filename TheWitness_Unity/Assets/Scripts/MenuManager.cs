@@ -542,6 +542,7 @@ public class MenuManager : MonoBehaviour {
             item.GetComponentInChildren<MenuButton>().index = index;
         }
         Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+        Debug.Log(11);
         activePath = Instantiate(ActivePathPF, transform);
         activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().starts, menuPole.GetComponent<Pole>().finishes);
     }
