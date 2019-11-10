@@ -38,10 +38,9 @@ public class Core : MonoBehaviour {
     private static Vector3 stepx = new Vector3(5f, 0f, 0f);
     private static Vector3 stepy = new Vector3(0f, -5f, 0f);
     private List<GameObject> finishes = new List<GameObject>();
-    public bool mode = true;
     public bool pathIsShown = false;
     public bool playerIsActive = false;
-    public GameObject myPole;
+    public GameObject myPole; 
     public GameObject activePath;
 
     public static class PolePreferences
@@ -53,7 +52,6 @@ public class Core : MonoBehaviour {
         public static int numOfCircles = 10;
         public static int numOfStars = 5;
         public static int numOfShapes = 20;
-        public static bool isFrozen = false;
         public static System.Random r = new System.Random();
         public static class MyRandom
         {
@@ -61,11 +59,10 @@ public class Core : MonoBehaviour {
             public static void SetSeed(int s = 0)
             {
                 seed = s;
-                r = new System.Random(seed);
+                r = s== 0 ? new System.Random():new System.Random(seed);
             }
             public static int GetRandom()
             {
-                //seed = (seed * 430 + 2531) % 11979;
                 //return seed;
 
                 return r.Next();
@@ -73,6 +70,44 @@ public class Core : MonoBehaviour {
         }
         public static string info = "";
         public static string mode = "normal";
+    }
+    public void ButtonSavePazzl()
+    {
+        String str = "";
+        foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
+        {
+
+            Debug.Log(point.x);
+            Debug.Log(point.y);
+            Debug.Log(point.down);
+            Debug.Log(point.right);
+        }
+        /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
+        {
+            var now = sq.GetComponent<PoleSquare>();
+            string cod = "";
+            if (now.hasElem)
+            {
+                byte[] bytes;
+                //bytes = BitConverter.GetBytes(n.x);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.y);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.c.r);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.c.g);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.c.b);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.Type);
+                //cod += BitConverter.ToString(bytes);
+                //bytes = BitConverter.GetBytes(n.rotate);
+                //cod += BitConverter.ToString(bytes);
+                Debug.Log(cod);
+                //if(now.element.) ;//!!! сделать все элементы наследованными от род класса
+
+            }
+        }*/
     }
     public void ButtonReport()
     {
@@ -101,7 +136,7 @@ public class Core : MonoBehaviour {
     public void ButtonShowSolution()
     {
         if (Core.PolePreferences.mode == "info") return;
-        foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
+        foreach (var point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
         {
             if (point.GetComponent<PoleEltPoint>() != null)
             {
@@ -273,50 +308,52 @@ public class Core : MonoBehaviour {
         }
 
         
-
+        //rework
         for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
         {
             for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
             {
                 if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().hasPoint)
                 {
-                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point = Instantiate(PointPrefab, transform.position + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation);
+                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point = Instantiate(PointPrefab, transform.position + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<PoleEltPoint>().SetDot(myPole.GetComponent<Pole>().poleDots[i][j]);
                     myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point);
+
+                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.c = new Color(45 / 255, 104 / 255, 1);
+                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                 }
-            }
-        }
-        for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
-        {
-            for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
-            {
                 if (j < myPole.GetComponent<Pole>().GetSize() - 1)
+                {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right != null)
                     {
                         if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().hasPoint)
                         {
-                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepx * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepx * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
                             myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right);
                             myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.c = new Color(45 / 255, 104 / 255, 1);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                         }
                     }
-            }
-            if (i < myPole.GetComponent<Pole>().GetSize() - 1)
-                for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
+                }
+                if (i < myPole.GetComponent<Pole>().GetSize() - 1)
                 {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down != null)
                     {
                         if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().hasPoint)
                         {
-                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepy * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepy * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
                             myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down);
                             myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.c = new Color(45 / 255, 104 / 255, 1);
+                            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
+
                         }
                     }
                 }
+            }
         }
         //finishes.Add(myPole.GetComponent<Pole>().finish);
-        mode = !mode;
         pathIsShown = false;
         playerPathLinesOnScreen = new List<GameObject>();
         playerPathDotsOnScreen = new List<GameObject>();
@@ -369,20 +406,9 @@ public class Core : MonoBehaviour {
                 {
                     path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
                 }
-                foreach (GameObject point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
+                foreach (Elements point in myPole.GetComponent<Pole>().eltsManager.unsolvedElts)
                 {
-                    if (point.GetComponent<PoleEltPoint>() != null)
-                    {
-                        point.GetComponent<PoleEltPoint>().ShowUnsolvedColor();
-                    }
-                    if (point.GetComponent<EltClrRing>() != null)
-                    {
-                        point.GetComponent<EltClrRing>().ShowUnsolvedColor();
-                    }
-                    if (point.GetComponent<PoleEltShape>() != null)
-                    {
-                        point.GetComponent<PoleEltShape>().ShowUnsolvedColor();
-                    }
+                    point.ShowUnsolvedColor();
                 }
             }
 

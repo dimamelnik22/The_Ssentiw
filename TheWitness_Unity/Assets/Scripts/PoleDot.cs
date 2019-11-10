@@ -11,7 +11,7 @@ public class PoleDot : MonoBehaviour {
     public bool isUsedBySolution = false;
     public bool isUsedByPlayer = false;
     public bool hasPoint = false;
-    public GameObject point;
+    public Elements point;
     public int posX;
     public int posY;
     

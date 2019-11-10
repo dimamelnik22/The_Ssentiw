@@ -51,7 +51,7 @@ public class Pole : MonoBehaviour
             return size;
         }
     };
-
+    public List<Elements> elt;
     public class PoleElts
     {
         private class Shape
@@ -59,9 +59,9 @@ public class Pole : MonoBehaviour
             public List<List<bool>> s;
             public int count;
         }
-        public List<GameObject> points;
-        public List<GameObject> clrRing;
-        public List<GameObject> unsolvedElts;
+        public List<Elements> points;
+        public List<Elements> clrRing;
+        public List<Elements> unsolvedElts;
         int[][] checkZones = new int[Core.PolePreferences.poleSize - 1][];
         public List<List<GameObject>> zone = new List<List<GameObject>>();
         private void FindZone(GameObject square, int x, int y)
@@ -153,12 +153,12 @@ public class Pole : MonoBehaviour
         }
         public PoleElts()
         {
-            points = new List<GameObject>();
-            clrRing = new List<GameObject>();
-            unsolvedElts = new List<GameObject>();
+            points = new List<Elements>();
+            clrRing = new List<Elements>();
+            unsolvedElts = new List<Elements>();
 
         }
-        public bool CheckShapeSplit(List<GameObject> zone, List<GameObject> shapes)
+        public bool CheckShapeSplit(List<GameObject> zone, List<Elements> shapes)
         {
             //List<GameObject> curzone = new List<GameObject>(zone);
             int size = 0;
@@ -356,7 +356,7 @@ public class Pole : MonoBehaviour
             {
                 bool localIsSolved = true;
                 Color c = Color.red;
-                List<GameObject> localShapes = new List<GameObject>();
+                List<Elements> localShapes = new List<Elements>();
                 foreach (GameObject z in p)
                 {
 
@@ -379,9 +379,7 @@ public class Pole : MonoBehaviour
                        
                         localShapes.Add(z.GetComponent<PoleSquare>().element);
                     }
-                }
-                
-                if(localIsSolved == false)
+                }                if(localIsSolved == false)
                 {
                     foreach (GameObject z in p)
                     {
@@ -394,17 +392,17 @@ public class Pole : MonoBehaviour
                 bool solveShape = CheckShapeSplit(p, localShapes);
                 if (!solveShape)
                 {
-                    foreach (GameObject sh in localShapes)
+                    foreach (Elements sh in localShapes)
                         unsolvedElts.Add(sh);
                 }
                 localIsSolved = localIsSolved && solveShape;
                 isSolved = localIsSolved && isSolved;
             }
-            foreach (GameObject p in points)
+            
+            foreach (PoleEltPoint p in points)
             {
-
-                if (!p.GetComponent<PoleEltPoint>().IsSolvedByPlayer()) unsolvedElts.Add(p);
-                isSolved = isSolved && p.GetComponent<PoleEltPoint>().IsSolvedByPlayer();
+                if (!p.IsSolvedByPlayer()) unsolvedElts.Add(p);
+                isSolved = isSolved && p.IsSolvedByPlayer();
             }
 
             return isSolved;
@@ -833,14 +831,8 @@ public class Pole : MonoBehaviour
 
                     switch (info[++iter].ToString())
                     {
-                        case "U":
-                            poleDots[y][x].GetComponent<PoleDot>().up.GetComponent<PoleLine>().hasPoint = true;
-                            break;
                         case "D":
                             poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().hasPoint = true;
-                            break;
-                        case "L":
-                            poleDots[y][x].GetComponent<PoleDot>().left.GetComponent<PoleLine>().hasPoint = true;
                             break;
                         case "R":
                             poleDots[y][x].GetComponent<PoleDot>().right.GetComponent<PoleLine>().hasPoint = true;
@@ -891,9 +883,10 @@ public class Pole : MonoBehaviour
                         if (sq.GetComponent<PoleSquare>().indexI == i && sq.GetComponent<PoleSquare>().indexJ == j)
                         {
                             sq.GetComponent<PoleSquare>().hasElem = true;
-                            sq.GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, sq.transform);
+                            sq.GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, sq.transform).GetComponent<Elements>();
                             sq.GetComponent<PoleSquare>().element.GetComponent<Renderer>().material.color = this.color[color];
                             sq.GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = this.color[color];
+                            
                         }
                     }
                 }
@@ -936,7 +929,7 @@ public class Pole : MonoBehaviour
                         if (sq.GetComponent<PoleSquare>().indexI == i && sq.GetComponent<PoleSquare>().indexJ == j)
                         {
                             sq.GetComponent<PoleSquare>().hasElem = true;
-                            sq.GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, sq.transform);
+                            sq.GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, sq.transform).GetComponent<Elements>();
                             sq.GetComponent<PoleSquare>().element.GetComponent<Renderer>().material.color = this.color[color];
                             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = this.color[color];
                         }
@@ -1007,7 +1000,7 @@ public class Pole : MonoBehaviour
                         if (sq.GetComponent<PoleSquare>().indexI == i && sq.GetComponent<PoleSquare>().indexJ == j)
                         {
                             sq.GetComponent<PoleSquare>().hasElem = true;
-                            sq.GetComponent<PoleSquare>().element = Instantiate(ShapePF, sq.transform);
+                            sq.GetComponent<PoleSquare>().element = Instantiate(ShapePF, sq.transform).GetComponent<Elements>();
                             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().boolList = bitmap;
                             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().Create();
                         }
@@ -1466,7 +1459,7 @@ public class Pole : MonoBehaviour
             {
                 int i = Core.PolePreferences.MyRandom.GetRandom() % coloredZones[j].Count;
                 coloredZones[j][i].GetComponent<PoleSquare>().hasElem = true;
-                coloredZones[j][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, coloredZones[j][i].transform.position, ClrRingPrefab.transform.rotation);
+                coloredZones[j][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, coloredZones[j][i].transform.position, ClrRingPrefab.transform.rotation).GetComponent<Elements>();
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = color[k];
                 eltsManager.clrRing.Add(coloredZones[j][i].GetComponent<PoleSquare>().element);
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
@@ -1522,7 +1515,7 @@ public class Pole : MonoBehaviour
                     }
                     int j = Core.PolePreferences.MyRandom.GetRandom() % localZones[i].Count;
                     localZones[i][j].GetComponent<PoleSquare>().hasElem = true;
-                    localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, localZones[i][j].transform.position, ClrStarPrefab.transform.rotation);
+                    localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, localZones[i][j].transform.position, ClrStarPrefab.transform.rotation).GetComponent<Elements>();
                     localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = c;
                     eltsManager.clrRing.Add(localZones[i][j].GetComponent<PoleSquare>().element);
                     localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = c;
@@ -1548,7 +1541,7 @@ public class Pole : MonoBehaviour
                     { 
                         int j = Core.PolePreferences.MyRandom.GetRandom() % localZones[i].Count;
                         localZones[i][j].GetComponent<PoleSquare>().hasElem = true;
-                        localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, localZones[i][j].transform.position, ClrStarPrefab.transform.rotation);
+                        localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPrefab, localZones[i][j].transform.position, ClrStarPrefab.transform.rotation).GetComponent<Elements>();
                         localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = colorStar[t];
                         eltsManager.clrRing.Add(localZones[i][j].GetComponent<PoleSquare>().element);
                         localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = colorStar[t];
@@ -1716,7 +1709,7 @@ public class Pole : MonoBehaviour
                     continue;
                 }
                 GameObject sq = sqList[Core.PolePreferences.MyRandom.GetRandom() % sqList.Count];
-                GameObject shapeElt = Instantiate(ShapePF, sq.transform);
+                Elements shapeElt = Instantiate(ShapePF, sq.transform).GetComponent<Elements>();
                 sq.GetComponent<PoleSquare>().hasElem = true;
                 sq.GetComponent<PoleSquare>().element = shapeElt;
                 shapeElt.GetComponent<PoleEltShape>().boolList = ZoneToBoolList(activeShapes[i][j]);

@@ -200,8 +200,6 @@ public class ActivePath : MonoBehaviour
     }
     public void Update()
     {
-        if (!Core.PolePreferences.isFrozen)
-        {
 
             if (isStarted)
             {
@@ -396,7 +394,6 @@ public class ActivePath : MonoBehaviour
 
             }
             
-        }
         //foreach(GameObject g in dotsOnPole)
         //{
         //    g.GetComponent<Renderer>().material.color = new Color(1, 0, 0);

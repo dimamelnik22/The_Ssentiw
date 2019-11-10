@@ -186,15 +186,15 @@ public class MenuManager : MonoBehaviour {
         Core.PolePreferences.mode = "normal";
         //Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
         //Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
-        Core.PolePreferences.MyRandom.SetSeed(0);
-        //Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
-        Core.PolePreferences.poleSize = 8;
+        Core.PolePreferences.MyRandom.SetSeed();
+        Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
+        //Core.PolePreferences.poleSize = 8;
         Core.PolePreferences.complexity = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (4 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
-        //Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
-        //Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
+        Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
+        Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Log();
-        //Core.PolePreferences.numOfShapes = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (1 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
-        Core.PolePreferences.numOfShapes = 50;
+        Core.PolePreferences.numOfShapes = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (1 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
+        //Core.PolePreferences.numOfShapes = 50;
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
     }
@@ -531,7 +531,6 @@ public class MenuManager : MonoBehaviour {
 
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
-        Core.PolePreferences.isFrozen = false;
         lastPos = Input.mousePosition;
         menuPole = Instantiate(PolePF, transform);
         menuPole.GetComponent<Pole>().InitMenuItem(menuMap.pointer.size);
