@@ -14,9 +14,14 @@ public class StartDot : MonoBehaviour
 
     void OnMouseDown()
     {
+        
         GameObject activePath = null;
         if (GameObject.FindGameObjectWithTag("Core").GetComponent<Core>() != null)
+        {
+            if (GameObject.FindGameObjectWithTag("Core").GetComponent<Core>().pathIsShown)
+                return;
             activePath = GameObject.FindGameObjectWithTag("Core").GetComponent<Core>().activePath;
+        }
         if (GameObject.FindGameObjectWithTag("Core").GetComponent<MenuManager>() != null)
             activePath = GameObject.FindGameObjectWithTag("Core").GetComponent<MenuManager>().activePath;
         //activePath.GetComponent<ActivePath>().pointer.SetActive(true);

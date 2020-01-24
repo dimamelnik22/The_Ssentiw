@@ -73,7 +73,6 @@ public class Core : MonoBehaviour {
     }
     public void ButtonSavePazzl()
     {
-        String str = "";
         foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
         {
 
@@ -161,16 +160,10 @@ public class Core : MonoBehaviour {
         myPole.GetComponent<Pole>().playerPath.lines.Clear();
         playerPathDotsOnScreen.Clear();
         playerPathLinesOnScreen.Clear();
-       
-        if (pathIsShown)
+        foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
+            Destroy(gameObject);
+        if (!pathIsShown)
         {
-            foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
-                Destroy(gameObject);
-        }
-        else
-        {
-            foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
-                Destroy(gameObject);
             foreach (GameObject dot in myPole.GetComponent<Pole>().systemPath.dots)
             {
                 if (dot == myPole.GetComponent<Pole>().starts[0]) Instantiate(PathStartPrefab, dot.transform.position + pathstepz, PathStartPrefab.transform.rotation);
