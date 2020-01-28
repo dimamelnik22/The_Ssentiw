@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PoleDot : MonoBehaviour {
     public GameObject DotPF;
+    public GameObject EditButtonPF;
+    public GameObject dot;
+    public GameObject editButton;
     public GameObject up;
     public GameObject down;
     public GameObject left;
@@ -53,7 +56,18 @@ public class PoleDot : MonoBehaviour {
 
     public void CreateDot()
     {
-        Instantiate(DotPF, transform);
+        if (dot == null)
+            dot = Instantiate(DotPF, transform);
+    }
+
+    public void ShowEditButton()
+    {
+        editButton = Instantiate(EditButtonPF, transform);
+    }
+
+    public void HideEditButton()
+    {
+        Destroy(editButton);
     }
     // Use this for initialization
     void Start () {

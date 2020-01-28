@@ -44,6 +44,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DotPF: {fileID: 3438751875270885126, guid: ebe43634e98e55a40a27ad2b92fa5d0b, type: 3}
+  EditButtonPF: {fileID: 6810284297996705324, guid: 01e65e81e33d8084a866d78446330d42,
+    type: 3}
+  dot: {fileID: 0}
   up: {fileID: 0}
   down: {fileID: 0}
   left: {fileID: 0}

@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PoleSquare : MonoBehaviour {
 
-	public GameObject up;
+    public GameObject EditButtonPF;
+    public GameObject editButton;
+    public GameObject up;
 	public GameObject down;
 	public GameObject left;
 	public GameObject right;
@@ -14,9 +16,17 @@ public class PoleSquare : MonoBehaviour {
     public int indexI;
     public int indexJ;
 
-   
-	// Use this for initialization
-	void Start ()
+    public void ShowEditButton()
+    {
+        editButton = Instantiate(EditButtonPF, transform);
+    }
+
+    public void HideEditButton()
+    {
+        Destroy(editButton);
+    }
+    // Use this for initialization
+    void Start ()
     {
 		
 	}

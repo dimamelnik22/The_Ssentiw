@@ -7,10 +7,7 @@ using UnityEngine.UI;
 
 
 public class Core : MonoBehaviour {
-    public void move()
-    {
-        activePath.GetComponent<ActivePath>().move();
-    }
+
     public GameObject PolePrefab;
     public GameObject PointPrefab;
 
@@ -71,7 +68,7 @@ public class Core : MonoBehaviour {
         public static string info = "";
         public static string mode = "normal";
     }
-    public void ButtonSavePazzl()
+    public void ButtonSavePazzle()
     {
         foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
         {
@@ -189,7 +186,7 @@ public class Core : MonoBehaviour {
         switch (Core.PolePreferences.mode)
         {
             case "normal":
-                myPole.GetComponent<Pole>().Init(PolePreferences.poleSize);
+                myPole.GetComponent<Pole>().Init(PolePreferences.poleSize, PolePreferences.poleSize);
                 // START and FINISH creating
                 int x = 0;
                 int y = 0;
@@ -303,9 +300,9 @@ public class Core : MonoBehaviour {
 
         
         //rework
-        for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
+        for (int i = 0; i < myPole.GetComponent<Pole>().height; i++)
         {
-            for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
+            for (int j = 0; j < myPole.GetComponent<Pole>().width; j++)
             {
                 if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().hasPoint)
                 {
@@ -316,7 +313,7 @@ public class Core : MonoBehaviour {
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.c = new Color(45 / 255, 104 / 255, 1);
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                 }
-                if (j < myPole.GetComponent<Pole>().GetSize() - 1)
+                if (j < myPole.GetComponent<Pole>().width - 1)
                 {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right != null)
                     {
@@ -330,7 +327,7 @@ public class Core : MonoBehaviour {
                         }
                     }
                 }
-                if (i < myPole.GetComponent<Pole>().GetSize() - 1)
+                if (i < myPole.GetComponent<Pole>().height - 1)
                 {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down != null)
                     {
