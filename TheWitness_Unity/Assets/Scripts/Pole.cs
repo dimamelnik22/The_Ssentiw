@@ -113,22 +113,21 @@ public class Pole : MonoBehaviour
         }
         public void SetZone(GameObject square)
         {
-            checkZones = new int[Core.PolePreferences.poleSize - 1][];
-            int size = Core.PolePreferences.poleSize - 1;
-            for (int i = 0; i < size; ++i)
+            checkZones = new int[height-1][];
+            for (int i = 0; i < height-1; ++i)
             {
-                checkZones[i] = new int[size];
-                for (int j = 0; j < size; ++j)
+                checkZones[i] = new int[width-1];
+                for (int j = 0; j < width-1; ++j)
                 {
                     checkZones[i][j] = 0;
                 }
             }
             GameObject square1 = square;
             int quantityZones = 0;
-            for (int x = 0; x < size; ++x)
+            for (int x = 0; x < width-1; ++x)
             {
                 GameObject square2 = square1;
-                for (int y = 0; y < size; ++y)
+                for (int y = 0; y < height-1; ++y)
                 {
                     if (checkZones[y][x] == 0)
                     {
@@ -146,10 +145,10 @@ public class Pole : MonoBehaviour
                 zone.Add(new List<GameObject>());
             }
             square1 = square;
-            for (int x = 0; x < size; ++x)
+            for (int x = 0; x < width-1; ++x)
             {
                 GameObject square2 = square1;
-                for (int y = 0; y < size; ++y)
+                for (int y = 0; y < height-1; ++y)
                 {
                     zone[checkZones[y][x] - 1].Add(square2);
                     square2 = square2.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down;
@@ -359,7 +358,6 @@ public class Pole : MonoBehaviour
             unsolvedElts.Clear();
             zone.Clear();
             SetZone(square);
-
             foreach (List<GameObject> p in zone)
             {
                 bool localIsSolved = true;
@@ -689,6 +687,94 @@ public class Pole : MonoBehaviour
 
     }
 
+    delegate void funcDecode(string input);
+    public void startDecode(string input)
+    {
+        int x;
+        int y;
+        for (int i = 0; i< input.Length;i +=2)
+        {
+            x = input[i] - '0';
+            y = input[i + 1] - '0';
+            Debug.Log(x + " " + y);
+        }
+    }
+    public void finishDecode(string input)
+    {
+        int x;
+        int y;
+        for (int i = 0; i < input.Length; i += 2)
+        {
+            x = input[i] - '0';
+            y = input[i + 1] - '0';
+            Debug.Log(x + " " + y);
+        }
+    }
+    public void pointDecode(string input)
+    {
+        int x;
+        int y;
+        int f;
+        for (int i = 0; i < input.Length; i += 3)
+        {
+            x = input[i] - '0';
+            y = input[i + 1] - '0';
+            f = input[i + 2] - '0';
+            Debug.Log(x + " " + y + " " + f);
+        }
+    }
+    public void ringDecode(string input)
+    {
+        Debug.Log(input);// work!
+    }
+    public void custom(string info)
+    {
+        // test coode 5s4404*f4130*p002101200010020120231242*r00ff00ff0000ff00ff0000ff00ff0000ff00ff0000ff00ff0010ff00ffff*
+
+        funcDecode[] decode = new funcDecode[4];// decode funcs array
+        decode[0] = startDecode;
+        decode[1] = finishDecode;
+        decode[2] = pointDecode;
+        decode[3] = ringDecode;
+        int decodeId = 0; //index of decode func
+
+        int size = info[0];
+        bool flag = true;
+        string saveLine = ""; // save line one type of obj
+        for(int i = 1; i < info.Length; ++i)
+        {
+            if (flag)
+            {
+                switch (info[i])
+                {
+                    case 's':
+                        decodeId = 0;
+                        break;
+                    case 'f':
+                        decodeId = 1;
+                        break;
+                    case 'p':
+                        decodeId = 2;
+                        break;
+                    case 'r':
+                        decodeId = 3;
+                        break;
+                }
+                flag = false;
+                saveLine = "";
+            }
+            else if (info[i] == '*')
+            {
+                decode[decodeId](saveLine);
+                flag = true;
+            }
+            else
+            {
+                saveLine += info[i];
+            }
+        }
+        
+    }
     public void InitStr(string info)
     {
         playerPath = new PolePath();
@@ -1489,6 +1575,8 @@ public class Pole : MonoBehaviour
                 int i = Core.PolePreferences.MyRandom.GetRandom() % coloredZones[j].Count;
                 coloredZones[j][i].GetComponent<PoleSquare>().hasElem = true;
                 coloredZones[j][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, coloredZones[j][i].transform.position, ClrRingPrefab.transform.rotation).GetComponent<Elements>();
+                coloredZones[j][i].GetComponent<PoleSquare>().element.x = i;
+                coloredZones[j][i].GetComponent<PoleSquare>().element.x = j;
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = color[k];
                 eltsManager.clrRing.Add(coloredZones[j][i].GetComponent<PoleSquare>().element);
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];

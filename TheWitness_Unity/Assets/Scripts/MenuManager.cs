@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour {
     public GameObject PolePF;
     public GameObject ActivePathPF;
     public GameObject MenuItemPF;
+    public GameObject MenuInputFeildPF;
 
     public GameObject activePath;
     public GameObject menuPole;
@@ -198,6 +199,13 @@ public class MenuManager : MonoBehaviour {
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
     }
+    public void InputField()
+    {
+        //Instantiate(MenuInputFeildPF, new Vector3(Screen.width/2, Screen.height/2, 0f), MenuItemPF.transform.rotation);
+        //Instantiate(MenuItemPF, activePath.GetComponent<ActivePath>().currentFinish.transform.position + new Vector3(0f, 0f, 0.5f), MenuItemPF.transform.rotation);
+
+    }
+
     private void LoadLevelSelect()
     {
         
@@ -403,18 +411,19 @@ public class MenuManager : MonoBehaviour {
         funcList[4] = () => MenuManager.MainSettings.speed = 2f;
         menuMap.add(new MenuNode(names, funcList, 5), 1);
         menuMap.back();
-        funcList = new MenuFunc[4];
+        funcList = new MenuFunc[5];
         funcList[0] = LoadPoleLevel;
+        //funcList[4] = InputField;    
         switch (MainSettings.language)
         {
             case "RUS":
-                names = new string[] { "Старт", "Размер", "Длина", "Элементы" };
+                names = new string[] { "Старт" , "Размер", "Длина", "Элементы", "custompuzzle" };
                 break;
             default:
-                names = new string[] { "Start", "Size", "Complexity", "Elements" };
+                names = new string[] { "Start","Size", "Complexity", "Elements", "custompuzzle" };
                 break;
         }
-        menuMap.add(new MenuNode(names, funcList, 4),1);
+        menuMap.add(new MenuNode(names, funcList, 5),1);
         funcList = new MenuFunc[4];
         switch (MainSettings.language)
         {

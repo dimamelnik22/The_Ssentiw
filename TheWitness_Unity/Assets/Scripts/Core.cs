@@ -7,6 +7,13 @@ using UnityEngine.UI;
 
 
 public class Core : MonoBehaviour {
+    public void move()
+    {
+        activePath.GetComponent<ActivePath>().move();
+    }
+
+    public InputField CustomPuzzle;
+
 
     public GameObject PolePrefab;
     public GameObject PointPrefab;
@@ -68,16 +75,109 @@ public class Core : MonoBehaviour {
         public static string info = "";
         public static string mode = "normal";
     }
-    public void ButtonSavePazzle()
+    public void ButtonLoadPazzl()
     {
+        if (CustomPuzzle.text == "")
+            Debug.Log("pusto");
+        else
+        {
+            Core.PolePreferences.mode = "custom";
+            Core.PolePreferences.info = CustomPuzzle.text;
+            Debug.Log(Core.PolePreferences.info);
+            SceneManager.LoadScene("PoleLevel");
+        }
+    }
+    private string color2HEX(int col)
+    {
+        string s = Convert.ToString((int)col, 16);
+        if (s.Length == 1)
+        {
+            s = "0" + s;
+        }
+        return s;
+    }
+    public void ButtonSavePazzl()
+    {
+        string str = "";
+        //str += myPole.GetComponent<Pole>().GetSize();
+        str += "s";
+        foreach (var start in myPole.GetComponent<Pole>().starts)
+        {
+            str += start.GetComponent<PoleDot>().posX;
+            str += start.GetComponent<PoleDot>().posY;
+        }
+        str += "*";
+        str += "f";
+        foreach (var finish in myPole.GetComponent<Pole>().finishes)
+        {
+            str += finish.GetComponent<PoleDot>().posX;
+            str += finish.GetComponent<PoleDot>().posY;
+        }
+        str += "*";
+        str += "p";
         foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
         {
+            str += point.x;
+            str += point.y;
+            switch ((point.down ? 1 : 0) + 2 * (point.right ? 1 : 0))
+            {
+                case 0:
+                    str += 0;
+                    break;
+                case 1:
+                    str += 1;
+                    break;
+                case 2:
+                    str += 2;
+                    break;
+            }
 
-            Debug.Log(point.x);
+            /*Debug.Log(point.x);
             Debug.Log(point.y);
             Debug.Log(point.down);
-            Debug.Log(point.right);
+            Debug.Log(point.right);*/
         }
+        str += "*";
+        str += "r";
+        foreach (var ring in myPole.GetComponent<Pole>().eltsManager.clrRing)
+        {
+            str += ring.x;// rework
+            str += ring.y;
+            str += color2HEX((int)ring.c.a * 255);
+            str += color2HEX((int)ring.c.r * 255);
+            str += color2HEX((int)ring.c.g * 255);
+            str += color2HEX((int)ring.c.b * 255);
+            /*using System;
+class Demo {
+   static void Main() {
+      int val = 255*255;
+      val *= 255*255;
+      string hex = Convert.ToString(val, 16);
+      long intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+	  Console.WriteLine("Integer: "+val);
+      Console.WriteLine("Hex String: "+hex);
+	  Console.WriteLine("Integer: "+intValue);
+	  hex = "00000000";
+	  intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+      Console.WriteLine("Hex String: "+hex);
+	  Console.WriteLine("Integer: "+intValue);
+      
+   }
+}*/
+            /*Debug.Log(ring.x);
+            Debug.Log(ring.y);
+            Debug.Log(ring.c.a * 255);
+            Debug.Log(ring.c.r * 255);
+            Debug.Log(ring.c.g * 255);
+            Debug.Log(ring.c.b * 255);*/
+        }
+        str += "*";
+        Debug.Log(str);
+        /*foreach (PoleEltPoint ring in myPole.GetComponent<Pole>().eltsManager.clrRing)
+        {
+            Debug.Log(ring.x);
+            Debug.Log(ring.y);
+        }*/
         /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
         {
             var now = sq.GetComponent<PoleSquare>();
@@ -294,6 +394,10 @@ public class Core : MonoBehaviour {
                 break;
             case "info":
                 myPole.GetComponent<Pole>().InitStr(Core.PolePreferences.info);
+                //gentimewin.text = Core.PolePreferences.info;
+                break;
+            case "custom":
+                myPole.GetComponent<Pole>().custom(Core.PolePreferences.info);
                 //gentimewin.text = Core.PolePreferences.info;
                 break;
         }
