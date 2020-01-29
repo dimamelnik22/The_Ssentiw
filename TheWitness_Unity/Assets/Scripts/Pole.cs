@@ -113,11 +113,11 @@ public class Pole : MonoBehaviour
         }
         public void SetZone(GameObject square)
         {
-            checkZones = new int[width-1][];
-            for (int i = 0; i < width-1; ++i)
+            checkZones = new int[height-1][];
+            for (int i = 0; i < height-1; ++i)
             {
-                checkZones[i] = new int[height-1];
-                for (int j = 0; j < height-1; ++j)
+                checkZones[i] = new int[width-1];
+                for (int j = 0; j < width-1; ++j)
                 {
                     checkZones[i][j] = 0;
                 }
