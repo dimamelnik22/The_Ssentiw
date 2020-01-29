@@ -162,18 +162,42 @@ public class ActivePath : MonoBehaviour
         }
     }
 
-    //private bool CheckBorder()
-    //{
-    //    GameObject lastDot = dotsOnPole[dotsOnPole.Count - 1];
-    //    if (transform.position.x > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToRight()
-    //        || transform.position.x < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToLeft()
-    //        || transform.position.y > lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToUp()
-    //        || transform.position.y < lastDot.transform.position.x && !lastDot.GetComponent<PoleDot>().AllowedToDown())
-    //        return false;
-    //    else return true;
+    public void move()
+    {
+        pointer.transform.Translate(0f, -5f, 0f);
+        Update();
+    }
+    public void SystemStep(GameObject dot)
+    {
+        dotsOnPole.Add(dot);
+        dots.Add(Instantiate(PathDotPrefab, dotsOnPole[dotsOnPole.Count - 1].transform.position + stepz, PathDotPrefab.transform.rotation));
+        if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right.GetComponent<PoleLine>().right == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().right);
+        }
+        else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left.GetComponent<PoleLine>().left == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().left);
+        }
+        else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up.GetComponent<PoleLine>().up == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().up);
+        }
+        else if (dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down != null && dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down.GetComponent<PoleLine>().down == dotsOnPole[dotsOnPole.Count - 2])
+        {
+            linesOnPole.Add(dotsOnPole[dotsOnPole.Count - 1].GetComponent<PoleDot>().down);
+        }
 
-    //}
+        currentLine.transform.localScale = new Vector3(linesOnPole[linesOnPole.Count - 1].GetComponent<PoleLine>().Line.transform.localScale.x, linesOnPole[linesOnPole.Count - 1].GetComponent<PoleLine>().Line.transform.localScale.y, 0.1f);
+        currentLine.transform.position = linesOnPole[linesOnPole.Count - 1].transform.position + stepz;
+        leadDot.transform.position = dots[dots.Count - 1].transform.position;
+        currentLine = Instantiate(PathLinePrefab, dots[dots.Count - 1].transform.position, PathLinePrefab.transform.rotation);
+        dots[dots.Count - 1].transform.parent = this.transform;
+        currentLine.transform.parent = this.transform;
+        lines.Add(currentLine);
+        pointer.transform.position = leadDot.transform.position;
 
+    }
     public void Update()
     {
 

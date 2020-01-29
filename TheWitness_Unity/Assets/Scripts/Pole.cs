@@ -668,6 +668,94 @@ public class Pole : MonoBehaviour
 
     }
 
+    delegate void funcDecode(string input);
+    public void startDecode(string input)
+    {
+        int x;
+        int y;
+        for (int i = 0; i< input.Length;i +=2)
+        {
+            x = input[i] - '0';
+            y = input[i + 1] - '0';
+            Debug.Log(x + " " + y);
+        }
+    }
+    public void finishDecode(string input)
+    {
+        int x;
+        int y;
+        for (int i = 0; i < input.Length; i += 2)
+        {
+            x = input[i] - '0';
+            y = input[i + 1] - '0';
+            Debug.Log(x + " " + y);
+        }
+    }
+    public void pointDecode(string input)
+    {
+        int x;
+        int y;
+        int f;
+        for (int i = 0; i < input.Length; i += 3)
+        {
+            x = input[i] - '0';
+            y = input[i + 1] - '0';
+            f = input[i + 2] - '0';
+            Debug.Log(x + " " + y + " " + f);
+        }
+    }
+    public void ringDecode(string input)
+    {
+        Debug.Log(input);// work!
+    }
+    public void custom(string info)
+    {
+        // test coode 5s4404*f4130*p002101200010020120231242*r00ff00ff0000ff00ff0000ff00ff0000ff00ff0000ff00ff0010ff00ffff*
+
+        funcDecode[] decode = new funcDecode[4];// decode funcs array
+        decode[0] = startDecode;
+        decode[1] = finishDecode;
+        decode[2] = pointDecode;
+        decode[3] = ringDecode;
+        int decodeId = 0; //index of decode func
+
+        int size = info[0];
+        bool flag = true;
+        string saveLine = ""; // save line one type of obj
+        for(int i = 1; i < info.Length; ++i)
+        {
+            if (flag)
+            {
+                switch (info[i])
+                {
+                    case 's':
+                        decodeId = 0;
+                        break;
+                    case 'f':
+                        decodeId = 1;
+                        break;
+                    case 'p':
+                        decodeId = 2;
+                        break;
+                    case 'r':
+                        decodeId = 3;
+                        break;
+                }
+                flag = false;
+                saveLine = "";
+            }
+            else if (info[i] == '*')
+            {
+                decode[decodeId](saveLine);
+                flag = true;
+            }
+            else
+            {
+                saveLine += info[i];
+            }
+        }
+        
+    }
     public void InitStr(string info)
     {
         playerPath = new PolePath();
@@ -1460,6 +1548,8 @@ public class Pole : MonoBehaviour
                 int i = Core.PolePreferences.MyRandom.GetRandom() % coloredZones[j].Count;
                 coloredZones[j][i].GetComponent<PoleSquare>().hasElem = true;
                 coloredZones[j][i].GetComponent<PoleSquare>().element = Instantiate(ClrRingPrefab, coloredZones[j][i].transform.position, ClrRingPrefab.transform.rotation).GetComponent<Elements>();
+                coloredZones[j][i].GetComponent<PoleSquare>().element.x = i;
+                coloredZones[j][i].GetComponent<PoleSquare>().element.x = j;
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<EltClrRing>().c = color[k];
                 eltsManager.clrRing.Add(coloredZones[j][i].GetComponent<PoleSquare>().element);
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
@@ -1894,7 +1984,7 @@ public class Pole : MonoBehaviour
     {
         string path = "S";
         GameObject cur = start;
-        while (!finishes.Contains(cur))
+        while (cur != playerPath.dots[playerPath.dots.Count - 1])
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer && path[path.Length-1].ToString() != "D")
@@ -1927,7 +2017,7 @@ public class Pole : MonoBehaviour
     {
         string path = "S";
         GameObject cur = start;
-        while (!finishes.Contains(cur))
+        while (cur != systemPath.dots[systemPath.dots.Count - 1])
         {
             //Debug.Log(path.Length + " " + path);
             if (cur.GetComponent<PoleDot>().up != null && cur.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution && path[path.Length - 1].ToString() != "D")
