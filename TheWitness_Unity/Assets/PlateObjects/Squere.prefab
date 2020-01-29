@@ -43,6 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54b3f407342392648b3693c453293bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EditButtonPF: {fileID: 3625902837194963452, guid: b02c6b47f2c1dcb49aa7a3461e517ea8,
+    type: 3}
+  editButton: {fileID: 0}
   up: {fileID: 0}
   down: {fileID: 0}
   left: {fileID: 0}

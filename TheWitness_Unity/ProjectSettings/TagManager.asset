@@ -18,6 +18,7 @@ TagManager:
   - Core
   - EltShape
   - EltClrRing
+  - Editor
   layers:
   - Default
   - TransparentFX

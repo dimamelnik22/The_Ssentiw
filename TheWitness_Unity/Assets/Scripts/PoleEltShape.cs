@@ -28,12 +28,12 @@ public class PoleEltShape : Elements
         transform.Translate(new Vector3(-boolList[0].Count + 1, boolList.Count - 1, 0f) / 2);
     }
 
-    public void ShowUnsolvedColor()
+    public new void ShowUnsolvedColor()
     {
         colorlerping = true;
         StartCoroutine(Do());
     }
-    public void ShowNormalizedColor()
+    public new void ShowNormalizedColor()
     {
         colorlerping = false;
         foreach (GameObject block in blocks)

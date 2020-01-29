@@ -583,7 +583,8 @@ public class MenuManager : MonoBehaviour {
 
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
-
+                activePath.GetComponent<ActivePath>().pointer.transform.Translate(0.75f, 0f, 0f);
+                activePath.GetComponent<ActivePath>().Update();
             }
             else  if (prevPaths.Count>0)
             {
@@ -620,7 +621,7 @@ public class MenuManager : MonoBehaviour {
         else if (prevPaths.Count > 0 )
         {
             
-            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().starts[0].transform.position.x && dist.x < 0 && ((Input.GetMouseButton(0) == true) || (Input.touchCount > 0)))
+            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().starts[0].transform.position.x && dist.x < 0 && (Input.GetMouseButton(0) == false) && (Input.touchCount == 0))
             {
                 Debug.Log(222);
                 Destroy(menuPole);

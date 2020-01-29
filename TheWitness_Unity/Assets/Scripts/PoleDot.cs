@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PoleDot : MonoBehaviour {
+    public GameObject PointPrefab;
     public GameObject DotPF;
+    public GameObject EditButtonPF;
+    public GameObject dot;
+    public GameObject editButton;
     public GameObject up;
     public GameObject down;
     public GameObject left;
     public GameObject right;
+    public GameObject startFinish;
     public bool isUsedBySolution = false;
     public bool isUsedByPlayer = false;
     public bool hasPoint = false;
@@ -53,7 +58,27 @@ public class PoleDot : MonoBehaviour {
 
     public void CreateDot()
     {
-        Instantiate(DotPF, transform);
+        if (dot == null)
+            dot = Instantiate(DotPF, transform);
+    }
+    public void CreatePoint()
+    {
+        if (hasPoint)
+        {
+            point = Instantiate(PointPrefab, transform.position, PointPrefab.transform.rotation).GetComponent<Elements>();
+            point.GetComponent<PoleEltPoint>().SetDot(this.gameObject);
+        }
+    }
+
+    public void ShowEditButton()
+    {
+        if (!hasPoint && startFinish == null)
+            editButton = Instantiate(EditButtonPF, transform);
+    }
+
+    public void HideEditButton()
+    {
+        Destroy(editButton);
     }
     // Use this for initialization
     void Start () {

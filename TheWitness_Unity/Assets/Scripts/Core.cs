@@ -257,16 +257,10 @@ class Demo {
         myPole.GetComponent<Pole>().playerPath.lines.Clear();
         playerPathDotsOnScreen.Clear();
         playerPathLinesOnScreen.Clear();
-       
-        if (pathIsShown)
+        foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
+            Destroy(gameObject);
+        if (!pathIsShown)
         {
-            foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
-                Destroy(gameObject);
-        }
-        else
-        {
-            foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Path"))
-                Destroy(gameObject);
             foreach (GameObject dot in myPole.GetComponent<Pole>().systemPath.dots)
             {
                 if (dot == myPole.GetComponent<Pole>().starts[0]) Instantiate(PathStartPrefab, dot.transform.position + pathstepz, PathStartPrefab.transform.rotation);
@@ -292,7 +286,7 @@ class Demo {
         switch (Core.PolePreferences.mode)
         {
             case "normal":
-                myPole.GetComponent<Pole>().Init(PolePreferences.poleSize);
+                myPole.GetComponent<Pole>().Init(PolePreferences.poleSize, PolePreferences.poleSize);
                 // START and FINISH creating
                 int x = 0;
                 int y = 0;
@@ -410,9 +404,9 @@ class Demo {
 
         
         //rework
-        for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
+        for (int i = 0; i < myPole.GetComponent<Pole>().height; i++)
         {
-            for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
+            for (int j = 0; j < myPole.GetComponent<Pole>().width; j++)
             {
                 if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().hasPoint)
                 {
@@ -423,7 +417,7 @@ class Demo {
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.c = new Color(45 / 255, 104 / 255, 1);
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                 }
-                if (j < myPole.GetComponent<Pole>().GetSize() - 1)
+                if (j < myPole.GetComponent<Pole>().width - 1)
                 {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right != null)
                     {
@@ -437,7 +431,7 @@ class Demo {
                         }
                     }
                 }
-                if (i < myPole.GetComponent<Pole>().GetSize() - 1)
+                if (i < myPole.GetComponent<Pole>().height - 1)
                 {
                     if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down != null)
                     {
