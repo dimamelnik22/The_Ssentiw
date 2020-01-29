@@ -178,7 +178,7 @@ class Demo {
             Debug.Log(ring.x);
             Debug.Log(ring.y);
         }*/
-        /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquere"))
+        /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquare"))
         {
             var now = sq.GetComponent<PoleSquare>();
             string cod = "";

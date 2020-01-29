@@ -72,8 +72,7 @@ public class PoleDot : MonoBehaviour {
 
     public void ShowEditButton()
     {
-        if (!hasPoint && startFinish == null)
-            editButton = Instantiate(EditButtonPF, transform);
+        editButton = Instantiate(EditButtonPF, transform);
     }
 
     public void HideEditButton()

@@ -8,6 +8,7 @@ public class PoleLine : MonoBehaviour {
     public GameObject Line;
     public readonly int speed = 20;
     public GameObject EditButtonPF;
+    public GameObject PointPrefab;
     public GameObject editButton;
     public GameObject up;
 	public GameObject down;
@@ -63,9 +64,19 @@ public class PoleLine : MonoBehaviour {
         }
     }
 
+    public void CreatePoint()
+    {
+        if (hasPoint)
+        {
+            point = Instantiate(PointPrefab, transform.position, PointPrefab.transform.rotation).GetComponent<Elements>();
+            point.GetComponent<PoleEltPoint>().SetLine(this.gameObject);
+        }
+    }
+
     public void ShowEditButton()
     {
         editButton = Instantiate(EditButtonPF, transform);
+        editButton.GetComponent<EditLine>().line = this.gameObject;
     }
 
     public void HideEditButton()
