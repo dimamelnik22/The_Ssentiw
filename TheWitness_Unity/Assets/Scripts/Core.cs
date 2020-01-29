@@ -99,7 +99,7 @@ public class Core : MonoBehaviour {
     public void ButtonSavePazzl()
     {
         string str = "";
-        str += myPole.GetComponent<Pole>().GetSize();
+        //str += myPole.GetComponent<Pole>().GetSize();
         str += "s";
         foreach (var start in myPole.GetComponent<Pole>().starts)
         {

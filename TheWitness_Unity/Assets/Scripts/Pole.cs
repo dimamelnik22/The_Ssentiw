@@ -113,22 +113,21 @@ public class Pole : MonoBehaviour
         }
         public void SetZone(GameObject square)
         {
-            checkZones = new int[Core.PolePreferences.poleSize - 1][];
-            int size = Core.PolePreferences.poleSize - 1;
-            for (int i = 0; i < size; ++i)
+            checkZones = new int[width-1][];
+            for (int i = 0; i < width-1; ++i)
             {
-                checkZones[i] = new int[size];
-                for (int j = 0; j < size; ++j)
+                checkZones[i] = new int[height-1];
+                for (int j = 0; j < height-1; ++j)
                 {
                     checkZones[i][j] = 0;
                 }
             }
             GameObject square1 = square;
             int quantityZones = 0;
-            for (int x = 0; x < size; ++x)
+            for (int x = 0; x < width-1; ++x)
             {
                 GameObject square2 = square1;
-                for (int y = 0; y < size; ++y)
+                for (int y = 0; y < height-1; ++y)
                 {
                     if (checkZones[y][x] == 0)
                     {
@@ -146,10 +145,10 @@ public class Pole : MonoBehaviour
                 zone.Add(new List<GameObject>());
             }
             square1 = square;
-            for (int x = 0; x < size; ++x)
+            for (int x = 0; x < width-1; ++x)
             {
                 GameObject square2 = square1;
-                for (int y = 0; y < size; ++y)
+                for (int y = 0; y < height-1; ++y)
                 {
                     zone[checkZones[y][x] - 1].Add(square2);
                     square2 = square2.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().down;
@@ -359,7 +358,6 @@ public class Pole : MonoBehaviour
             unsolvedElts.Clear();
             zone.Clear();
             SetZone(square);
-
             foreach (List<GameObject> p in zone)
             {
                 bool localIsSolved = true;
