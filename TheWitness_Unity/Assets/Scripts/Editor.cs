@@ -29,7 +29,6 @@ public class Editor : MonoBehaviour
     public bool playerIsActive = false;
     public GameObject myPole;
 
-    public int currentSize = 5;
     public InputField heightInput;
     public InputField widthInput;
     private string element = "";
@@ -80,14 +79,44 @@ public class Editor : MonoBehaviour
 
     public void ButtonTrySolve()
     {
-        
+        if (TrySolve(myPole.GetComponent<Pole>().starts[0], myPole.GetComponent<Pole>().finishes[0]))
+            Debug.Log("success");
+    }
+
+    public bool TrySolve(GameObject begin, GameObject end)
+    {
+        begin.GetComponent<PoleDot>().isUsedByPlayer = true;
+        if (begin == end && myPole.GetComponent<Pole>().eltsManager.CheckSolution(myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
+            return true;
+        List<GameObject> dots = new List<GameObject>();
+        if (begin.GetComponent<PoleDot>().up != null && !begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up);
+        if (begin.GetComponent<PoleDot>().right != null && !begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
+        if (begin.GetComponent<PoleDot>().down != null && !begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down);
+        if (begin.GetComponent<PoleDot>().left != null && !begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left);
+        bool success = false;
+        foreach (GameObject next in dots)
+        {
+            if (TrySolve(next, end))
+            {
+                success = true;
+            }
+        }
+        if (!success)
+        {
+            begin.GetComponent<PoleDot>().isUsedByPlayer = false;
+        }
+        return success;
     }
 
     public void ButtonResize()
     {
+        HideEditButtons();
         Destroy(myPole);
         myPole = Instantiate(PolePrefab);
-        currentSize++;
         myPole.GetComponent<Pole>().Init(System.Int32.Parse(heightInput.text), System.Int32.Parse(widthInput.text));
         myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
         myPole.GetComponent<Pole>().StartScaling(myPole.GetComponent<Pole>().poleDots[0][0]);
@@ -124,7 +153,7 @@ public class Editor : MonoBehaviour
         {
             myPole.GetComponent<Pole>().poleDots[y][x].GetComponent<PoleDot>().hasPoint = true;
             myPole.GetComponent<Pole>().poleDots[y][x].GetComponent<PoleDot>().CreatePoint();
-            //myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point);
+            myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[y][x].GetComponent<PoleDot>().point);
         }
         HideEditButtons();
     }
