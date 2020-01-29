@@ -1335,6 +1335,8 @@ public class Pole : MonoBehaviour
     {
         finishDots.Add(Instantiate(FinishPrefab, stepx * x + stepy * y, FinishPrefab.transform.rotation));
         finishes.Add(poleDots[y][x]);
+        finishDots[finishDots.Count - 1].GetComponent<FinishDot>().LinkDot(finishes[finishes.Count - 1]);
+        finishDots[finishDots.Count - 1].transform.parent = this.transform;
     }
     public void GeneratePoints(int numberOfPoints)
     {

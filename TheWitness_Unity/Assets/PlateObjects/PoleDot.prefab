@@ -43,14 +43,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 153457becdc980b4eafafd502130fd65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PointPrefab: {fileID: 1313451005600678, guid: d78850c56a1b1e74ea93ebccf4a8503d,
+    type: 3}
   DotPF: {fileID: 3438751875270885126, guid: ebe43634e98e55a40a27ad2b92fa5d0b, type: 3}
   EditButtonPF: {fileID: 6810284297996705324, guid: 01e65e81e33d8084a866d78446330d42,
     type: 3}
   dot: {fileID: 0}
+  editButton: {fileID: 0}
   up: {fileID: 0}
   down: {fileID: 0}
   left: {fileID: 0}
   right: {fileID: 0}
+  startFinish: {fileID: 0}
   isUsedBySolution: 0
   isUsedByPlayer: 0
   hasPoint: 0

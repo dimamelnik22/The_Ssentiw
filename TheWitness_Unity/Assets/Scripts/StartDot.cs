@@ -10,11 +10,13 @@ public class StartDot : MonoBehaviour
     public void LinkDot(GameObject start)
     {
         dot = start;
+        dot.GetComponent<PoleDot>().startFinish = this.gameObject;
     }
 
     void OnMouseDown()
     {
-        
+        if (GameObject.FindGameObjectWithTag("Editor") != null)
+            return;
         GameObject activePath = null;
         if (GameObject.FindGameObjectWithTag("Core").GetComponent<Core>() != null)
         {

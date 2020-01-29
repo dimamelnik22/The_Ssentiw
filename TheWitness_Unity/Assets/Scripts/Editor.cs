@@ -32,6 +32,7 @@ public class Editor : MonoBehaviour
     public int currentSize = 5;
     public InputField heightInput;
     public InputField widthInput;
+    private string element = "";
 
     public void ButtonSavePazzl()
     {
@@ -92,21 +93,60 @@ public class Editor : MonoBehaviour
         myPole.GetComponent<Pole>().StartScaling(myPole.GetComponent<Pole>().poleDots[0][0]);
     }
 
-    public void CreateStartIn()
+    public void ButtonAddStart()
     {
-
+        ShowEditButtonsDots();
+        element = "start";
     }
 
-    public void ShowEditButtons()
+    public void ButtonAddFinish()
+    {
+        ShowEditButtonsDots();
+        element = "finish";
+    }
+
+    public void ButtonAddPoint()
+    {
+        ShowEditButtonsDots();
+        element = "point";
+    }
+    public void AddElementToDot(int x, int y)
+    {
+        if (element == "start")
+        {
+            myPole.GetComponent<Pole>().AddStart(x, y);
+        }
+        else if (element == "finish")
+        {
+            myPole.GetComponent<Pole>().AddFinish(x, y);
+        }
+        else if (element == "point")
+        {
+            myPole.GetComponent<Pole>().poleDots[y][x].GetComponent<PoleDot>().hasPoint = true;
+            myPole.GetComponent<Pole>().poleDots[y][x].GetComponent<PoleDot>().CreatePoint();
+            //myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point);
+        }
+        HideEditButtons();
+    }
+
+    public void ShowEditButtonsDots()
     {
         foreach(var dot in GameObject.FindGameObjectsWithTag("PoleDot"))
         {
             dot.GetComponent<PoleDot>().ShowEditButton();
         }
+    }
+
+    public void ShowEditButtonsLines()
+    {
         foreach (var line in GameObject.FindGameObjectsWithTag("PoleLine"))
         {
             line.GetComponent<PoleLine>().ShowEditButton();
         }
+    }
+
+    public void ShowEditButtonsSqueres()
+    {
         foreach (var squere in GameObject.FindGameObjectsWithTag("PoleSquere"))
         {
             squere.GetComponent<PoleSquare>().ShowEditButton();
