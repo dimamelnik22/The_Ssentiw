@@ -99,7 +99,8 @@ public class Core : MonoBehaviour {
     public void ButtonSavePazzl()
     {
         string str = "";
-        //str += myPole.GetComponent<Pole>().GetSize();
+        str += myPole.GetComponent<Pole>().eltsManager.height;
+        str += myPole.GetComponent<Pole>().eltsManager.width;
         str += "s";
         foreach (var start in myPole.GetComponent<Pole>().starts)
         {
@@ -141,38 +142,72 @@ public class Core : MonoBehaviour {
         str += "r";
         foreach (var ring in myPole.GetComponent<Pole>().eltsManager.clrRing)
         {
-            str += ring.x;// rework
+            str += ring.x;// rework points not set
             str += ring.y;
             str += color2HEX((int)ring.c.a * 255);
             str += color2HEX((int)ring.c.r * 255);
             str += color2HEX((int)ring.c.g * 255);
             str += color2HEX((int)ring.c.b * 255);
-            /*using System;
-class Demo {
-   static void Main() {
-      int val = 255*255;
-      val *= 255*255;
-      string hex = Convert.ToString(val, 16);
-      long intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-	  Console.WriteLine("Integer: "+val);
-      Console.WriteLine("Hex String: "+hex);
-	  Console.WriteLine("Integer: "+intValue);
-	  hex = "00000000";
-	  intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-      Console.WriteLine("Hex String: "+hex);
-	  Console.WriteLine("Integer: "+intValue);
-      
-   }
-}*/
-            /*Debug.Log(ring.x);
-            Debug.Log(ring.y);
-            Debug.Log(ring.c.a * 255);
-            Debug.Log(ring.c.r * 255);
-            Debug.Log(ring.c.g * 255);
-            Debug.Log(ring.c.b * 255);*/
+        }
+        str += "*";
+        str += "T";
+        foreach (GameObject s in GameObject.FindGameObjectsWithTag("EltShape"))
+        {
+            PoleEltShape shape = s.GetComponent<PoleEltShape>(); 
+            str += shape.x;
+            str += shape.y;
+            str += shape.boolList.Count;
+            str += shape.boolList[0].Count;
+            int k = 16;
+            int len = 1;
+            while(Math.Pow(2, shape.boolList[0].Count) > k)
+            {
+                k *= 16;
+            }
+            for (int i = 0; i < shape.boolList.Count; ++i)
+            {
+                string bit = "";
+                for (int j = 0; j < shape.boolList[0].Count; ++j)
+                {
+                    bit += shape.boolList[i][j] ? 1 : 0;
+                }
+                Debug.Log(bit);
+                long intValue = long.Parse(bit, System.Globalization.NumberStyles.HexNumber);
+                string t = Convert.ToString(intValue, 16);
+                while (t.Length < len);
+                {
+                    t = "0" + t;
+                }
+                str += t;
+            }
+            
         }
         str += "*";
         Debug.Log(str);
+        /*using System;
+class Demo {
+static void Main() {
+  int val = 255*255;
+  val *= 255*255;
+  string hex = Convert.ToString(val, 16);
+  long intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+  Console.WriteLine("Integer: "+val);
+  Console.WriteLine("Hex String: "+hex);
+  Console.WriteLine("Integer: "+intValue);
+  hex = "00000000";
+  intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+  Console.WriteLine("Hex String: "+hex);
+  Console.WriteLine("Integer: "+intValue);
+
+}
+}*/
+        /*Debug.Log(ring.x);
+        Debug.Log(ring.y);
+        Debug.Log(ring.c.a * 255);
+        Debug.Log(ring.c.r * 255);
+        Debug.Log(ring.c.g * 255);
+        Debug.Log(ring.c.b * 255);*/
+
         /*foreach (PoleEltPoint ring in myPole.GetComponent<Pole>().eltsManager.clrRing)
         {
             Debug.Log(ring.x);
