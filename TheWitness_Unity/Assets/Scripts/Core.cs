@@ -171,7 +171,6 @@ public class Core : MonoBehaviour {
                 {
                     bit += shape.boolList[i][j] ? 1 : 0;
                 }
-                Debug.Log(bit);
                 long intValue = long.Parse(bit, System.Globalization.NumberStyles.HexNumber);
                 string t = Convert.ToString(intValue, 16);
                 while (t.Length < len);
