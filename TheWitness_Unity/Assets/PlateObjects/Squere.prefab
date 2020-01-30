@@ -54,3 +54,6 @@ MonoBehaviour:
   element: {fileID: 0}
   indexI: 0
   indexJ: 0
+  ShapeBoolPF: {fileID: 8652781673341267249, guid: fab1ed988860f644db0d2c0a4355b4a9,
+    type: 3}
+  shapeBool: {fileID: 0}

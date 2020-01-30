@@ -9,7 +9,11 @@ public class PoleEltShape : Elements
     public int size = 0;
     public List<GameObject> blocks = new List<GameObject>();
 
-
+    public void OnDestroy()
+    {
+        foreach (var block in blocks)
+            Destroy(block);
+    }
 
     public void Create()
     {

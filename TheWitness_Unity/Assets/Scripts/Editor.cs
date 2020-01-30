@@ -8,6 +8,7 @@ public class Editor : MonoBehaviour
 {
     public GameObject PolePrefab;
     public GameObject PointPrefab;
+    public GameObject ShapePF;
 
     public Text SolveTimeText;
     public float solvetime = 0f;
@@ -34,6 +35,7 @@ public class Editor : MonoBehaviour
 
     public InputField heightInput;
     public InputField widthInput;
+    private List<List<bool>> boolList;
     private string element = "";
     private GameObject finish;
 
@@ -205,6 +207,7 @@ public class Editor : MonoBehaviour
 
     public void ButtonResize()
     {
+        ButtonHideSolution();
         HideEditButtons();
         myPole.GetComponent<Pole>().ClearPole();
         foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
@@ -216,6 +219,7 @@ public class Editor : MonoBehaviour
         Destroy(myPole);
         myPole = Instantiate(PolePrefab);
         myPole.GetComponent<Pole>().Init(System.Int32.Parse(heightInput.text), System.Int32.Parse(widthInput.text));
+        UpdateBoolList();
         myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
         myPole.GetComponent<Pole>().StartScaling(myPole.GetComponent<Pole>().poleDots[0][0]);
     }
@@ -255,6 +259,24 @@ public class Editor : MonoBehaviour
             if (square.GetComponent<PoleSquare>().hasElem)
                 square.GetComponent<PoleSquare>().ShowEditButton();
         element = "delete";
+    }
+
+    public void ButtonShapeBuild()
+    {
+        HideEditButtons();
+        UpdateBoolList();
+        foreach (var square in GameObject.FindGameObjectsWithTag("PoleSquare"))
+        {
+            square.GetComponent<PoleSquare>().ShowEditButton();
+        }
+        element = "shapebuild";
+    }
+
+    public void ButtonShapePlace()
+    {
+        HideEditButtons();
+        ShowEditButtonsSqueres();
+        element = "shapeplace";
     }
 
     public void EditDot(int x, int y)
@@ -311,6 +333,32 @@ public class Editor : MonoBehaviour
         HideEditButtons();
     }
 
+    public void EditSquare(GameObject square)
+    {
+        var sq = square.GetComponent<PoleSquare>();
+        if (element == "shapeplace")
+        {
+            Elements shapeElt = Instantiate(ShapePF, square.transform).GetComponent<Elements>();
+            sq.GetComponent<PoleSquare>().hasElem = true;
+            sq.GetComponent<PoleSquare>().element = shapeElt;
+            CutBoolList();
+            shapeElt.GetComponent<PoleEltShape>().boolList = boolList;
+            shapeElt.GetComponent<PoleEltShape>().Create();
+            HideEditButtons();
+        }
+        else if (element == "shapebuild")
+        {
+            boolList[sq.indexI][sq.indexJ] = !boolList[sq.indexI][sq.indexJ];
+            sq.UpdateShapeBool(boolList[sq.indexI][sq.indexJ]);
+        }
+        else if (element == "delete")
+        {
+            sq.hasElem = false;
+            Destroy(sq.element);
+            HideEditButtons();
+        }
+    }
+
     public void ShowEditButtonsDots()
     {
         foreach(var dot in GameObject.FindGameObjectsWithTag("PoleDot"))
@@ -352,69 +400,22 @@ public class Editor : MonoBehaviour
         {
             squere.GetComponent<PoleSquare>().HideEditButton();
         }
+        foreach (var sh in GameObject.FindGameObjectsWithTag("ShapeBool"))
+            Destroy(sh);
     }
     void Start()
     {
+        
         myPole = Instantiate(PolePrefab);
         myPole.GetComponent<Pole>().Init(5,5);
+        UpdateBoolList();
         myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
         myPole.GetComponent<Pole>().StartScaling(myPole.GetComponent<Pole>().poleDots[0][0]);
-        //myPole.GetComponent<Pole>().AddStart(x, y);
-        //myPole.GetComponent<Pole>().AddFinish(x, y);
-        //foreach (GameObject start in myPole.GetComponent<Pole>().starts)
-        //    myPole.GetComponent<Pole>().StartScaling(start);
+        
         //myPole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
         ////myPole.GetComponent<Pole>().GenerateShapes(100);
         //myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
-        //myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-
-
-
-        ////rework
-        //for (int i = 0; i < myPole.GetComponent<Pole>().GetSize(); i++)
-        //{
-        //    for (int j = 0; j < myPole.GetComponent<Pole>().GetSize(); j++)
-        //    {
-        //        if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().hasPoint)
-        //        {
-        //            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point = Instantiate(PointPrefab, transform.position + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
-        //            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<PoleEltPoint>().SetDot(myPole.GetComponent<Pole>().poleDots[i][j]);
-        //            myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point);
-
-        //            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.c = new Color(45 / 255, 104 / 255, 1);
-        //            myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
-        //        }
-        //        if (j < myPole.GetComponent<Pole>().GetSize() - 1)
-        //        {
-        //            if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right != null)
-        //            {
-        //                if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().hasPoint)
-        //                {
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepx * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right);
-        //                    myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point);
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.c = new Color(45 / 255, 104 / 255, 1);
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().right.GetComponent<PoleLine>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
-        //                }
-        //            }
-        //        }
-        //        if (i < myPole.GetComponent<Pole>().GetSize() - 1)
-        //        {
-        //            if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down != null)
-        //            {
-        //                if (myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().hasPoint)
-        //                {
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point = Instantiate(PointPrefab, transform.position + stepy * 0.5f + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.GetComponent<PoleEltPoint>().SetLine(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down);
-        //                    myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point);
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.c = new Color(45 / 255, 104 / 255, 1);
-        //                    myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().down.GetComponent<PoleLine>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
-
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        
 
     }
 
@@ -423,4 +424,51 @@ public class Editor : MonoBehaviour
 
     }
 
+    private void UpdateBoolList()
+    {
+        boolList = new List<List<bool>>();
+        for (int i = 0; i < myPole.GetComponent<Pole>().height; ++i)
+        {
+            boolList.Add(new List<bool>());
+            for (int j = 0; j < myPole.GetComponent<Pole>().width; ++j)
+                boolList[i].Add(false);
+        }
+    }
+    private void CutBoolList()
+    {
+        bool empty = true;
+        while (empty)
+        {
+            for (int i = 0; i < boolList[0].Count; ++i)
+                if (boolList[0][i]) empty = false;
+            if (empty)
+                boolList.RemoveAt(0);
+        }
+        empty = true;
+        while (empty)
+        {
+            for (int i = 0; i < boolList[0].Count; ++i)
+                if (boolList[boolList.Count - 1][i]) empty = false;
+            if (empty)
+                boolList.RemoveAt(boolList.Count - 1);
+        }
+        empty = true;
+        while (empty)
+        {
+            for (int i = 0; i < boolList.Count; ++i)
+                if (boolList[i][0]) empty = false;
+            if (empty)
+                for (int i = 0; i < boolList.Count; ++i)
+                    boolList[i].RemoveAt(0);
+        }
+        empty = true;
+        while (empty)
+        {
+            for (int i = 0; i < boolList.Count; ++i)
+                if (boolList[i][boolList[0].Count - 1]) empty = false;
+            if (empty)
+                for (int i = 0; i < boolList.Count; ++i)
+                    boolList[i].RemoveAt(boolList[i].Count - 1);
+        }
+    }
 }

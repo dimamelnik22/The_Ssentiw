@@ -19,7 +19,7 @@ TagManager:
   - EltClrRing
   - Editor
   - PoleSquare
-  - PoleSquere
+  - ShapeBool
   layers:
   - Default
   - TransparentFX
