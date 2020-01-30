@@ -1117,6 +1117,44 @@ public class Pole : MonoBehaviour
         foreach (GameObject start in starts) StartScaling(start);
     }
     // "S(size)sSTposyYposxXFHposyYposxXPT(num)p{posyYposxXdir}RG(num)r{indexIIindexJJcolor}SR(num)s{indexIIindexJJcolor}SP(num)s{indexIIindexJJheightHwidthWbitmap}
+    
+    public void GetZoneDots(GameObject begin, List<GameObject> dots)
+    {
+        var newdots = new List<GameObject>();
+        if (begin.GetComponent<PoleDot>().up != null && !begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer && !dots.Contains(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up))
+        {
+            dots.Add(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up);
+            newdots.Add(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up);
+        }
+        if (begin.GetComponent<PoleDot>().right != null && !begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer && !dots.Contains(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right))
+        {
+            dots.Add(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
+            newdots.Add(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
+        }
+        if (begin.GetComponent<PoleDot>().down != null && !begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer && !dots.Contains(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down))
+        {
+            dots.Add(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down);
+            newdots.Add(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down);
+        }
+        if (begin.GetComponent<PoleDot>().left != null && !begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer && !dots.Contains(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left))
+        {
+            dots.Add(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left);
+            newdots.Add(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left);
+        }
+        //Debug.Log(newdots.Count);
+        foreach (GameObject dot in newdots)
+            GetZoneDots(dot, dots);
+    }
+    public bool FindFinish(GameObject begin)
+    {
+        var dots = new List<GameObject>();
+        GetZoneDots(begin, dots);
+        //Debug.Log("dots found");
+        foreach (GameObject dot in dots)
+            if (finishes.Contains(dot))
+                return true;
+        return false;
+    }
     public bool FindPath(GameObject begin, GameObject end, int[][] ways)
     {
         begin.GetComponent<PoleDot>().isUsedBySolution = true;
@@ -1411,7 +1449,6 @@ public class Pole : MonoBehaviour
         
     }
     
-
     public void AddStart(int x, int y)
     {
         startDots.Add(Instantiate(StartPrefab, stepx * x + stepy * y, StartPrefab.transform.rotation));

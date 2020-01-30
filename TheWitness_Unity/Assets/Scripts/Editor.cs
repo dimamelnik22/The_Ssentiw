@@ -97,7 +97,7 @@ public class Editor : MonoBehaviour
         {
             solvetime = Time.realtimeSinceStartup;
             foreach (GameObject start in myPole.GetComponent<Pole>().starts)
-                if (TrySolve(start, myPole.GetComponent<Pole>().finishes))
+                if (TrySolve(start, myPole.GetComponent<Pole>().finishes, false))
                 {
                     Debug.Log("success");
 
@@ -117,7 +117,7 @@ public class Editor : MonoBehaviour
         }
     }
 
-    public bool TrySolve(GameObject begin, List<GameObject> ends)
+    public bool TrySolve(GameObject begin, List<GameObject> ends, bool needToCheckLocal)
     {
         begin.GetComponent<PoleDot>().isUsedByPlayer = true;
         var dotslist = myPole.GetComponent<Pole>().systemPath.dots;
@@ -156,19 +156,38 @@ public class Editor : MonoBehaviour
             finish = begin;
             return true;
         }
+        var beginDot = begin.GetComponent<PoleDot>();
         List<GameObject> dots = new List<GameObject>();
-        if (begin.GetComponent<PoleDot>().up != null && !begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
-            dots.Add(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up);
-        if (begin.GetComponent<PoleDot>().right != null && !begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
-            dots.Add(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
-        if (begin.GetComponent<PoleDot>().down != null && !begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
-            dots.Add(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down);
-        if (begin.GetComponent<PoleDot>().left != null && !begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
-            dots.Add(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left);
+        if (beginDot.up != null && !beginDot.up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(beginDot.up.GetComponent<PoleLine>().up);
+        if (beginDot.right != null && !beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(beginDot.right.GetComponent<PoleLine>().right);
+        if (beginDot.down != null && !beginDot.down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(beginDot.down.GetComponent<PoleLine>().down);
+        if (beginDot.left != null && !beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
+            dots.Add(beginDot.left.GetComponent<PoleLine>().left);
+        if (needToCheckLocal)
+        {
+            //Debug.Log("start check");
+            var tmp = new List<GameObject>();
+            foreach (GameObject dot in dots)
+                if (myPole.GetComponent<Pole>().FindFinish(dot))
+                    tmp.Add(dot);
+            dots = new List<GameObject>(tmp);
+        }
+
         bool success = false;
         foreach (GameObject next in dots)
         {
-            if (TrySolve(next, ends))
+            bool needCheck = false;
+            if (beginDot.posX > 0 && beginDot.posX < myPole.GetComponent<Pole>().width - 1 && beginDot.posY > 0 && beginDot.posY < myPole.GetComponent<Pole>().height - 1
+                && (next.GetComponent<PoleDot>().posX == 0 || next.GetComponent<PoleDot>().posY == 0 || next.GetComponent<PoleDot>().posX == myPole.GetComponent<Pole>().width - 1 || next.GetComponent<PoleDot>().posY == myPole.GetComponent<Pole>().height - 1))
+            {
+                needCheck = true;
+                
+            }
+                
+            if (TrySolve(next, ends, needCheck))
             {
                 success = true;
             }
