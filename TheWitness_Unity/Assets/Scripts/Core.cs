@@ -84,10 +84,21 @@ public class Core : MonoBehaviour {
             Core.PolePreferences.mode = "custom";
             Core.PolePreferences.info = CustomPuzzle.text;
             Debug.Log(Core.PolePreferences.info);
-            SceneManager.LoadScene("PoleLevel");
+            myPole.GetComponent<Pole>().ClearPole();
+            foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
+                Destroy(point);
+            foreach (GameObject shape in GameObject.FindGameObjectsWithTag("EltShape"))
+                Destroy(shape);
+            foreach (GameObject clrRing in GameObject.FindGameObjectsWithTag("EltClrRing"))
+                Destroy(clrRing);
+            Destroy(myPole);
+            myPole = Instantiate(PolePrefab);
+            myPole.GetComponent<Pole>().custom(Core.PolePreferences.info);
+            myPole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
+            myPole.GetComponent<Pole>().StartScaling(myPole.GetComponent<Pole>().poleDots[0][0]);
         }
     }
-    private string color2HEX(int col)
+    private string color2HEX(float col)
     {
         string s = Convert.ToString((int)col, 16);
         if (s.Length == 1)
@@ -95,6 +106,11 @@ public class Core : MonoBehaviour {
             s = "0" + s;
         }
         return s;
+    }
+    public void SavePuzzle(GameObject pole)
+    {
+        myPole = pole;
+        ButtonSavePazzl();
     }
     public void ButtonSavePazzl()
     {
@@ -115,73 +131,82 @@ public class Core : MonoBehaviour {
             str += finish.GetComponent<PoleDot>().posY;
         }
         str += "*";
-        str += "p";
-        foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
-        {
-            str += point.x;
-            str += point.y;
-            switch ((point.down ? 1 : 0) + 2 * (point.right ? 1 : 0))
+        if(myPole.GetComponent<Pole>().eltsManager.points.Count != 0)
+        { 
+            str += "p";
+            foreach(PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
             {
-                case 0:
-                    str += 0;
-                    break;
-                case 1:
-                    str += 1;
-                    break;
-                case 2:
-                    str += 2;
-                    break;
-            }
+                str += point.x;
+                str += point.y;
+                switch ((point.down ? 1 : 0) + 2 * (point.right ? 1 : 0))
+                {
+                    case 0:
+                        str += 0;
+                        break;
+                    case 1:
+                        str += 1;
+                        break;
+                    case 2:
+                        str += 2;
+                        break;
+                }
 
-            /*Debug.Log(point.x);
-            Debug.Log(point.y);
-            Debug.Log(point.down);
-            Debug.Log(point.right);*/
-        }
-        str += "*";
-        str += "r";
-        foreach (var ring in myPole.GetComponent<Pole>().eltsManager.clrRing)
-        {
-            str += ring.x;// rework points not set
-            str += ring.y;
-            str += color2HEX((int)ring.c.a * 255);
-            str += color2HEX((int)ring.c.r * 255);
-            str += color2HEX((int)ring.c.g * 255);
-            str += color2HEX((int)ring.c.b * 255);
-        }
-        str += "*";
-        str += "T";
-        foreach (GameObject s in GameObject.FindGameObjectsWithTag("EltShape"))
-        {
-            PoleEltShape shape = s.GetComponent<PoleEltShape>(); 
-            str += shape.x;
-            str += shape.y;
-            str += shape.boolList.Count;
-            str += shape.boolList[0].Count;
-            int k = 16;
-            int len = 1;
-            while(Math.Pow(2, shape.boolList[0].Count) > k)
-            {
-                k *= 16;
+                /*Debug.Log(point.x);
+                Debug.Log(point.y);
+                Debug.Log(point.down);
+                Debug.Log(point.right);*/
             }
-            for (int i = 0; i < shape.boolList.Count; ++i)
-            {
-                string bit = "";
-                for (int j = 0; j < shape.boolList[0].Count; ++j)
-                {
-                    bit += shape.boolList[i][j] ? 1 : 0;
-                }
-                long intValue = long.Parse(bit, System.Globalization.NumberStyles.HexNumber);
-                string t = Convert.ToString(intValue, 16);
-                while (t.Length < len);
-                {
-                    t = "0" + t;
-                }
-                str += t;
-            }
-            
+            str += "*";
         }
-        str += "*";
+        if (myPole.GetComponent<Pole>().eltsManager.clrRing.Count != 0)
+        {
+            str += "r";
+            foreach (var ring in myPole.GetComponent<Pole>().eltsManager.clrRing)
+            {
+                str += ring.x;// rework points not set
+                str += ring.y;
+                str += color2HEX(ring.c.r * 255);
+                str += color2HEX(ring.c.g * 255);
+                str += color2HEX(ring.c.b * 255);
+                str += color2HEX(ring.c.a * 255);
+            }
+            str += "*";
+        }
+        if (GameObject.FindGameObjectsWithTag("EltShape").Length != 0)
+        {
+            str += "T";
+            foreach (GameObject s in GameObject.FindGameObjectsWithTag("EltShape"))
+            {
+                PoleEltShape shape = s.GetComponent<PoleEltShape>();
+                str += shape.x;
+                str += shape.y;
+                str += shape.boolList.Count;
+                str += shape.boolList[0].Count;
+                int k = 16;
+                int len = 1;
+                while (Math.Pow(2, shape.boolList[0].Count) > k)
+                {
+                    k *= 16;
+                }
+                for (int i = 0; i < shape.boolList.Count; ++i)
+                {
+                    string bit = "";
+                    for (int j = 0; j < shape.boolList[0].Count; ++j)
+                    {
+                        bit += shape.boolList[i][j] ? 1 : 0;
+                    }
+                    long intValue = long.Parse(bit, System.Globalization.NumberStyles.HexNumber);
+                    string t = Convert.ToString(intValue, 16);
+                    while (t.Length < len) ;
+                    {
+                        t = "0" + t;
+                    }
+                    str += t;
+                }
+
+            }
+            str += "*";
+        }
         Debug.Log(str);
         /*using System;
 class Demo {

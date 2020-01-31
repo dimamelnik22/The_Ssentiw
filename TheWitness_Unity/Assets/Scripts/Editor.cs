@@ -39,6 +39,9 @@ public class Editor : MonoBehaviour
 
     public void ButtonSavePazzl()
     {
+        Core c= new Core();
+        c.SavePuzzle(myPole);// fucking костыль
+        /*
         foreach (PoleEltPoint point in myPole.GetComponent<Pole>().eltsManager.points)
         {
 
@@ -46,7 +49,7 @@ public class Editor : MonoBehaviour
             Debug.Log(point.y);
             Debug.Log(point.down);
             Debug.Log(point.right);
-        }
+        }*/
         /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquare"))
         {
             var now = sq.GetComponent<PoleSquare>();
