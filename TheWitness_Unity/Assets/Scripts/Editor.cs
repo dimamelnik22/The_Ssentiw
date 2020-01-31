@@ -38,6 +38,7 @@ public class Editor : MonoBehaviour
     private List<List<bool>> boolList;
     private string element = "";
     private GameObject finish;
+    public int count = 0;
 
     public void ButtonSavePazzl()
     {
@@ -95,6 +96,7 @@ public class Editor : MonoBehaviour
     }
     public void ButtonTrySolve()
     {
+        count = 0;
         if (myPole.GetComponent<Pole>().starts.Count > 0 && myPole.GetComponent<Pole>().finishes.Count > 0)
         {
             solvetime = Time.realtimeSinceStartup;
@@ -116,12 +118,14 @@ public class Editor : MonoBehaviour
                     }
                 }
             SolveTimeText.text = (Time.realtimeSinceStartup - solvetime).ToString();
+            Debug.Log(count);
         }
     }
 
     public bool TrySolve(GameObject begin, List<GameObject> ends, bool needToCheckLocal)
     {
         begin.GetComponent<PoleDot>().isUsedByPlayer = true;
+        
         var dotslist = myPole.GetComponent<Pole>().systemPath.dots;
         dotslist.Add(begin);
         int i = dotslist.Count - 1;
@@ -170,14 +174,17 @@ public class Editor : MonoBehaviour
             dots.Add(beginDot.left.GetComponent<PoleLine>().left);
         if (needToCheckLocal)
         {
-            //Debug.Log("start check");
             var tmp = new List<GameObject>();
             foreach (GameObject dot in dots)
                 if (myPole.GetComponent<Pole>().FindFinish(dot))
                     tmp.Add(dot);
             dots = new List<GameObject>(tmp);
+            if (beginDot.posY == 4 && beginDot.posX == 2)
+            {
+                //Debug.Log(dots.Count + " " + beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer + " " + beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer);
+            }
         }
-
+        if (dots.Count == 0) count++;
         bool success = false;
         foreach (GameObject next in dots)
         {
@@ -202,6 +209,7 @@ public class Editor : MonoBehaviour
             if (line != null)
                 line.GetComponent<PoleLine>().isUsedByPlayer = false;
         }
+        
         return success;
     }
 
