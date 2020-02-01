@@ -1388,7 +1388,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2051816112}
-        m_MethodName: NextButton
+        m_MethodName: ButtonNext
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

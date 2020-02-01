@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &710910093910903250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6905002656806481244}
+  - component: {fileID: 9048016909530290654}
+  m_Layer: 0
+  m_Name: PoleDot
+  m_TagString: PoleDot
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6905002656806481244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710910093910903250}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9048016909530290654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710910093910903250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153457becdc980b4eafafd502130fd65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  point: {fileID: 0}
+  posX: 0
+  posY: 0
+  up: {fileID: 0}
+  down: {fileID: 0}
+  left: {fileID: 0}
+  right: {fileID: 0}
+  PointPF: {fileID: 1313451005600678, guid: d78850c56a1b1e74ea93ebccf4a8503d, type: 3}
+  DotPF: {fileID: 3438751875270885126, guid: ebe43634e98e55a40a27ad2b92fa5d0b, type: 3}
+  EditButtonPF: {fileID: 6810284297996705324, guid: 01e65e81e33d8084a866d78446330d42,
+    type: 3}
+  StartPF: {fileID: 60427439705312059, guid: d99249c5f60360746a1f86efe4d94a5b, type: 3}
+  FinishPF: {fileID: 6994292661995902292, guid: 0b61fc6453aea5544ad4970ac8615bdd,
+    type: 3}
+  startFinish: {fileID: 0}
+  isUsedBySolution: 0
+  isUsedByPlayer: 0
+  hasPoint: 0
+  dot: {fileID: 0}

@@ -2257,7 +2257,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1176836712}
         m_MethodName: ButtonMenu
         m_Mode: 1
         m_Arguments:
@@ -3296,6 +3296,11 @@ PrefabInstance:
     - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
         type: 3}
       propertyPath: SolveTimeText
+      value: 
+      objectReference: {fileID: 693345326}
+    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
+        type: 3}
+      propertyPath: SolveTimeTextField
       value: 
       objectReference: {fileID: 693345326}
     - target: {fileID: 8374150072764131709, guid: e17bd2516363ca040aee1a9739d5040a,
