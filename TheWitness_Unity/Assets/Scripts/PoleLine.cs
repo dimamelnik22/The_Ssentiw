@@ -7,14 +7,17 @@ public class PoleLine : MonoBehaviour {
     public bool isHorizontal = false;
     public GameObject Line;
     public readonly int speed = 20;
-	public GameObject up;
+    public GameObject EditButtonPF;
+    public GameObject PointPrefab;
+    public GameObject editButton;
+    public GameObject up;
 	public GameObject down;
 	public GameObject left;
 	public GameObject right;
     public bool isUsedBySolution = false;
     public bool isUsedByPlayer = false;
     public bool hasPoint = false;
-    public GameObject point;
+    public Elements point;
     private int dir = 1;
     private bool isScaling = false;
     public bool scalingIsFinished = false;
@@ -61,19 +64,28 @@ public class PoleLine : MonoBehaviour {
         }
     }
 
+    public void CreatePoint()
+    {
+        if (hasPoint)
+        {
+            point = Instantiate(PointPrefab, transform.position, PointPrefab.transform.rotation).GetComponent<Elements>();
+            point.GetComponent<PoleEltPoint>().SetLine(this.gameObject);
+        }
+    }
+
+    public void ShowEditButton()
+    {
+        editButton = Instantiate(EditButtonPF, transform);
+        editButton.GetComponent<EditLine>().line = this.gameObject;
+    }
+
+    public void HideEditButton()
+    {
+        Destroy(editButton);
+    }
     // Use this for initialization
     void Start () {
-        pole = GameObject.FindGameObjectWithTag("Pole");
-        //if (isHorizontal)
-        //{
-        //    Line.transform.localScale = new Vector3(0f, 1f, 1f);
-        //    Line.transform.localPosition =new Vector3(-2.5f, 0f, 0f);
-        //}
-        //else
-        //{
-        //    Line.transform.localScale = new Vector3(1f, 0f, 1f);
-        //    Line.transform.localPosition =  new Vector3(0f, 2.5f, 0f);
-        //}
+
     }
 	
 	// Update is called once per frame
@@ -93,7 +105,8 @@ public class PoleLine : MonoBehaviour {
                     Line.transform.localPosition = new Vector3(0f, 0f, 0f);
                     isScaling = false;
                     scalingIsFinished = true;
-                    second.GetComponent<PoleDot>().CreateDot();
+                    if (second.GetComponent<PoleDot>().dot == null)
+                        second.GetComponent<PoleDot>().CreateDot();
                     pole.GetComponent<Pole>().StartScaling(second);
                 }
             }

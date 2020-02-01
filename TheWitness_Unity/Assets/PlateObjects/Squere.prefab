@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 114909678527663770}
   m_Layer: 0
   m_Name: Squere
-  m_TagString: PoleSquere
+  m_TagString: PoleSquare
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,6 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54b3f407342392648b3693c453293bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EditButtonPF: {fileID: 3625902837194963452, guid: b02c6b47f2c1dcb49aa7a3461e517ea8,
+    type: 3}
+  editButton: {fileID: 0}
   up: {fileID: 0}
   down: {fileID: 0}
   left: {fileID: 0}
@@ -51,3 +54,6 @@ MonoBehaviour:
   element: {fileID: 0}
   indexI: 0
   indexJ: 0
+  ShapeBoolPF: {fileID: 8652781673341267249, guid: fab1ed988860f644db0d2c0a4355b4a9,
+    type: 3}
+  shapeBool: {fileID: 0}

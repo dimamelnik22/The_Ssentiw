@@ -14,10 +14,12 @@ TagManager:
   - PoleStart
   - PoleFinish
   - Pole
-  - PoleSquere
   - Core
   - EltShape
   - EltClrRing
+  - Editor
+  - PoleSquare
+  - ShapeBool
   layers:
   - Default
   - TransparentFX

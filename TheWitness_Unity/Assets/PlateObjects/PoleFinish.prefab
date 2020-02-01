@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 23564170868836896}
   - component: {fileID: 65832029078229874}
   - component: {fileID: 114147618112082262}
+  - component: {fileID: 156656458505227855}
   m_Layer: 0
   m_Name: PoleFinish
   m_TagString: PoleFinish
@@ -104,13 +105,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 153457becdc980b4eafafd502130fd65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PointPrefab: {fileID: 0}
+  DotPF: {fileID: 0}
+  EditButtonPF: {fileID: 0}
+  dot: {fileID: 0}
+  editButton: {fileID: 0}
   up: {fileID: 0}
   down: {fileID: 0}
   left: {fileID: 0}
   right: {fileID: 0}
+  startFinish: {fileID: 0}
   isUsedBySolution: 0
   isUsedByPlayer: 0
   hasPoint: 0
   point: {fileID: 0}
   posX: 0
   posY: 0
+--- !u!114 &156656458505227855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127332840723964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d28001cc62828b4a8393244746a0e7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour {
     public GameObject PolePF;
     public GameObject ActivePathPF;
     public GameObject MenuItemPF;
+    public GameObject MenuInputFeildPF;
 
     public GameObject activePath;
     public GameObject menuPole;
@@ -186,18 +187,25 @@ public class MenuManager : MonoBehaviour {
         Core.PolePreferences.mode = "normal";
         //Core.PolePreferences.MyRandom.seed = Core.PolePreferences.MyRandom.GetRandom();
         //Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
-        Core.PolePreferences.MyRandom.SetSeed(0);
-        //Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
-        Core.PolePreferences.poleSize = 8;
+        Core.PolePreferences.MyRandom.SetSeed();
+        Core.PolePreferences.poleSize = 5 + Core.PolePreferences.MyRandom.GetRandom() % 5;
+        //Core.PolePreferences.poleSize = 8;
         Core.PolePreferences.complexity = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (4 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
-        //Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
-        //Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
+        Core.PolePreferences.numOfCircles = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
+        Core.PolePreferences.numOfPoints = Core.PolePreferences.poleSize + Core.PolePreferences.MyRandom.GetRandom() % Core.PolePreferences.poleSize;
         Log();
-        //Core.PolePreferences.numOfShapes = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (1 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
-        Core.PolePreferences.numOfShapes = 50;
+        Core.PolePreferences.numOfShapes = Mathf.RoundToInt(Core.PolePreferences.poleSize * Core.PolePreferences.poleSize * (1 + Core.PolePreferences.MyRandom.GetRandom() % 4) / 10);
+        //Core.PolePreferences.numOfShapes = 50;
         //Debug.Log(Core.PolePreferences.MyRandom.seed + " " + Core.PolePreferences.poleSize + " " + Core.PolePreferences.numOfPoints);
         SceneManager.LoadScene("PoleLevel");
     }
+    public void InputField()
+    {
+        //Instantiate(MenuInputFeildPF, new Vector3(Screen.width/2, Screen.height/2, 0f), MenuItemPF.transform.rotation);
+        //Instantiate(MenuItemPF, activePath.GetComponent<ActivePath>().currentFinish.transform.position + new Vector3(0f, 0f, 0.5f), MenuItemPF.transform.rotation);
+
+    }
+
     private void LoadLevelSelect()
     {
         
@@ -403,18 +411,19 @@ public class MenuManager : MonoBehaviour {
         funcList[4] = () => MenuManager.MainSettings.speed = 2f;
         menuMap.add(new MenuNode(names, funcList, 5), 1);
         menuMap.back();
-        funcList = new MenuFunc[4];
+        funcList = new MenuFunc[5];
         funcList[0] = LoadPoleLevel;
+        //funcList[4] = InputField;    
         switch (MainSettings.language)
         {
             case "RUS":
-                names = new string[] { "Старт", "Размер", "Длина", "Элементы" };
+                names = new string[] { "Старт" , "Размер", "Длина", "Элементы", "custompuzzle" };
                 break;
             default:
-                names = new string[] { "Start", "Size", "Complexity", "Elements" };
+                names = new string[] { "Start","Size", "Complexity", "Elements", "custompuzzle" };
                 break;
         }
-        menuMap.add(new MenuNode(names, funcList, 4),1);
+        menuMap.add(new MenuNode(names, funcList, 5),1);
         funcList = new MenuFunc[4];
         switch (MainSettings.language)
         {
@@ -531,7 +540,6 @@ public class MenuManager : MonoBehaviour {
 
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
-        Core.PolePreferences.isFrozen = false;
         lastPos = Input.mousePosition;
         menuPole = Instantiate(PolePF, transform);
         menuPole.GetComponent<Pole>().InitMenuItem(menuMap.pointer.size);
@@ -543,6 +551,7 @@ public class MenuManager : MonoBehaviour {
             item.GetComponentInChildren<MenuButton>().index = index;
         }
         Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
+        Debug.Log(11);
         activePath = Instantiate(ActivePathPF, transform);
         activePath.GetComponent<ActivePath>().Init(menuPole, menuPole.GetComponent<Pole>().starts, menuPole.GetComponent<Pole>().finishes);
     }
@@ -574,7 +583,8 @@ public class MenuManager : MonoBehaviour {
 
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
-
+                activePath.GetComponent<ActivePath>().pointer.transform.Translate(0.75f, 0f, 0f);
+                activePath.GetComponent<ActivePath>().Update();
             }
             else  if (prevPaths.Count>0)
             {
@@ -611,7 +621,7 @@ public class MenuManager : MonoBehaviour {
         else if (prevPaths.Count > 0 )
         {
             
-            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().starts[0].transform.position.x && dist.x < 0 && ((Input.GetMouseButton(0) == true) || (Input.touchCount > 0)))
+            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().starts[0].transform.position.x && dist.x < 0 && (Input.GetMouseButton(0) == false) && (Input.touchCount == 0))
             {
                 Debug.Log(222);
                 Destroy(menuPole);
