@@ -182,31 +182,32 @@ public class Core : MonoBehaviour {
                 str += shape.y;
                 str += shape.boolList.Count;
                 str += shape.boolList[0].Count;
-                int k = 16;
+                /*int k = 16;
                 int len = 1;
                 while (Math.Pow(2, shape.boolList[0].Count) > k)
                 {
                     k *= 16;
-                }
+                }*/
                 for (int i = 0; i < shape.boolList.Count; ++i)
                 {
-                    string bit = "";
                     for (int j = 0; j < shape.boolList[0].Count; ++j)
                     {
-                        bit += shape.boolList[i][j] ? 1 : 0;
+                        str += shape.boolList[i][j] ? 1 : 0;
+                        //bit += shape.boolList[i][j] ? 1 : 0;
                     }
-                    long intValue = long.Parse(bit, System.Globalization.NumberStyles.HexNumber);
+                    /*long intValue = long.Parse(bit, System.Globalization.NumberStyles.HexNumber);
                     string t = Convert.ToString(intValue, 16);
                     while (t.Length < len) ;
                     {
                         t = "0" + t;
                     }
-                    str += t;
+                    str += t;*/
                 }
 
             }
             str += "*";
         }
+        GUIUtility.systemCopyBuffer = str;
         Debug.Log(str);
         /*using System;
 class Demo {

@@ -755,7 +755,43 @@ public class Pole : MonoBehaviour
     }
     public void shapeDecode(string input)
     {
-        Debug.Log(input);// work!
+        Debug.Log(input);
+        Debug.Log(input.Length);
+
+        for (int k = 0; k < input.Length;)
+        {
+            Debug.Log(k);
+            int x = input[k] - '0';
+            int y = input[k + 1] -'0';
+            int row = input[k + 2] - '0';
+            int col = input[k + 3] - '0';
+            k += 4;
+            Debug.Log(x + " " + y + " " + row + " " + col + " " + k);
+            List<List<bool>> bitmap = new List<List<bool>>();
+            for (int i = 0; i < row; ++i)
+            {
+                bitmap.Add(new List<bool>());
+                for (int j = 0; j < col; ++j)
+                {
+                    if (input[k + i * col + j] - '0' == 1)
+                    {
+                        bitmap[i].Add(true);
+                    }
+                    else
+                    {
+                        bitmap[i].Add(false);
+                    }
+
+                }
+            }
+            PoleSquare sq = poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().right.GetComponent<PoleSquare>();
+            sq.GetComponent<PoleSquare>().hasElem = true;
+            sq.GetComponent<PoleSquare>().element = Instantiate(ShapePF, sq.transform).GetComponent<Elements>();
+            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().boolList = bitmap;
+            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().Create();
+
+            k += row * col;
+        }
     }
     public void customInit(int _height, int _width)
     {
