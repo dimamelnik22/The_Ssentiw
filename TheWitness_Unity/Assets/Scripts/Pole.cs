@@ -1267,6 +1267,7 @@ public class Pole : MonoBehaviour
     public bool FindFinish(GameObject begin)
     {
         var dots = new List<GameObject>();
+        dots.Add(begin);
         GetZoneDots(begin, dots);
         //Debug.Log("dots found");
         foreach (GameObject dot in dots)

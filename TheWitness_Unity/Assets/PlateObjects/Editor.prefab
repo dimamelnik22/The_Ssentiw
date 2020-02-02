@@ -46,6 +46,9 @@ MonoBehaviour:
   PolePrefab: {fileID: 1670594076711100, guid: 581d52efa0b3bf745bdd80c6ce26222a, type: 3}
   PointPrefab: {fileID: 1313451005600678, guid: d78850c56a1b1e74ea93ebccf4a8503d,
     type: 3}
+  ShapePF: {fileID: 3770795184194819828, guid: ae90e4ed66029d148a11e8b52bc63ae4, type: 3}
+  SolveTimeText: {fileID: 0}
+  solvetime: 0
   PathDotPrefab: {fileID: 1289634203458916, guid: 40433b7d33f019e46b1fc3260fe90cef,
     type: 3}
   PathVerticalLinePrefab: {fileID: 1367289501012780, guid: 4f3bc1701dab5d042b6bdd10295f9ddb,
@@ -66,4 +69,5 @@ MonoBehaviour:
   pathIsShown: 0
   playerIsActive: 0
   myPole: {fileID: 0}
-  currentSize: 5
+  heightInput: {fileID: 0}
+  widthInput: {fileID: 0}
