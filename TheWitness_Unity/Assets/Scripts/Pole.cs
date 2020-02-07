@@ -62,6 +62,7 @@ public class Pole : MonoBehaviour
         public int height;
         public int width;
         public List<Elements> points;
+        public List<Elements> shape;
         public List<Elements> clrRing;
         public List<Elements> unsolvedElts;
         int[][] checkZones;
@@ -789,6 +790,7 @@ public class Pole : MonoBehaviour
             sq.GetComponent<PoleSquare>().element = Instantiate(ShapePF, sq.transform).GetComponent<Elements>();
             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().boolList = bitmap;
             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>().Create();
+            eltsManager.shape.Add(sq.GetComponent<PoleSquare>().element);
 
             k += row * col;
         }
@@ -2019,6 +2021,7 @@ public class Pole : MonoBehaviour
                 shapeElt.GetComponent<PoleEltShape>().x = sq.GetComponent<PoleSquare>().indexJ;
                 shapeElt.GetComponent<PoleEltShape>().y = sq.GetComponent<PoleSquare>().indexI;
                 shapeElt.GetComponent<PoleEltShape>().Create();
+                //eltsManager.shape.Add(shapeElt);
                 sqList.Remove(sq);
             }
         }
@@ -2154,6 +2157,7 @@ public class Pole : MonoBehaviour
         }
         eltsManager.points.Clear();
         eltsManager.clrRing.Clear();
+        eltsManager.shape.Clear();
         foreach (GameObject temp in GameObject.FindGameObjectsWithTag("PoleStart")) Destroy(temp);
         foreach (GameObject temp in GameObject.FindGameObjectsWithTag("PoleFinish")) Destroy(temp);
         if (systemPath != null)

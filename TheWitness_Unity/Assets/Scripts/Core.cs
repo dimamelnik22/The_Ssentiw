@@ -44,7 +44,7 @@ public class Core : MonoBehaviour {
     private List<GameObject> finishes = new List<GameObject>();
     public bool pathIsShown = false;
     public bool playerIsActive = false;
-    public GameObject myPole; 
+    public GameObject myPole;
     public GameObject activePath;
 
     public static class PolePreferences
@@ -74,6 +74,10 @@ public class Core : MonoBehaviour {
         }
         public static string info = "";
         public static string mode = "normal";
+    }
+    public void ButtonComplexity()
+    {
+        Complexity.countComplexity(myPole.GetComponent<Pole>().poleDots, myPole.GetComponent<Pole>());
     }
     public void ButtonLoadPazzl()
     {
@@ -450,7 +454,7 @@ static void Main() {
                 myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
                 myPole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
                 //gentimewin.text = (Time.realtimeSinceStartup - gentime).ToString();
-                gentime = Time.realtimeSinceStartup;
+                gentime = Time.realtimeSinceStartup - gentime;
                 break;
             case "info":
                 myPole.GetComponent<Pole>().InitStr(Core.PolePreferences.info);
@@ -473,7 +477,6 @@ static void Main() {
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point = Instantiate(PointPrefab, transform.position + stepx * j + stepy * i + pathstepz, PointPrefab.transform.rotation).GetComponent<Elements>();
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<PoleEltPoint>().SetDot(myPole.GetComponent<Pole>().poleDots[i][j]);
                     myPole.GetComponent<Pole>().eltsManager.points.Add(myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point);
-
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.c = new Color(45 / 255, 104 / 255, 1);
                     myPole.GetComponent<Pole>().poleDots[i][j].GetComponent<PoleDot>().point.GetComponent<Renderer>().material.color = new Color(45 / 255, 104 / 255, 1);
                 }
