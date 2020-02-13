@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -46,8 +47,8 @@ public class Core : MonoBehaviour {
     public static class PolePreferences
     {
         
-        public static int poleSize = 9;
-        public static int complexity = 40;
+        public static int poleSize = 6;
+        public static int complexity = 20;
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;
         public static int numOfStars = 5;
@@ -218,11 +219,11 @@ class Demo {
     
     public void ButtonNext()
     {
-        if (Core.PolePreferences.mode =="info")
+        if (SceneManager.GetActiveScene().name == "Introduction")
         {
             if (MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) < MenuManager.MainSettings.levels.Count - 1)
                 Core.PolePreferences.info = MenuManager.MainSettings.levels[MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) + 1];
-            else Core.PolePreferences.info = MenuManager.MainSettings.levels[0];
+            else ButtonMenu();
         }
 
         Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
@@ -289,9 +290,10 @@ class Demo {
         int height = PolePreferences.poleSize;
         int width = PolePreferences.poleSize;
         activePole = Instantiate(PolePF);
-        switch (Core.PolePreferences.mode)
+        
+        switch (SceneManager.GetActiveScene().name)
         {
-            case "normal":
+            case "PoleLevel":
                 activePole.GetComponent<Pole>().Init(height, width);
                 // START and FINISH creating
                 var borderDots = new List<GameObject>();
@@ -316,17 +318,27 @@ class Demo {
                 dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
                 activePole.GetComponent<Pole>().AddFinish(dot);
                 borderDots.Remove(dot);
-
+                //for (int a = 0; a < 3; ++a)
+                //{
+                //    activePole.GetComponent<Pole>().poleLines[PolePreferences.MyRandom.GetRandom() % activePole.GetComponent<Pole>().poleLines.Count].GetComponent<PoleLine>().cut = true;
+                //}
                 foreach (GameObject start in activePole.GetComponent<Pole>().starts)
                     activePole.GetComponent<Pole>().StartScaling(start);
                 activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
                 activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
                 break;
-            case "info":
-                //activePole.GetComponent<Pole>().InitStr(Core.PolePreferences.info);
-                break;
-            case "custom":
+            case "Introduction":
+                if (Core.PolePreferences.info == "")
+                {
+                    StreamReader sr = new StreamReader("Assets/Resources/introductionLevels.txt");
+                    MenuManager.MainSettings.levels = new List<string>();
+                    while (sr.Peek() >= 0)
+                    {
+                        MenuManager.MainSettings.levels.Add(sr.ReadLine());
+                    }
+                    Core.PolePreferences.info = MenuManager.MainSettings.levels[0];
+                }
                 activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
                 break;
         }

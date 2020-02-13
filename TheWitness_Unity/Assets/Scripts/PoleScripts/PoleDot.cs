@@ -69,25 +69,30 @@ public class PoleDot : MonoBehaviour {
     }
     public bool AllowedToUp()
     {
-        return (up != null);
+        return (up != null && !up.GetComponent<PoleLine>().cut);
     }
     public bool AllowedToDown()
     {
-        return (down != null);
+        return (down != null && !down.GetComponent<PoleLine>().cut);
     }
     public bool AllowedToLeft()
     {
-        return (left != null);
+        return (left != null && !left.GetComponent<PoleLine>().cut);
     }
     public bool AllowedToRight()
     {
-        return (right != null);
+        return (right != null && !right.GetComponent<PoleLine>().cut);
     }
 
     public void CreateDot()
     {
         if (dot == null)
             dot = Instantiate(DotPF, transform);
+    }
+    public void DeleteDot()
+    {
+        if (dot != null)
+            Destroy(dot);
     }
     public void CreateObject()
     {

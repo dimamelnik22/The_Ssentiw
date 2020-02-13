@@ -34,6 +34,8 @@ public class PoleLine : MonoBehaviour {
     public bool scalingIsFinished = false;
     [HideInInspector]
     public bool isHorizontal = false;
+    [HideInInspector]
+    public bool cut = false;
 
     private GameObject scaleEndDot;
     private GameObject editButton;
@@ -43,7 +45,7 @@ public class PoleLine : MonoBehaviour {
 
     public void StartScaling(GameObject dot)
     {
-        if (Line.transform.localScale.x + Line.transform.localScale.y < 2f)
+        if (Line.transform.localScale.x + Line.transform.localScale.y < 2f && !cut)
         {
             if (dot == up)
             {
@@ -84,6 +86,59 @@ public class PoleLine : MonoBehaviour {
             point = Instantiate(PointPF, transform).GetComponent<Elements>();
             point.GetComponent<PoleEltPoint>().Attach(this.gameObject);
             GameObject.FindGameObjectWithTag("Pole").GetComponent<Pole>().eltsManager.points.Add(point);
+        }
+    }
+
+    public void CutOrCreateLine()
+    {
+        cut = !cut;
+        if (cut)
+        {
+            Line.transform.localPosition = new Vector3(0f, 0f, 0f);
+            Line.transform.localScale = new Vector3(0f, 0f, 0f);
+            if (isHorizontal)
+            {
+                var dot = left.GetComponent<PoleDot>();
+                if (!dot.AllowedToDown() && !dot.AllowedToLeft() && !dot.AllowedToRight() && !dot.AllowedToUp())
+                {
+                    dot.DeleteDot();
+                }
+                dot = right.GetComponent<PoleDot>();
+                if (!dot.AllowedToDown() && !dot.AllowedToLeft() && !dot.AllowedToRight() && !dot.AllowedToUp())
+                {
+                    dot.DeleteDot();
+                }
+            }
+            else
+            {
+                var dot = up.GetComponent<PoleDot>();
+                if (!dot.AllowedToDown() && !dot.AllowedToLeft() && !dot.AllowedToRight() && !dot.AllowedToUp())
+                {
+                    dot.DeleteDot();
+                }
+                dot = down.GetComponent<PoleDot>();
+                if (!dot.AllowedToDown() && !dot.AllowedToLeft() && !dot.AllowedToRight() && !dot.AllowedToUp())
+                {
+                    dot.DeleteDot();
+                }
+            }
+        }
+        else
+        {
+            if (isHorizontal)
+            {
+                Line.transform.localScale = new Vector3(5f, 1f, 1f);
+                Line.transform.localPosition = new Vector3(0f, 0f, 0f);
+                right.GetComponent<PoleDot>().CreateDot();
+                left.GetComponent<PoleDot>().CreateDot();
+            }
+            else
+            {
+                Line.transform.localScale = new Vector3(1f, 5f, 1f);
+                Line.transform.localPosition = new Vector3(0f, 0f, 0f);
+                up.GetComponent<PoleDot>().CreateDot();
+                down.GetComponent<PoleDot>().CreateDot();
+            }
         }
     }
 

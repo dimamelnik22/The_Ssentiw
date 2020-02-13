@@ -174,6 +174,15 @@ public class Editor : MonoBehaviour
         ShowEditButtonsSqueres();
         element = "shapeplace";
     }
+    public void ButtonCutRestore()
+    {
+        HideEditButtons();
+        foreach (var line in GameObject.FindGameObjectsWithTag("PoleLine"))
+        {
+            line.GetComponent<PoleLine>().ShowEditButton();
+        }
+        element = "cut";
+    }
     public void EditDot(GameObject dot)
     {
         if (element == "start")
@@ -223,6 +232,10 @@ public class Editor : MonoBehaviour
             activePole.GetComponent<Pole>().eltsManager.points.Remove(line.GetComponent<PoleLine>().point);
             Destroy(line.GetComponent<PoleLine>().point.gameObject);
         }
+        else if (element == "cut")
+        {
+            line.GetComponent<PoleLine>().CutOrCreateLine();
+        }
         HideEditButtons();
     }
     public void EditSquare(GameObject square)
@@ -254,7 +267,7 @@ public class Editor : MonoBehaviour
     {
         foreach(var dot in GameObject.FindGameObjectsWithTag("PoleDot"))
         {
-            if (!dot.GetComponent<PoleDot>().hasPoint && dot.GetComponent<PoleDot>().startFinish == null)
+            if (dot.GetComponent<PoleDot>().dot !=null && !dot.GetComponent<PoleDot>().hasPoint && dot.GetComponent<PoleDot>().startFinish == null)
                 dot.GetComponent<PoleDot>().ShowEditButton();
         }
     }
@@ -262,7 +275,7 @@ public class Editor : MonoBehaviour
     {
         foreach (var line in GameObject.FindGameObjectsWithTag("PoleLine"))
         {
-            if (!line.GetComponent<PoleLine>().hasPoint)
+            if (!line.GetComponent<PoleLine>().cut && !line.GetComponent<PoleLine>().hasPoint)
                 line.GetComponent<PoleLine>().ShowEditButton();
         }
     }
@@ -344,13 +357,13 @@ public class Editor : MonoBehaviour
             return true;
         }
         List<GameObject> dots = new List<GameObject>();
-        if (beginDot.up != null && !beginDot.up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.AllowedToUp() && !beginDot.up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
             dots.Add(beginDot.up.GetComponent<PoleLine>().up);
-        if (beginDot.right != null && !beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.AllowedToRight() && !beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
             dots.Add(beginDot.right.GetComponent<PoleLine>().right);
-        if (beginDot.down != null && !beginDot.down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.AllowedToDown() && !beginDot.down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
             dots.Add(beginDot.down.GetComponent<PoleLine>().down);
-        if (beginDot.left != null && !beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.AllowedToLeft() && !beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
             dots.Add(beginDot.left.GetComponent<PoleLine>().left);
         if (prevDot != null)
             if (prevDot.GetComponent<PoleDot>().posX > 0 && prevDot.GetComponent<PoleDot>().posX < activePole.GetComponent<Pole>().width - 1 && prevDot.GetComponent<PoleDot>().posY > 0 && prevDot.GetComponent<PoleDot>().posY < activePole.GetComponent<Pole>().height - 1
