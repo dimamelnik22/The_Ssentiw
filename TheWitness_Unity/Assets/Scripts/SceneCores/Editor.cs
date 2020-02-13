@@ -32,40 +32,8 @@ public class Editor : MonoBehaviour
     //????
     public void ButtonSavePuzzle()
     {
-        foreach (PoleEltPoint point in activePole.GetComponent<Pole>().eltsManager.points)
-        {
-
-            //Debug.Log(point.x);
-            //Debug.Log(point.y);
-            //Debug.Log(point.down);
-            //Debug.Log(point.right);
-        }
-        /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquare"))
-        {
-            var now = sq.GetComponent<PoleSquare>();
-            string cod = "";
-            if (now.hasElem)
-            {
-                byte[] bytes;
-                //bytes = BitConverter.GetBytes(n.x);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.y);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.c.r);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.c.g);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.c.b);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.Type);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.rotate);
-                //cod += BitConverter.ToString(bytes);
-                Debug.Log(cod);
-                //if(now.element.) ;//!!! сделать все элементы наследованными от род класса
-
-            }
-        }*/
+        Core c = new Core();
+        c.SavePuzzle(activePole);// fucking костыль
     }
     public void ButtonMenu()
     {
@@ -246,6 +214,7 @@ public class Editor : MonoBehaviour
             Elements shapeElt = Instantiate(ShapePF, square.transform).GetComponent<Elements>();
             sq.GetComponent<PoleSquare>().hasElem = true;
             sq.GetComponent<PoleSquare>().element = shapeElt;
+            shapeElt.location = sq.gameObject;
             CutBoolList();
             shapeElt.GetComponent<PoleEltShape>().boolList = boolList;
             shapeElt.GetComponent<PoleEltShape>().Create();

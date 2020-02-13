@@ -28,7 +28,7 @@ public class PoleLine : MonoBehaviour {
     public bool isUsedBySolution = false;
     [HideInInspector]
     public bool isUsedByPlayer = false;
-    [HideInInspector]
+    //[HideInInspector]
     public bool hasPoint = false;
     [HideInInspector]
     public bool scalingIsFinished = false;
@@ -85,7 +85,7 @@ public class PoleLine : MonoBehaviour {
         {
             point = Instantiate(PointPF, transform).GetComponent<Elements>();
             point.GetComponent<PoleEltPoint>().Attach(this.gameObject);
-            GameObject.FindGameObjectWithTag("Pole").GetComponent<Pole>().eltsManager.points.Add(point);
+            //GameObject.FindGameObjectWithTag("Pole").GetComponent<Pole>().eltsManager.points.Add(point);
         }
     }
 
@@ -94,6 +94,12 @@ public class PoleLine : MonoBehaviour {
         cut = !cut;
         if (cut)
         {
+            if (hasPoint)
+            {
+                this.gameObject.GetComponentInParent<Transform>().GetComponentInParent<Pole>().eltsManager.points.Remove(point);
+                Destroy(point.gameObject);
+                hasPoint = false;
+            }
             Line.transform.localPosition = new Vector3(0f, 0f, 0f);
             Line.transform.localScale = new Vector3(0f, 0f, 0f);
             if (isHorizontal)
