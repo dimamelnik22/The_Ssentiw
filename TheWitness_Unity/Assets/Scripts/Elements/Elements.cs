@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Elements : MonoBehaviour
 {
-    //SP(num)s{indexIIindexJJheightHwidthWbitmap}
-
-    //const string t = "SRP";
 
     [Header("Location")]
     public GameObject location;
@@ -38,6 +35,7 @@ public class Elements : MonoBehaviour
         }
         get { return type; }
     }*/
+    
     public void ShowUnsolvedColor()
     {
         tored = true;

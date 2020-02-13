@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1470181249515646}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f0bbb27722f07344862dfb25959ab86, type: 3}
+  m_Script: {fileID: 11500000, guid: 62eadc9fcce99104290c8644f9f94304, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CustomPuzzle: {fileID: 0}

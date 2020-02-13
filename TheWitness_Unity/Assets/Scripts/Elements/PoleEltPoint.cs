@@ -4,6 +4,45 @@ using UnityEngine;
 
 public class PoleEltPoint : Elements {
 
+    public int GetX()
+    {
+        if (location.GetComponent<PoleDot>() != null)
+        {
+            return location.GetComponent<PoleDot>().posX;
+        }
+        else
+        {
+            if (location.GetComponent<PoleLine>().isHorizontal)
+            {
+                return location.GetComponent<PoleLine>().left.GetComponent<PoleDot>().posX;
+            }
+            else
+            {
+                return location.GetComponent<PoleLine>().up.GetComponent<PoleDot>().posX;
+            }
+
+        }
+    }
+    public int GetY()
+    {
+        if (location.GetComponent<PoleDot>() != null)
+        {
+            return location.GetComponent<PoleDot>().posY;
+        }
+        else
+        {
+            if (location.GetComponent<PoleLine>().isHorizontal)
+            {
+                return location.GetComponent<PoleLine>().left.GetComponent<PoleDot>().posY;
+            }
+            else
+            {
+                return location.GetComponent<PoleLine>().up.GetComponent<PoleDot>().posY;
+            }
+
+        }
+    }
+    
     public void Attach(GameObject parentGameObject)
     {
         location = parentGameObject;

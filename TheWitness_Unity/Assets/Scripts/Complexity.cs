@@ -228,20 +228,20 @@ public static class Complexity
         poleDots = pDots;
         List<Elements> points = myPole.eltsManager.points;
         List<Elements> clrRing = myPole.eltsManager.clrRing;
-        List<Elements> shape = myPole.eltsManager.shape;
+        List<Elements> shape = myPole.eltsManager.shapes;
         List<GameObject> globalStarts = myPole.starts;
         List<GameObject> globalFinishes = myPole.finishes;
         List<path> mustVisit;
         mustVisit = new List<path>();
         for(int i = 0; i < points.Count;++i)
         {
-            if (points[i].GetComponent<PoleEltPoint>().right || points[i].GetComponent<PoleEltPoint>().down)
+            if (points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>() != null)
             {
-                mustVisit.Add(new path(poleDots[points[i].GetComponent<PoleEltPoint>().y][points[i].GetComponent<PoleEltPoint>().x], poleDots[points[i].GetComponent<PoleEltPoint>().y + (points[i].GetComponent<PoleEltPoint>().down? 1:0)][points[i].GetComponent<PoleEltPoint>().x + (points[i].GetComponent<PoleEltPoint>().right ? 1 : 0)]));
+                mustVisit.Add(new path(poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX()], poleDots[points[i].GetComponent<PoleEltPoint>().GetY() + (points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>().isHorizontal ? 0 : 1)][points[i].GetComponent<PoleEltPoint>().GetX() + (points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>().isHorizontal ? 1 : 0)]));
             }
             else
             {
-                mustVisit.Add(new path(poleDots[points[i].GetComponent<PoleEltPoint>().y][points[i].GetComponent<PoleEltPoint>().x], poleDots[points[i].GetComponent<PoleEltPoint>().y][points[i].GetComponent<PoleEltPoint>().x]));
+                mustVisit.Add(new path(poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX()], poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX()]));
             }
             
         }

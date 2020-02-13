@@ -415,6 +415,7 @@ RectTransform:
   - {fileID: 1937692526}
   - {fileID: 866412126}
   - {fileID: 1033952607}
+  - {fileID: 1270760294}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1854,7 +1855,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fd34f0f3beca424a84b4afc7642e2e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9779733fca47800408817f7f369c1096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1270760293
@@ -1889,11 +1890,11 @@ RectTransform:
   m_Children:
   - {fileID: 546757168}
   m_Father: {fileID: 190448714}
-  m_RootOrder: 11
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210.00006, y: -562}
+  m_AnchoredPosition: {x: 210.00006, y: -760}
   m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1270760295
@@ -1937,7 +1938,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1176836712}
-        m_MethodName: ButtonSavePazzl
+        m_MethodName: ButtonSavePuzzle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3704,26 +3705,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Editor
       objectReference: {fileID: 0}
-    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
-        type: 3}
-      propertyPath: heightInput
-      value: 
-      objectReference: {fileID: 844167551}
-    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
-        type: 3}
-      propertyPath: widthInput
-      value: 
-      objectReference: {fileID: 1889004959}
-    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
-        type: 3}
-      propertyPath: SolveTimeText
-      value: 
-      objectReference: {fileID: 693345326}
-    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
-        type: 3}
-      propertyPath: SolveTimeTextField
-      value: 
-      objectReference: {fileID: 693345326}
     - target: {fileID: 8374150072764131709, guid: e17bd2516363ca040aee1a9739d5040a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3779,5 +3760,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
+        type: 3}
+      propertyPath: heightInput
+      value: 
+      objectReference: {fileID: 844167551}
+    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
+        type: 3}
+      propertyPath: widthInput
+      value: 
+      objectReference: {fileID: 1889004959}
+    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
+        type: 3}
+      propertyPath: SolveTimeText
+      value: 
+      objectReference: {fileID: 693345326}
+    - target: {fileID: 8374150072764131698, guid: e17bd2516363ca040aee1a9739d5040a,
+        type: 3}
+      propertyPath: SolveTimeTextField
+      value: 
+      objectReference: {fileID: 693345326}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e17bd2516363ca040aee1a9739d5040a, type: 3}

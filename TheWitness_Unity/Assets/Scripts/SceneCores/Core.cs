@@ -72,6 +72,10 @@ public class Core : MonoBehaviour {
         public static string info = "";
         public static string mode = "normal";
     }
+    public void ButtonComplexity()
+    {
+        Complexity.countComplexity(activePole.GetComponent<Pole>().poleDots, activePole.GetComponent<Pole>());
+    }
     //????
     public void ButtonLoadPuzzle()
     {
@@ -82,7 +86,18 @@ public class Core : MonoBehaviour {
             Core.PolePreferences.mode = "custom";
             Core.PolePreferences.info = CustomPuzzle.text;
             Debug.Log(Core.PolePreferences.info);
-            SceneManager.LoadScene("PoleLevel");
+            activePole.GetComponent<Pole>().ClearPole();
+            foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
+                Destroy(point);
+            foreach (GameObject shape in GameObject.FindGameObjectsWithTag("EltShape"))
+                Destroy(shape);
+            foreach (GameObject clrRing in GameObject.FindGameObjectsWithTag("EltClrRing"))
+                Destroy(clrRing);
+            Destroy(activePole);
+            activePole = Instantiate(PolePF);
+            activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
+            activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
+            activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
         }
     }
     //????
@@ -96,10 +111,16 @@ public class Core : MonoBehaviour {
         return s;
     }
     //need update
-    public void ButtonSavePuzzle()
+    public void SavePuzzle(GameObject pole)
+    {
+        activePole = pole;
+        ButtonSavePazzl();
+    }
+    public void ButtonSavePazzl()
     {
         string str = "";
-        //str += myPole.GetComponent<Pole>().GetSize();
+        str += activePole.GetComponent<Pole>().eltsManager.height;
+        str += activePole.GetComponent<Pole>().eltsManager.width;
         str += "s";
         foreach (var start in activePole.GetComponent<Pole>().starts)
         {
@@ -114,99 +135,143 @@ public class Core : MonoBehaviour {
             str += finish.GetComponent<PoleDot>().posY;
         }
         str += "*";
-        str += "p";
-        // rewrite this
-        //foreach(PoleEltPoint point in activePole.GetComponent<Pole>().eltsManager.points)
-        //{
-        //    str += point.x;
-        //    str += point.y;
-        //    switch ((point.down ? 1 : 0) + 2 * (point.right ? 1 : 0))
-        //    {
-        //        case 0:
-        //            str += 0;
-        //            break;
-        //        case 1:
-        //            str += 1;
-        //            break;
-        //        case 2:
-        //            str += 2;
-        //            break;
-        //    }
-
-        //    /*Debug.Log(point.x);
-        //    Debug.Log(point.y);
-        //    Debug.Log(point.down);
-        //    Debug.Log(point.right);*/
-        //}
-        str += "*";
-        str += "r";
-        foreach (var ring in activePole.GetComponent<Pole>().eltsManager.clrRing)
+        if (activePole.GetComponent<Pole>().eltsManager.points.Count != 0)
         {
-            str += ring.location.GetComponent<PoleSquare>().indexI;
-            str += ring.location.GetComponent<PoleSquare>().indexJ;
-            str += Color2HEX((int)ring.c.a * 255);
-            str += Color2HEX((int)ring.c.r * 255);
-            str += Color2HEX((int)ring.c.g * 255);
-            str += Color2HEX((int)ring.c.b * 255);
-            /*using System;
-class Demo {
-   static void Main() {
-      int val = 255*255;
-      val *= 255*255;
-      string hex = Convert.ToString(val, 16);
-      long intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-	  Console.WriteLine("Integer: "+val);
-      Console.WriteLine("Hex String: "+hex);
-	  Console.WriteLine("Integer: "+intValue);
-	  hex = "00000000";
-	  intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-      Console.WriteLine("Hex String: "+hex);
-	  Console.WriteLine("Integer: "+intValue);
-      
-   }
-}*/
-            /*Debug.Log(ring.x);
-            Debug.Log(ring.y);
-            Debug.Log(ring.c.a * 255);
-            Debug.Log(ring.c.r * 255);
-            Debug.Log(ring.c.g * 255);
-            Debug.Log(ring.c.b * 255);*/
-        }
-        str += "*";
-        Debug.Log(str);
-        /*foreach (PoleEltPoint ring in myPole.GetComponent<Pole>().eltsManager.clrRing)
-        {
-            Debug.Log(ring.x);
-            Debug.Log(ring.y);
-        }*/
-        /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquare"))
-        {
-            var now = sq.GetComponent<PoleSquare>();
-            string cod = "";
-            if (now.hasElem)
+            str += "p";
+            foreach (PoleEltPoint point in activePole.GetComponent<Pole>().eltsManager.points)
             {
-                byte[] bytes;
-                //bytes = BitConverter.GetBytes(n.x);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.y);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.c.r);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.c.g);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.c.b);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.Type);
-                //cod += BitConverter.ToString(bytes);
-                //bytes = BitConverter.GetBytes(n.rotate);
-                //cod += BitConverter.ToString(bytes);
-                Debug.Log(cod);
-                //if(now.element.) ;//!!! сделать все элементы наследованными от род класса
+                str += point.GetX();
+                str += point.GetY();
+                if (point.location.GetComponent<PoleDot>())
+                {
+                    str += 0;
+                }
+                else
+                {
+                    if (point.location.GetComponent<PoleLine>().isHorizontal)
+                    {
+                        str += 2;
+                    }
+                    else
+                    {
+                        str += 1;
+                    }
+                }
+
+                /*Debug.Log(point.x); 
+                Debug.Log(point.y); 
+                Debug.Log(point.down); 
+                Debug.Log(point.right);*/
+            }
+            str += "*";
+        }
+        if (activePole.GetComponent<Pole>().eltsManager.clrRing.Count != 0)
+        {
+            str += "r";
+            foreach (var ring in activePole.GetComponent<Pole>().eltsManager.clrRing)
+            {
+                str += ring.location.GetComponent<PoleSquare>().indexJ;// rework points not set 
+                str += ring.location.GetComponent<PoleSquare>().indexI;
+                str += Color2HEX((int)(ring.c.r * 255));
+                str += Color2HEX((int)(ring.c.g * 255));
+                str += Color2HEX((int)(ring.c.b * 255));
+                str += Color2HEX((int)(ring.c.a * 255));
+            }
+            str += "*";
+        }
+        if (GameObject.FindGameObjectsWithTag("EltShape").Length != 0)
+        {
+            str += "T";
+            foreach (GameObject s in GameObject.FindGameObjectsWithTag("EltShape"))
+            {
+                PoleEltShape shape = s.GetComponent<PoleEltShape>();
+                str += shape.location.GetComponent<PoleSquare>().indexJ;
+                str += shape.location.GetComponent<PoleSquare>().indexI;
+                str += shape.boolList.Count;
+                str += shape.boolList[0].Count;
+                /*int k = 16; 
+                int len = 1; 
+                while (Math.Pow(2, shape.boolList[0].Count) > k) 
+                { 
+                    k *= 16; 
+                }*/
+                for (int i = 0; i < shape.boolList.Count; ++i)
+                {
+                    for (int j = 0; j < shape.boolList[0].Count; ++j)
+                    {
+                        str += shape.boolList[i][j] ? 1 : 0;
+                        //bit += shape.boolList[i][j] ? 1 : 0; 
+                    }
+                    /*long intValue = long.Parse(bit, System.Globalization.NumberStyles.HexNumber); 
+                    string t = Convert.ToString(intValue, 16); 
+                    while (t.Length < len) ; 
+                    { 
+                        t = "0" + t; 
+                    } 
+                    str += t;*/
+                }
 
             }
+            str += "*";
+        }
+        GUIUtility.systemCopyBuffer = str;
+        Debug.Log(str);
+        /*using System; 
+class Demo { 
+static void Main() { 
+  int val = 255*255; 
+  val *= 255*255; 
+  string hex = Convert.ToString(val, 16); 
+  long intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber); 
+  Console.WriteLine("Integer: "+val); 
+  Console.WriteLine("Hex String: "+hex); 
+  Console.WriteLine("Integer: "+intValue); 
+  hex = "00000000"; 
+  intValue = long.Parse(hex, System.Globalization.NumberStyles.HexNumber); 
+  Console.WriteLine("Hex String: "+hex); 
+  Console.WriteLine("Integer: "+intValue); 
+ 
+} 
+}*/
+        /*Debug.Log(ring.x); 
+        Debug.Log(ring.y); 
+        Debug.Log(ring.c.a * 255); 
+        Debug.Log(ring.c.r * 255); 
+        Debug.Log(ring.c.g * 255); 
+        Debug.Log(ring.c.b * 255);*/
+
+        /*foreach (PoleEltPoint ring in activePole.GetComponent<Pole>().eltsManager.clrRing) 
+        { 
+            Debug.Log(ring.x); 
+            Debug.Log(ring.y); 
+        }*/
+        /*foreach (GameObject sq in GameObject.FindGameObjectsWithTag("PoleSquare")) 
+        { 
+            var now = sq.GetComponent<PoleSquare>(); 
+            string cod = ""; 
+            if (now.hasElem) 
+            { 
+                byte[] bytes; 
+                //bytes = BitConverter.GetBytes(n.x); 
+                //cod += BitConverter.ToString(bytes); 
+                //bytes = BitConverter.GetBytes(n.y); 
+                //cod += BitConverter.ToString(bytes); 
+                //bytes = BitConverter.GetBytes(n.c.r); 
+                //cod += BitConverter.ToString(bytes); 
+                //bytes = BitConverter.GetBytes(n.c.g); 
+                //cod += BitConverter.ToString(bytes); 
+                //bytes = BitConverter.GetBytes(n.c.b); 
+                //cod += BitConverter.ToString(bytes); 
+                //bytes = BitConverter.GetBytes(n.Type); 
+                //cod += BitConverter.ToString(bytes); 
+                //bytes = BitConverter.GetBytes(n.rotate); 
+                //cod += BitConverter.ToString(bytes); 
+                Debug.Log(cod); 
+                //if(now.element.) ;//!!! сделать все элементы наследованными от род класса 
+ 
+            } 
         }*/
     }
-
     public void ButtonReport()
     {
         MenuManager.DebugMessage.Push2Buffer();
@@ -285,15 +350,16 @@ class Demo {
 
     //check update
     void Start() {
+        Debug.Log("11");
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
         int height = PolePreferences.poleSize;
         int width = PolePreferences.poleSize;
         activePole = Instantiate(PolePF);
-        
         switch (SceneManager.GetActiveScene().name)
         {
             case "PoleLevel":
+                Debug.Log("PoleLevel d");
                 activePole.GetComponent<Pole>().Init(height, width);
                 // START and FINISH creating
                 var borderDots = new List<GameObject>();

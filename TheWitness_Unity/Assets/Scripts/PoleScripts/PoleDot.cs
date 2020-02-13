@@ -23,7 +23,7 @@ public class PoleDot : MonoBehaviour {
     public GameObject StartPF;
     public GameObject FinishPF;
 
-    [HideInInspector]
+   // [HideInInspector]
     public GameObject startFinish;
     [HideInInspector]
     public bool isUsedBySolution = false;
@@ -91,6 +91,19 @@ public class PoleDot : MonoBehaviour {
     }
     public void DeleteDot()
     {
+        if(hasPoint)
+        {
+            this.gameObject.GetComponentInParent<Transform>().GetComponentInParent<Pole>().eltsManager.points.Remove(point);
+            Destroy(point.gameObject);
+            hasPoint = false;
+        }
+        if(startFinish != null)
+        {
+            this.gameObject.GetComponentInParent<Transform>().GetComponentInParent<Pole>().starts.Remove(this.gameObject);
+            this.gameObject.GetComponentInParent<Transform>().GetComponentInParent<Pole>().finishes.Remove(this.gameObject);
+            //sf
+            Destroy(startFinish);
+        }
         if (dot != null)
             Destroy(dot);
     }
