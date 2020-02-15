@@ -26,7 +26,7 @@ public class PoleLine : MonoBehaviour {
     public GameObject Line;
     [HideInInspector]
     public bool isUsedBySolution = false;
-    [HideInInspector]
+    //[HideInInspector]
     public bool isUsedByPlayer = false;
     //[HideInInspector]
     public bool hasPoint = false;
@@ -85,7 +85,7 @@ public class PoleLine : MonoBehaviour {
         {
             point = Instantiate(PointPF, transform).GetComponent<Elements>();
             point.GetComponent<PoleEltPoint>().Attach(this.gameObject);
-            //GameObject.FindGameObjectWithTag("Pole").GetComponent<Pole>().eltsManager.points.Add(point);
+            GameObject.FindGameObjectWithTag("Pole").GetComponent<Pole>().eltsManager.points.Add(point);
         }
     }
 

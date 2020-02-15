@@ -4,6 +4,8 @@ using UnityEngine;
 
 public static class Complexity
 {
+    //bug 55s41*f10*p310220431100130020042*r20ff00ffff01ff00ffff12ff00ffff23ff00ffff03ff00ffff300000ffff310000ffff*t0011122230101111011133121111111021211131113232011101*
+    private static int glob = 0;
     private static float gentime = 0f;
     private static GameObject start;
     private static GameObject finish;
@@ -49,174 +51,262 @@ public static class Complexity
 
     private static bool checkLeft(GameObject localStart, GameObject localFinish)
     {
-        if (localStart.GetComponent<PoleDot>().left != null)
+        if (localStart.GetComponent<PoleDot>().AllowedToLeft() && (!localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer || localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left  == localFinish))
         {
             localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = true;
             localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer = true;
-            if (findLocalShortPath(localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left, localFinish))
-            {
-                return true;
-            }
-            localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = false;
-            localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer = false;
+            return true;
         }
         return false;
     }
     private static bool checkRight(GameObject localStart, GameObject localFinish)
     {
-        if (localStart.GetComponent<PoleDot>().right != null)
+        if (localStart.GetComponent<PoleDot>().AllowedToRight() && (!localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer || localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right  == localFinish))
         {
             localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = true;
             localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer = true;
-            if (findLocalShortPath(localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right, localFinish))
-            {
-                return true;
-            }
-            localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = false;
-            localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer = false;
+            return true;
         }
         return false;
     }
     private static bool checkUp(GameObject localStart, GameObject localFinish)
     {
-        if (localStart.GetComponent<PoleDot>().up != null)
+        if (localStart.GetComponent<PoleDot>().AllowedToUp() && (!localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer || localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up == localFinish))
         {
             localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = true;
             localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer = true;
-            if (findLocalShortPath(localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up, localFinish))
-            {
-                return true;
-            }
-            localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = false;
-            localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer = false;
+            
+            return true;
         }
         return false;
     }
     private static bool checkDown(GameObject localStart, GameObject localFinish)
     {
-        if (localStart.GetComponent<PoleDot>().down != null)
+        if (localStart.GetComponent<PoleDot>().AllowedToDown() && (!localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer || localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down == localFinish))
         {
             localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = true;
             localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer = true;
-            if (findLocalShortPath(localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down, localFinish))
-            {
-                return true;
-            }
-            localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = false;
-            localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer = false;
+            return true;
         }
         return false;
     }
-    private static bool findLocalShortPath(GameObject localStart, GameObject localFinish)
+
+    private static bool findLocalShortPath(GameObject localStart, GameObject localFinish, List<path> localMustVisit, int debug)
     {
-        Debug.Log(localStart);
+        
+        if (localFinish == localStart)
+        {
+            if(setPath(localFinish, localMustVisit, debug + 1))
+                return true;
+            return false;
+        }
         if (Mathf.Abs(localStart.GetComponent<PoleDot>().posX - localFinish.GetComponent<PoleDot>().posX) > Mathf.Abs(localStart.GetComponent<PoleDot>().posY - localFinish.GetComponent<PoleDot>().posY))
         {
             if(localStart.GetComponent<PoleDot>().posX > localFinish.GetComponent<PoleDot>().posX)
             {
-                if (checkLeft(localStart, localFinish)) return true;
-                if (checkUp(localStart, localFinish)) return true;
-                if (checkDown(localStart, localFinish)) return true;
-                if (checkRight(localStart, localFinish)) return true;
+                if (checkLeft(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkUp(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkDown(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkRight(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
             }
             else
             {
-                if (checkRight(localStart, localFinish)) return true;
-                if (checkUp(localStart, localFinish)) return true;
-                if (checkDown(localStart, localFinish)) return true;
-                if (checkLeft(localStart, localFinish)) return true;
+                if (checkRight(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkUp(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkDown(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkLeft(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left, localFinish,localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
             }
         }
         else
         {
             if (localStart.GetComponent<PoleDot>().posY > localFinish.GetComponent<PoleDot>().posY)
             {
-                if (checkUp(localStart, localFinish)) return true;
-                if (checkRight(localStart, localFinish)) return true;
-                if (checkLeft(localStart, localFinish)) return true;
-                if (checkDown(localStart, localFinish)) return true;
+                if (checkUp(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkRight(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkLeft(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkDown(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
             }
             else
             {
-                if (checkDown(localStart, localFinish)) return true;
-                if (checkRight(localStart, localFinish)) return true;
-                if (checkLeft(localStart, localFinish)) return true;
-                if (checkUp(localStart, localFinish)) return true;
+
+                if (checkDown(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkRight(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkLeft(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
+                if (checkUp(localStart, localFinish))
+                {
+                    if (findLocalShortPath(localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up, localFinish, localMustVisit, debug + 1))
+                    {
+                        return true;
+                    }
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = false;
+                    localStart.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer = false;
+                }
             }
         }
         return false;
     }
-    private static void setUsed(GameObject d1, GameObject d2, bool used)
+
+    private static bool setPath(GameObject from,List<path> localMustVisit, int debug)
     {
-        d1.GetComponent<PoleDot>().isUsedByPlayer = used;
-        d2.GetComponent<PoleDot>().isUsedByPlayer = used;
-        if (d1.GetComponent<PoleDot>().posX  == d2.GetComponent<PoleDot>().posX)
+       
+        if (debug > glob)
         {
-            if(d1.GetComponent<PoleDot>().posY - d2.GetComponent<PoleDot>().posY > 0)
-            {
-                d1.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = used;
-            }
-            else
-            {
-                d2.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedByPlayer = used;
-            }
+            glob = debug;
+            GameObject.FindGameObjectWithTag("Core").GetComponent<Core>().glob = localMustVisit.Count;
         }
-        else
+        if (localMustVisit.Count == 0)
         {
-            if (d1.GetComponent<PoleDot>().posX - d2.GetComponent<PoleDot>().posX > 0)
+            if (from == finish)
             {
-                d1.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedByPlayer = used;
-            }
-            else
-            {
-                d2.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedByPlayer = used;
-            }
-        }
-    }
-    private static bool setPath(GameObject from,List<path> localMustVisit)
-    {
-        if(localMustVisit.Count == 0)
-        {
-            if (findLocalShortPath(from, finish))
                 return true;
+            }
+            if (findLocalShortPath(from, finish, localMustVisit,debug+1))
+            {
+
+                return true;
+            }
         }
+
         for (int i = 0; i < localMustVisit.Count; ++i)
         {
             List<path> nextMustVisit = new List<path>(localMustVisit);
             nextMustVisit.RemoveAt(i);
-
             if (localMustVisit[i].dot1 == localMustVisit[i].dot2)
             {
-                if (findLocalShortPath(from, localMustVisit[i].dot1) == true)
+                if (findLocalShortPath(from, localMustVisit[i].dot1, nextMustVisit, debug + 1))
                 {
-                    localMustVisit[i].dot1.GetComponent<PoleDot>().isUsedByPlayer = true;
-                    if (setPath(localMustVisit[i].dot1, nextMustVisit))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             else
             {
-                if (findLocalShortPath(from, localMustVisit[i].dot1) == true)
+                if (findLocalShortPath(from, localMustVisit[i].dot1, nextMustVisit, debug + 1))
                 {
-                    setUsed(localMustVisit[i].dot2, localMustVisit[i].dot1, true);
-                    if (setPath(localMustVisit[i].dot2, nextMustVisit))
-                        return true;
-                    else
-                    {
-                        setUsed(localMustVisit[i].dot2, localMustVisit[i].dot1, false);
-                    }
+                    return true;
                 }
-                if (findLocalShortPath(from, localMustVisit[i].dot2) == true)
+                if (findLocalShortPath(from, localMustVisit[i].dot2, nextMustVisit, debug + 1))
                 {
-                    setUsed(localMustVisit[i].dot2, localMustVisit[i].dot1, false);
-                    if (setPath(localMustVisit[i].dot1, nextMustVisit))
-                        return true;
-                    else
-                    {
-                        setUsed(localMustVisit[i].dot2, localMustVisit[i].dot1, false);
-                    }
+                    return true;
                 }
             }
         }
@@ -235,9 +325,21 @@ public static class Complexity
         mustVisit = new List<path>();
         for(int i = 0; i < points.Count;++i)
         {
+            poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX()].GetComponent<PoleDot>().isUsedByPlayer = true;
             if (points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>() != null)
             {
-                mustVisit.Add(new path(poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX()], poleDots[points[i].GetComponent<PoleEltPoint>().GetY() + (points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>().isHorizontal ? 0 : 1)][points[i].GetComponent<PoleEltPoint>().GetX() + (points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>().isHorizontal ? 1 : 0)]));
+                points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>().isUsedByPlayer = true;
+                if (points[i].GetComponent<PoleEltPoint>().location.GetComponent<PoleLine>().isHorizontal)
+                {
+                    poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX() + 1].GetComponent<PoleDot>().isUsedByPlayer = true;
+                    mustVisit.Add(new path(poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX()], poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX() + 1]));
+                }
+                else
+                {
+                    poleDots[points[i].GetComponent<PoleEltPoint>().GetY() + 1][points[i].GetComponent<PoleEltPoint>().GetX()].GetComponent<PoleDot>().isUsedByPlayer = true;
+                    mustVisit.Add(new path(poleDots[points[i].GetComponent<PoleEltPoint>().GetY()][points[i].GetComponent<PoleEltPoint>().GetX()], poleDots[points[i].GetComponent<PoleEltPoint>().GetY() + 1][points[i].GetComponent<PoleEltPoint>().GetX()]));
+                }
+                
             }
             else
             {
@@ -245,34 +347,26 @@ public static class Complexity
             }
             
         }
-        int[] sequence = new int[mustVisit.Count]; 
-        for (int i = 0; i < mustVisit.Count; ++i)
+        
+        //55s00*f44*p220*
+        
+        start = globalStarts[0];
+        start.GetComponent<PoleDot>().isUsedByPlayer = true;
+        finish = globalFinishes[0];
+        finish.GetComponent<PoleDot>().isUsedByPlayer = true;
+        // fixed bug with long generation. and pole set is used by player
+        if (setPath(start, new List<path>(mustVisit), 0))
         {
-            sequence[i] = i;
-        }
-        /*while(NextSet(sequence, sequence.Length))
-        {
-        }*/
-        pole = new int[poleDots.Length][];
-        for (int i = 0; i < poleDots.Length; ++i)
-        {
-            pole[i] = new int[poleDots[0].Length];
-            for (int j = 0; j < poleDots[0].Length; ++j)
+            Debug.Log("all good");
+            foreach (GameObject line in myPole.poleLines)
             {
-                pole[i][j] = 0;
+                line.GetComponent<PoleLine>().isUsedBySolution = line.GetComponent<PoleLine>().isUsedByPlayer;
+            }
+            foreach (GameObject dot in GameObject.FindGameObjectsWithTag("PoleDot"))
+            {
+                dot.GetComponent<PoleDot>().isUsedBySolution = dot.GetComponent<PoleDot>().isUsedByPlayer;
             }
         }
-        for (int i = 0; i < mustVisit.Count; ++i)
-        {
-            pole[mustVisit[i].dot1.GetComponent<PoleDot>().posY][mustVisit[i].dot1.GetComponent<PoleDot>().posX] = 1;
-            if (mustVisit[i].dot1.GetComponent<PoleDot>().posX != mustVisit[i].dot2.GetComponent<PoleDot>().posX || mustVisit[i].dot1.GetComponent<PoleDot>().posY != mustVisit[i].dot2.GetComponent<PoleDot>().posY)
-                pole[mustVisit[i].dot2.GetComponent<PoleDot>().posY][mustVisit[i].dot2.GetComponent<PoleDot>().posX] = 1;
-        }
-
-        start = globalStarts[0];
-        finish = globalFinishes[0];
-        // fixed bug with long generation. and pole set is used by player
-        //if(setPath(start, new List<path>(mustVisit))) Debug.Log("all good");
     }
     public static void countComplexity(GameObject[][] poleDots, Pole mypole)
     {

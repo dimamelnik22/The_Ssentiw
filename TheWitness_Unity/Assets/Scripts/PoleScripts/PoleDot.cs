@@ -27,7 +27,7 @@ public class PoleDot : MonoBehaviour {
     public GameObject startFinish;
     [HideInInspector]
     public bool isUsedBySolution = false;
-    [HideInInspector]
+    //[HideInInspector]
     public bool isUsedByPlayer = false;
     [HideInInspector]
     public bool hasPoint = false;
