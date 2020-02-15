@@ -109,7 +109,7 @@ public class PoleDot : MonoBehaviour {
     }
     public void CreateObject()
     {
-        if (hasPoint)
+        if (hasPoint && point == null)
         {
             point = Instantiate(PointPF, transform).GetComponent<Elements>();
             point.GetComponent<PoleEltPoint>().Attach(this.gameObject);

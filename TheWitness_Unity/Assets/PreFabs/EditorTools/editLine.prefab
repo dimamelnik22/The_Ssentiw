@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2550935306083560425}
   m_Layer: 0
   m_Name: editLine
-  m_TagString: Untagged
+  m_TagString: EditButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

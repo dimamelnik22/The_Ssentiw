@@ -117,7 +117,7 @@ public class Pole : MonoBehaviour
         public List<Elements> shapes;
         public List<Elements> clrRing;
         public List<Elements> unsolvedElts;
-        int[][] checkZones;
+        public int[][] checkZones;
         public List<List<GameObject>> zone = new List<List<GameObject>>();
         private void FindZone(GameObject square, int x, int y)
         {
@@ -160,6 +160,7 @@ public class Pole : MonoBehaviour
         }
         public void SetZone(GameObject square)
         {
+            zone = new List<List<GameObject>>();
             checkZones = new int[height-1][];
             for (int i = 0; i < height-1; ++i)
             {
@@ -433,7 +434,8 @@ public class Pole : MonoBehaviour
                        
                         localShapes.Add(z.GetComponent<PoleSquare>().element);
                     }
-                }                if(localIsSolved == false)
+                }
+                if(localIsSolved == false)
                 {
                     foreach (GameObject z in p)
                     {
@@ -854,7 +856,7 @@ public class Pole : MonoBehaviour
 
         int _height = info[0] - '0';
         int _width = info[1] - '0';
-        Debug.Log(_height + " " + _width);
+
         Init(_height, _width);
         bool flag = true;
         string saveLine = ""; // save line one type of obj
@@ -938,6 +940,19 @@ public class Pole : MonoBehaviour
             if (finishes.Contains(dot))
                 return true;
         return false;
+    }
+
+    public bool FindUnsolvedPoint(GameObject begin)
+    {
+        var dots = new List<GameObject>
+        {
+            begin
+        };
+        GetZoneFreeDots(begin, dots);
+        foreach (GameObject dot in dots)
+            if (dot.GetComponent<PoleDot>().hasPoint)
+                return false;
+        return true;
     }
 
     //need more fixes
