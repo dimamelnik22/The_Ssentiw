@@ -15,7 +15,6 @@ public class Core : MonoBehaviour {
 
     [Header("Prefabs")]
     public GameObject PolePF;
-    public GameObject PointPF;
     public GameObject PathDotPF;
     public GameObject PathVerticalLinePF;
     public GameObject PathHorizontalLinePF;
@@ -217,6 +216,9 @@ public class Core : MonoBehaviour {
         }
         GUIUtility.systemCopyBuffer = str;
         Debug.Log(str);
+
+        //File.AppendAllText("Assets/Resources/introductionLevels.txt", str + Environment.NewLine);
+
         /*using System; 
 class Demo { 
 static void Main() { 
@@ -288,13 +290,21 @@ static void Main() {
         if (SceneManager.GetActiveScene().name == "Introduction")
         {
             if (MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) < MenuManager.MainSettings.levels.Count - 1)
+            {
                 Core.PolePreferences.info = MenuManager.MainSettings.levels[MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) + 1];
-            else ButtonMenu();
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+            else
+            {
+                ButtonMenu();
+            }
         }
-
-        Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
-        MenuManager.DebugMessage.SaveSeed(Core.PolePreferences.MyRandom.seed);
-        SceneManager.LoadScene("PoleLevel");
+        else if (SceneManager.GetActiveScene().name == "PoleLevel")
+        {
+            Core.PolePreferences.MyRandom.SetSeed(Core.PolePreferences.MyRandom.GetRandom());
+            MenuManager.DebugMessage.SaveSeed(Core.PolePreferences.MyRandom.seed);
+            SceneManager.LoadScene("PoleLevel");
+        }
     }
 
     //need fix
@@ -367,7 +377,7 @@ static void Main() {
 
     //check update
     void Start() {
-        Debug.Log("11");
+         
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
         int height = PolePreferences.poleSize;
@@ -376,7 +386,6 @@ static void Main() {
         switch (SceneManager.GetActiveScene().name)
         {
             case "PoleLevel":
-                Debug.Log("PoleLevel d");
                 activePole.GetComponent<Pole>().Init(height, width);
                 // START and FINISH creating
                 var borderDots = new List<GameObject>();
@@ -405,11 +414,11 @@ static void Main() {
                 //{
                 //    activePole.GetComponent<Pole>().poleLines[PolePreferences.MyRandom.GetRandom() % activePole.GetComponent<Pole>().poleLines.Count].GetComponent<PoleLine>().cut = true;
                 //}
-                foreach (GameObject start in activePole.GetComponent<Pole>().starts)
-                    activePole.GetComponent<Pole>().StartScaling(start);
                 activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
                 activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                foreach (GameObject start in activePole.GetComponent<Pole>().starts)
+                    activePole.GetComponent<Pole>().StartScaling(start);
                 break;
             case "Introduction":
                 if (Core.PolePreferences.info == "")
@@ -423,6 +432,8 @@ static void Main() {
                     Core.PolePreferences.info = MenuManager.MainSettings.levels[0];
                 }
                 activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
+                foreach (GameObject start in activePole.GetComponent<Pole>().starts)
+                    activePole.GetComponent<Pole>().StartScaling(start);
                 break;
         }
 

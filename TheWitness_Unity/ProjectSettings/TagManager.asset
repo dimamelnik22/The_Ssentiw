@@ -20,6 +20,7 @@ TagManager:
   - Editor
   - PoleSquare
   - ShapeBool
+  - EditButton
   layers:
   - Default
   - TransparentFX
