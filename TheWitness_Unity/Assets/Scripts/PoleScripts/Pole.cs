@@ -707,6 +707,27 @@ public class Pole : MonoBehaviour
             }
         }
     }
+    public void CutDecode(string input)
+    {
+        int x;
+        int y;
+        int f;
+        for (int i = 0; i < input.Length; i += 3)
+        {
+            x = input[i] - '0';
+            y = input[i + 1] - '0';
+            f = input[i + 2] - '0';
+            var dot = poleDots[y][x].GetComponent<PoleDot>();
+            if (f == 0)
+            {
+                dot.right.GetComponent<PoleLine>().cut = true;
+            }
+            else
+            {
+                dot.down.GetComponent<PoleLine>().cut = true;
+            }
+        }
+    }
     //????
     public void RingDecode(string input)
     {
@@ -846,12 +867,13 @@ public class Pole : MonoBehaviour
     {
         // test coode 
 
-        funcDecode[] decode = new funcDecode[5];// decode funcs array
+        funcDecode[] decode = new funcDecode[6];// decode funcs array
         decode[0] = StartDecode;
         decode[1] = FinishDecode;
         decode[2] = PointDecode;
         decode[3] = RingDecode;
         decode[4] = ShapeDecode;
+        decode[5] = CutDecode;
         int decodeId = 0; //index of decode func
 
         int _height = info[0] - '0';
@@ -878,8 +900,11 @@ public class Pole : MonoBehaviour
                     case 'r':
                         decodeId = 3;
                         break;
-                    case 'T':
+                    case 't':
                         decodeId = 4;
+                        break;
+                    case 'l':
+                        decodeId = 5;
                         break;
                 }
                 flag = false;

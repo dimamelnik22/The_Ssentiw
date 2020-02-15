@@ -96,8 +96,10 @@ public class Core : MonoBehaviour {
             Destroy(activePole);
             activePole = Instantiate(PolePF);
             activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
-            activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
-            activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
+            //activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
+            //activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
+            foreach (GameObject start in activePole.GetComponent<Pole>().starts)
+                activePole.GetComponent<Pole>().StartScaling(start);
         }
     }
     //????
@@ -181,7 +183,7 @@ public class Core : MonoBehaviour {
         }
         if (GameObject.FindGameObjectsWithTag("EltShape").Length != 0)
         {
-            str += "T";
+            str += "t";
             foreach (GameObject s in GameObject.FindGameObjectsWithTag("EltShape"))
             {
                 PoleEltShape shape = s.GetComponent<PoleEltShape>();
@@ -211,6 +213,38 @@ public class Core : MonoBehaviour {
                     str += t;*/
                 }
 
+            }
+            str += "*";
+        }
+        bool CutFlag = false;
+        foreach (GameObject s in activePole.GetComponent<Pole>().poleLines)
+        {
+            if(s.GetComponent<PoleLine>().cut)
+            {
+                CutFlag = true;
+                break;
+            }
+        }
+        if (CutFlag)
+        {
+            str += "l";
+            foreach (GameObject l in activePole.GetComponent<Pole>().poleLines)
+            {
+                if (l.GetComponent<PoleLine>().cut)
+                {
+                    if (l.GetComponent<PoleLine>().isHorizontal)
+                    {
+                        str += l.GetComponent<PoleLine>().left.GetComponent<PoleDot>().posX;
+                        str += l.GetComponent<PoleLine>().left.GetComponent<PoleDot>().posY;
+                        str += 0;
+                    }
+                    else
+                    {
+                        str += l.GetComponent<PoleLine>().up.GetComponent<PoleDot>().posX;
+                        str += l.GetComponent<PoleLine>().up.GetComponent<PoleDot>().posY;
+                        str += 1;
+                    }
+                }
             }
             str += "*";
         }

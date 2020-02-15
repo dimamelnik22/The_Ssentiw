@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Complexity
 {
-    //55s41*f42*p321231431042242301121*r1000ffffff0000ffffff3100ffffff0200ffffff2000ffffff3300ffffff1300ff00ff*T0341111122231100112322101112311113011132111*
+    //bug 55s41*f10*p310220431100130020042*r20ff00ffff01ff00ffff12ff00ffff23ff00ffff03ff00ffff300000ffff310000ffff*t0011122230101111011133121111111021211131113232011101*
     private static int glob = 0;
     private static float gentime = 0f;
     private static GameObject start;
@@ -347,7 +347,8 @@ public static class Complexity
             }
             
         }
-        mustVisit.RemoveAt(0);//55s00*f44*p220*
+        
+        //55s00*f44*p220*
         
         start = globalStarts[0];
         start.GetComponent<PoleDot>().isUsedByPlayer = true;
