@@ -195,6 +195,7 @@ public class Editor : MonoBehaviour
                 activePole.GetComponent<Pole>().finishes.Remove(dot);
                 //sf
                 Destroy(dot.GetComponent<PoleDot>().startFinish);
+				dot.GetComponent<PoleDot>().startFinish = null;
             }
             ButtonDelete();
         }

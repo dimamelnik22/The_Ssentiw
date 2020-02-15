@@ -403,6 +403,7 @@ public class Pole : MonoBehaviour
         }*/
         public bool CheckSolution(GameObject square)
         {
+            if (points.Count == 0 && clrRing.Count == 0 && shapes.Count == 0) return true;
             bool isSolved = true;
             unsolvedElts.Clear();
             zone.Clear();

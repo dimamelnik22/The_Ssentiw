@@ -21,6 +21,7 @@ TagManager:
   - PoleSquare
   - ShapeBool
   - EditButton
+  - Canvas
   layers:
   - Default
   - TransparentFX
