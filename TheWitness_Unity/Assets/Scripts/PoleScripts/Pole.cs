@@ -55,7 +55,7 @@ public class Pole : MonoBehaviour
     [HideInInspector]
     public int quantityRing = 0;
     private readonly List<Color> colorStar = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
-    private readonly List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.black };
+    private readonly List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
     //?????????????????????????????????????????????????
 
     private static Vector3 stepx = new Vector3(5f,0f,0f);
@@ -854,7 +854,6 @@ public class Pole : MonoBehaviour
 
         int _height = info[0] - '0';
         int _width = info[1] - '0';
-        Debug.Log(_height + " " + _width);
         Init(_height, _width);
         bool flag = true;
         string saveLine = ""; // save line one type of obj

@@ -24,6 +24,10 @@ public class Editor : MonoBehaviour
     public GameObject PathStartPF;
     public GameObject PathFinishPF;
 
+    [HideInInspector]
+    private readonly List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
+    [HideInInspector]
+    private int k = 0;
     private GameObject activePole;
     private List<List<bool>> boolList;
     private string element = "";
@@ -142,6 +146,13 @@ public class Editor : MonoBehaviour
         ShowEditButtonsSqueres();
         element = "shapeplace";
     }
+    public void ButtonAddClrRing()
+    {
+
+        HideEditButtons();
+        ShowEditButtonsSqueres();
+        element = "clrRing";
+    }
     public void ButtonCutRestore()
     {
         HideEditButtons();
@@ -192,7 +203,7 @@ public class Editor : MonoBehaviour
         {
             line.GetComponent<PoleLine>().hasPoint = true;
             line.GetComponent<PoleLine>().CreatePoint();
-            activePole.GetComponent<Pole>().eltsManager.points.Add(line.GetComponent<PoleLine>().point);
+            //activePole.GetComponent<Pole>().eltsManager.points.Add(line.GetComponent<PoleLine>().point);
         }
         else if (element == "delete")
         {
