@@ -44,8 +44,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CustomPuzzle: {fileID: 0}
+  glob: 0
   PolePF: {fileID: 1670594076711100, guid: 581d52efa0b3bf745bdd80c6ce26222a, type: 3}
-  PointPF: {fileID: 1313451005600678, guid: d78850c56a1b1e74ea93ebccf4a8503d, type: 3}
   PathDotPF: {fileID: 1289634203458916, guid: 40433b7d33f019e46b1fc3260fe90cef, type: 3}
   PathVerticalLinePF: {fileID: 1367289501012780, guid: 4f3bc1701dab5d042b6bdd10295f9ddb,
     type: 3}
@@ -56,6 +56,8 @@ MonoBehaviour:
   PathFinishPF: {fileID: 1324287101198826, guid: 2566e9d3c9786ce4c9cc234250d8068c,
     type: 3}
   ActivePathPF: {fileID: 1919482870161848, guid: c0226f6b9af8d6e49830bb46b6e55349,
+    type: 3}
+  WelcomeTextPF: {fileID: 7061436962928366065, guid: 694b5a7b6a490ee458ca6658be0714b4,
     type: 3}
   PlayerWrongPathMaterial: {fileID: 2100000, guid: 19431b65307a6eb4a8af1763c32a0614,
     type: 2}

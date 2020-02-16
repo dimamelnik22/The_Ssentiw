@@ -732,9 +732,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Coder
-
-'
+  m_Text: Save
 --- !u!222 &546757170
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -931,7 +929,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 50
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 3
@@ -942,7 +940,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Delete
+  m_Text: 'Delete
+
+    object'
 --- !u!222 &579346979
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1974,8 +1974,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210.00006, y: -760}
-  m_SizeDelta: {x: 400, y: 100}
+  m_AnchoredPosition: {x: 310, y: -660}
+  m_SizeDelta: {x: 200, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1270760295
 MonoBehaviour:
@@ -3809,8 +3809,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 310, y: -660}
-  m_SizeDelta: {x: 200, y: 100}
+  m_AnchoredPosition: {x: 210, y: -760}
+  m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2145669934
 MonoBehaviour:

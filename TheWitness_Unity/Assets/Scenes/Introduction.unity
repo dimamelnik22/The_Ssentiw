@@ -562,7 +562,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f0bbb27722f07344862dfb25959ab86, type: 3}
+  m_Script: {fileID: 11500000, guid: 62eadc9fcce99104290c8644f9f94304, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1417517490
@@ -684,9 +684,10 @@ GameObject:
   - component: {fileID: 1770821471}
   - component: {fileID: 1770821470}
   - component: {fileID: 1770821469}
+  - component: {fileID: 1770821473}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -771,3 +772,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1770821473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770821468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6333c5df598ba0146b0349fc0b78f617, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WelcomeTextPF: {fileID: 7061436962928366065, guid: 694b5a7b6a490ee458ca6658be0714b4,
+    type: 3}
+  EditorButtonPF: {fileID: 7172198795702618252, guid: 98109f9992b2ab54681295898b8988c7,
+    type: 3}

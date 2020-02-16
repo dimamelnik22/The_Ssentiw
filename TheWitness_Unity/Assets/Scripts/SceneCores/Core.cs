@@ -309,9 +309,10 @@ static void Main() {
             } 
         }*/
     }
-    public void ButtonReport()
+    public void ButtonOpenEditor()
     {
-        MenuManager.DebugMessage.Push2Buffer();
+        Debug.Log("editor");
+        SceneManager.LoadScene("LevelEditor");
     }
     public void ButtonMenu()
     {
@@ -464,6 +465,7 @@ static void Main() {
                         MenuManager.MainSettings.levels.Add(sr.ReadLine());
                     }
                     Core.PolePreferences.info = MenuManager.MainSettings.levels[0];
+                    GameObject.FindGameObjectWithTag("Canvas").GetComponent<CanvasScript>().ShowText();
                 }
                 activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
                 foreach (GameObject start in activePole.GetComponent<Pole>().starts)
@@ -471,8 +473,9 @@ static void Main() {
                 break;
         }
 
-        
-        
+
+        MenuManager.MainSettings.speed = Mathf.Max(activePole.GetComponent<Pole>().height, activePole.GetComponent<Pole>().width) / 5f;
+
         pathIsShown = false;
         playerPathLinesOnScreen = new List<GameObject>();
         playerPathDotsOnScreen = new List<GameObject>();
@@ -512,14 +515,16 @@ static void Main() {
             {
                 foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                 {
-                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
+                    //path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
+                    path.GetComponent<Renderer>().material = PlayerGoodPathMaterial;
                 }
             }
             else
             {
                 foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                 {
-                    path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
+                    //path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
+                    path.GetComponent<Renderer>().material = PlayerGoodPathMaterial;
                 }
                 foreach (Elements point in activePole.GetComponent<Pole>().eltsManager.unsolvedElts)
                 {
@@ -528,6 +533,13 @@ static void Main() {
             }
 
             MenuManager.DebugMessage.SavePath(activePole.GetComponent<Pole>().PathToStr(activePath.GetComponent<ActivePath>().dotsOnPole[0]));
+            //SDRDRURDDLDRRF
+            if (SceneManager.GetActiveScene().name == "Introduction" && MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) == 3 && MenuManager.DebugMessage.path == "SDRDRURDDLDRRF")
+            {
+                GameObject.FindGameObjectWithTag("Canvas").GetComponent<CanvasScript>().ShowEditorButton();
+            }
+
+
             foreach (GameObject dot in activePole.GetComponent<Pole>().playerPath.dots)
                 dot.GetComponent<PoleDot>().isUsedByPlayer = false;
             foreach (GameObject line in activePole.GetComponent<Pole>().playerPath.lines)

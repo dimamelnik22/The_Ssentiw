@@ -28,7 +28,7 @@ public class MenuManager : MonoBehaviour {
     {
         private static int seed = new int();
         private static string s;
-        private static string path;
+        public static string path;
         public static void Push2Buffer()
         {
             GUIUtility.systemCopyBuffer =":"+ seed + "\n" + s + ":" + path;
@@ -179,13 +179,10 @@ public class MenuManager : MonoBehaviour {
         ConvertPreferences();
         SceneManager.LoadScene("PoleLevel");
     }
-    private void LoadLevelWithString()
+    private void LoadTutorial()
     {
-        Core.PolePreferences.mode = "info";
-        Core.PolePreferences.info = MainSettings.levels[0];
-        Debug.Log(Core.PolePreferences.info);
-        Debug.Log(MainSettings.levels[0]);
-        SceneManager.LoadScene("PoleLevel");
+        Core.PolePreferences.info = "";
+        SceneManager.LoadScene("Introduction");
     }
     private void LoadRandomPoleLevel()
     {
@@ -348,16 +345,16 @@ public class MenuManager : MonoBehaviour {
 
         MenuFunc[] funcList = new MenuFunc[5];
         funcList[0] = LoadRandomPoleLevel;
-        funcList[2] = () => LoadLevelWithString();
+        funcList[2] = () => LoadTutorial();
         funcList[4] = Application.Quit;
         string[] names;
         switch(MainSettings.language)
         {
             case "RUS":
-                names = new string[] { "Старт", "Пользовательская", "Примеры", "Настройки", "Выход" };
+                names = new string[] { "Старт", "Пользовательская", "Обучение", "Настройки", "Выход" };
                 break;
             default:
-                names = new string[] { "Start random", "Custom", "Examples", "Settings", "Exit" };
+                names = new string[] { "Start random", "Custom", "Tutorial", "Settings", "Exit" };
                 break;
         }
         menuMap.Add(new MenuNode(names, funcList, 5), 0);
@@ -634,14 +631,15 @@ public class MenuManager : MonoBehaviour {
                     item.GetComponentInChildren<MenuButton>().index = index;
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
-                activePath.GetComponent<ActivePath>().pointer.transform.Translate(-4f, 0f, 0f);
+                activePath.GetComponent<ActivePath>().pointer.transform.Translate(-2.5f, 0f, 0f);
                 activePath.GetComponent<ActivePath>().Update();
+				
             }
         }
         else if (prevPaths.Count > 0 )
         {
             
-            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().starts[0].transform.position.x && dist.x < 0 && (Input.GetMouseButton(0) == false) && (Input.touchCount == 0))
+            if (activePath.GetComponent<ActivePath>().pointer != null && activePath.GetComponent<ActivePath>().pointer.transform.position.x <= menuPole.GetComponent<Pole>().starts[0].transform.position.x && (Input.GetMouseButton(0) == false) && (Input.touchCount == 0))
             {
                 Debug.Log(222);
                 Destroy(menuPole);
@@ -667,7 +665,7 @@ public class MenuManager : MonoBehaviour {
                 }
                 Instantiate(MenuItemPF, menuPole.GetComponent<Pole>().starts[0].transform.position + new Vector3(10f, 5f, 0f), MenuItemPF.transform.rotation).GetComponent<MenuItem>().SetName(menuMap.pointer.MainName);
        
-                activePath.GetComponent<ActivePath>().pointer.transform.Translate(-4f, 0f, 0f);
+                activePath.GetComponent<ActivePath>().pointer.transform.Translate(-2.5f, 0f, 0f);
                 activePath.GetComponent<ActivePath>().Update();
 
             }
