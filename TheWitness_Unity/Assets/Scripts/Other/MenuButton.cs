@@ -9,6 +9,5 @@ public class MenuButton : MonoBehaviour
     void OnMouseDown()
     {
         GameObject.FindGameObjectWithTag("Core").GetComponent<MenuManager>().PressButton(index);
-        Debug.Log("pressed");
     }
 }

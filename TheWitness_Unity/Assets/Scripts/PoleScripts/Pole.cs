@@ -403,7 +403,7 @@ public class Pole : MonoBehaviour
         }*/
         public bool CheckSolution(GameObject square)
         {
-            if (points.Count == 0 && clrRing.Count == 0 && shapes.Count == 0) return true;
+            if (height == 1 || width == 1) return true;
             bool isSolved = true;
             unsolvedElts.Clear();
             zone.Clear();
@@ -794,7 +794,8 @@ public class Pole : MonoBehaviour
         height = _height;
         width = _width;
         eltsManager = new PoleElts(height, width);
-        Core.PolePreferences.poleSize = height;
+        Core.PolePreferences.height = height;
+        Core.PolePreferences.width = width;
         poleDots = new GameObject[height][];
         poleLines = new List<GameObject>();
         for (int y = 0; y < height; y++)
@@ -968,20 +969,7 @@ public class Pole : MonoBehaviour
         return false;
     }
 
-    public bool FindUnsolvedPoint(GameObject begin)
-    {
-        var dots = new List<GameObject>
-        {
-            begin
-        };
-        GetZoneFreeDots(begin, dots);
-        foreach (GameObject dot in dots)
-            if (dot.GetComponent<PoleDot>().hasPoint)
-                return false;
-        return true;
-    }
 
-    //need more fixes
     public bool FindPath(GameObject begin, List<GameObject> ends, bool needToCheckLocal)
     {
         begin.GetComponent<PoleDot>().isUsedBySolution = true;
@@ -1017,19 +1005,19 @@ public class Pole : MonoBehaviour
                 systemPath.lines.Add(line);
             }
         }
-        if (ends.Contains(begin))
+        if (ends.Contains(begin) && systemPath.dots.Count >= Core.PolePreferences.complexity)
         {
             return true;
         }
         var beginDot = begin.GetComponent<PoleDot>();
         List<GameObject> dots = new List<GameObject>();
-        if (beginDot.up != null && !beginDot.up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.up != null && !beginDot.up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedBySolution)
             dots.Add(beginDot.up.GetComponent<PoleLine>().up);
-        if (beginDot.right != null && !beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.right != null && !beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedBySolution)
             dots.Add(beginDot.right.GetComponent<PoleLine>().right);
-        if (beginDot.down != null && !beginDot.down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.down != null && !beginDot.down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedBySolution)
             dots.Add(beginDot.down.GetComponent<PoleLine>().down);
-        if (beginDot.left != null && !beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
+        if (beginDot.left != null && !beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedBySolution)
             dots.Add(beginDot.left.GetComponent<PoleLine>().left);
         if (needToCheckLocal)
         {
@@ -1059,8 +1047,14 @@ public class Pole : MonoBehaviour
         }
         if (!success)
         {
-            if (needToCheckLocal && systemPath.dots.Count >= width * height * Core.PolePreferences.complexity)
+            if (needToCheckLocal && systemPath.dots.Count >= Core.PolePreferences.complexity)
+            {
+                AddFinish(begin);
+                var tmp = finishes[0];
+                finishes.RemoveAt(0);
+                finishes.Add(tmp);
                 return true;
+            }
             begin.GetComponent<PoleDot>().isUsedBySolution = false;
             systemPath.dots.Remove(begin);
             systemPath.lines.Remove(line);
@@ -1280,25 +1274,28 @@ public class Pole : MonoBehaviour
         dot.GetComponent<PoleDot>().AddFinish();
     }
 
-    //need to rewrite
     public void GeneratePoints(int numberOfPoints)
     {
         eltsManager.points.Clear();
-        numberOfPoints = System.Math.Min(numberOfPoints, (systemPath.dots.Count + systemPath.lines.Count) / 2 - 4);
-        List<GameObject> pathList = new List<GameObject>
+        numberOfPoints = Mathf.Min(numberOfPoints, (systemPath.dots.Count + systemPath.lines.Count - 4) / 2);
+        List<GameObject> pathList = new List<GameObject>(systemPath.dots);
+        pathList.AddRange(systemPath.lines);
+        foreach (GameObject start in starts)
         {
-            systemPath.dots[0]
-        };
-        for (int i = 0; i<systemPath.dots.Count; i++)
-        {
-            pathList.Add(systemPath.dots[i]);
-        }
-        for (int i = 0; i < systemPath.lines.Count; i++)
-            pathList.Add(systemPath.lines[i]);
-        foreach(GameObject start in starts)
             pathList.Remove(start);
+            if (pathList.Contains(start.GetComponent<PoleDot>().left)) pathList.Remove(start.GetComponent<PoleDot>().left);
+            if (pathList.Contains(start.GetComponent<PoleDot>().right)) pathList.Remove(start.GetComponent<PoleDot>().right);
+            if (pathList.Contains(start.GetComponent<PoleDot>().up)) pathList.Remove(start.GetComponent<PoleDot>().up);
+            if (pathList.Contains(start.GetComponent<PoleDot>().down)) pathList.Remove(start.GetComponent<PoleDot>().down);
+        }
         foreach (GameObject finish in finishes)
+        {
             pathList.Remove(finish);
+            if (pathList.Contains(finish.GetComponent<PoleDot>().left)) pathList.Remove(finish.GetComponent<PoleDot>().left);
+            if (pathList.Contains(finish.GetComponent<PoleDot>().right)) pathList.Remove(finish.GetComponent<PoleDot>().right);
+            if (pathList.Contains(finish.GetComponent<PoleDot>().up)) pathList.Remove(finish.GetComponent<PoleDot>().up);
+            if (pathList.Contains(finish.GetComponent<PoleDot>().down)) pathList.Remove(finish.GetComponent<PoleDot>().down);
+        }
         for (int i = 0; i < numberOfPoints; i++)
         {
             if (pathList.Count == 0) break;
@@ -1323,25 +1320,6 @@ public class Pole : MonoBehaviour
                 if (pathList.Contains(obj.GetComponent<PoleLine>().up)) pathList.Remove(obj.GetComponent<PoleLine>().up);
                 if (pathList.Contains(obj.GetComponent<PoleLine>().down)) pathList.Remove(obj.GetComponent<PoleLine>().down);
             }
-            if (pathList.Count == 0) break;
-
-            //r %= systemPath.dots.Count + systemPath.lines.Count;
-            //if (r % 2 == 0)
-            //{
-            //    if (!systemPath.dots[(r / 2)].GetComponent<PoleDot>().hasPoint)
-            //    {
-            //        systemPath.dots[(r / 2)].GetComponent<PoleDot>().hasPoint = true;
-            //    }
-            //    else i--;
-            //}
-            //else
-            //{
-            //    if (!systemPath.lines[(r - 1) / 2].GetComponent<PoleLine>().hasPoint)
-            //    {
-            //        systemPath.lines[(r - 1) / 2].GetComponent<PoleLine>().hasPoint = true;
-            //    }
-            //    else i--;
-            //}
 
         }
     }
@@ -1544,8 +1522,8 @@ public class Pole : MonoBehaviour
         }
         ways[starts[0].GetComponent<PoleDot>().posY][starts[0].GetComponent<PoleDot>().posX] = 1;
         dotData = new PathDotStack();
-        //bool isFound = FindPath(start, finish, ways);
-        bool isFound = FindPathQuick(starts[0], finishes[0], ways);
+        bool isFound = FindPath(starts[0], finishes,false);
+        //bool isFound = FindPathQuick(starts[0], finishes[0], ways);
         while (!isFound)
         {
             for (int i = 0; i < height; i++)
@@ -1557,16 +1535,17 @@ public class Pole : MonoBehaviour
             }
             ways[starts[0].GetComponent<PoleDot>().posY][starts[0].GetComponent<PoleDot>().posX] = 1;
             dotData = new PathDotStack();
-            isFound = FindPathQuick(starts[0], finishes[0], ways);
+            //isFound = FindPathQuick(starts[0], finishes[0], ways);
+            isFound = FindPath(starts[0], finishes, false);
         }
-        if (isFound)
-        {
-            foreach (GameObject dot in GameObject.FindGameObjectsWithTag("PoleDot"))
-                if (dot.GetComponent<PoleDot>().isUsedBySolution) systemPath.dots.Add(dot);
+        //if (isFound)
+        //{
+        //    foreach (GameObject dot in GameObject.FindGameObjectsWithTag("PoleDot"))
+        //        if (dot.GetComponent<PoleDot>().isUsedBySolution) systemPath.dots.Add(dot);
 
-            foreach (GameObject obj in GameObject.FindGameObjectsWithTag("PoleLine"))
-                if (obj.GetComponent<PoleLine>().isUsedBySolution) systemPath.lines.Add(obj);
-        }
+        //    foreach (GameObject obj in GameObject.FindGameObjectsWithTag("PoleLine"))
+        //        if (obj.GetComponent<PoleLine>().isUsedBySolution) systemPath.lines.Add(obj);
+        //}
         //FindPath(starts[0], finishes, false);
         SetZone();
         SetShapes();
@@ -1692,10 +1671,10 @@ public class Pole : MonoBehaviour
     {
         List<List<bool>> boolList = new List<List<bool>>();
 
-        for (int i = 0; i < Core.PolePreferences.poleSize; i++)
+        for (int i = 0; i < Core.PolePreferences.height; i++)
         {
             boolList.Add(new List<bool>());
-            for (int j = 0; j < Core.PolePreferences.poleSize; j++)
+            for (int j = 0; j < Core.PolePreferences.width; j++)
             {
                 boolList[i].Add(false);
             }

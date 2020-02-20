@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 33274627266139350}
   - component: {fileID: 23120597429572794}
   - component: {fileID: 136959658392811602}
+  - component: {fileID: 3176301330579230271}
   m_Layer: 2
   m_Name: PlayerPathStart
   m_TagString: Path
@@ -92,3 +93,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &3176301330579230271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803471697624522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99ae181683af1ca449173a02d16c7b0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fade: 0
+  WronColor: {fileID: 2100000, guid: 19431b65307a6eb4a8af1763c32a0614, type: 2}
+  FadeColor: {fileID: 2100000, guid: 995a4569baa26d440a5107a712115744, type: 2}

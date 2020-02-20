@@ -22,7 +22,7 @@ public class Follow : MonoBehaviour {
 
     private readonly float eps = 0.9f;
     private bool moveHor = true;
-    private Vector2 lastPos;
+    public Vector2 lastPos;
     private Vector3 maxDistance = new Vector3(10f,10f,10f);
     private Vector3 stepz = new Vector3(0f, 0f, -0.5f);
 
@@ -41,34 +41,7 @@ public class Follow : MonoBehaviour {
     }
 
     void Update () {
-        //upLimit = transform.position.y;
-        //downLimit = transform.position.y;
-        //leftLimit = transform.position.x;
-        //rightLimit = transform.position.x;
-        //for (int y = 0; y < poleDots.Length; y++)
-        //    for (int x = 0; x < poleDots[y].Length; x++) 
-        //    {
-        //        if (poleDots[y][x] !=null)
-        //        {
-        //            GameObject dot = poleDots[y][x];
-        //            if (dot.transform.position.y == transform.position.y && dot.transform.position.x > transform.position.x && dot.transform.position.x > rightLimit)
-        //            {
-        //                rightLimit = dot.transform.position.x;
-        //            }
-        //            if (dot.transform.position.y == transform.position.y && dot.transform.position.x < transform.position.x && dot.transform.position.x < leftLimit)
-        //            {
-        //                leftLimit = dot.transform.position.x;
-        //            }
-        //            if (dot.transform.position.x == transform.position.x && dot.transform.position.y > transform.position.y && dot.transform.position.y > upLimit)
-        //            {
-        //                upLimit = dot.transform.position.y;
-        //            }
-        //            if (dot.transform.position.x == transform.position.x && dot.transform.position.y < transform.position.y && dot.transform.position.y < downLimit)
-        //            {
-        //                downLimit = dot.transform.position.y;
-        //            }
-        //        }
-        //    }
+        
         var nextDot = path.dotsOnPole[path.dotsOnPole.Count - 1];
         upLimit = nextDot.transform.position.y;
         downLimit = nextDot.transform.position.y;
@@ -119,12 +92,12 @@ public class Follow : MonoBehaviour {
 
         Vector2 dir = new Vector2(0f, 0f);
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (Input.GetMouseButton(0))
         {
 
             GetComponent<ParticleSystem>().Play();
-            dir = 0.03f * MenuManager.MainSettings.speed * new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
+            dir = 0.025f * MenuManager.MainSettings.speed * new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
             lastPos = Input.mousePosition;
         }
         else
@@ -132,9 +105,7 @@ public class Follow : MonoBehaviour {
             GetComponent<ParticleSystem>().Stop();
             lastPos = Input.mousePosition;
         }
-        #endif
-
-        #if !UNITY_EDITOR
+#else
         if (Input.touchCount > 0)
         {
 
@@ -143,11 +114,11 @@ public class Follow : MonoBehaviour {
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    lastpos = touch.position;
+                    lastPos = touch.position;
                     break;
                 case TouchPhase.Moved:
-                    dir = 0.02f * MenuManager.MainSettings.speed * (touch.position - lastpos);
-                    lastpos = touch.position;
+                    dir = 0.02f * MenuManager.MainSettings.speed * (touch.position - lastPos);
+                    lastPos = touch.position;
                     break;
             }   
         }
@@ -155,8 +126,11 @@ public class Follow : MonoBehaviour {
         {
             GetComponent<ParticleSystem>().Stop();
         }
-        #endif
-
+#endif
+        float camerarot = GameObject.FindGameObjectWithTag("MainCamera").transform.rotation.eulerAngles.z;
+        Vector2 tmp = dir;
+        dir.x = tmp.x * Mathf.Cos(camerarot / 180f * Mathf.PI) - tmp.y * Mathf.Sin(camerarot / 180f * Mathf.PI);
+        dir.y = tmp.x * Mathf.Sin(camerarot / 180f * Mathf.PI) + tmp.y * Mathf.Cos(camerarot / 180f * Mathf.PI);
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("PoleDot"))
         {
             if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.y - transform.position.y) * Mathf.Abs(go.transform.position.y - transform.position.y)) <
@@ -185,7 +159,7 @@ public class Follow : MonoBehaviour {
             }
             else
             {
-                if (Mathf.Abs(transform.position.y - nearestDot.transform.position.y) < eps)
+                if (Mathf.Abs(transform.position.y - nearestDot.transform.position.y) < eps && (nearestDot.GetComponent<PoleDot>().AllowedToRight() || nearestDot.GetComponent<PoleDot>().AllowedToLeft()))
                 {
                     if (dir.x > 0 && nearestDot.GetComponent<PoleDot>().AllowedToRight())
                     {
@@ -200,7 +174,7 @@ public class Follow : MonoBehaviour {
                         moveHor = !moveHor;
                     }
                 }
-                else transform.Translate(new Vector3(0f, dir.y + Mathf.Sign(nearestDot.transform.position.y - transform.position.y) * Mathf.Abs(dir.x), 0f));
+                else transform.Translate(new Vector3(0f, dir.y + Mathf.Sign(dir.y) * Mathf.Abs(dir.x) * 0.5f, 0f));
             }
         }
         else
@@ -211,7 +185,7 @@ public class Follow : MonoBehaviour {
             }
             else
             {
-                if (Mathf.Abs(transform.position.x - nearestDot.transform.position.x) < eps)
+                if (Mathf.Abs(transform.position.x - nearestDot.transform.position.x) < eps && (nearestDot.GetComponent<PoleDot>().AllowedToUp() || nearestDot.GetComponent<PoleDot>().AllowedToDown()))
                 {
                     if (dir.y > 0 && nearestDot.GetComponent<PoleDot>().AllowedToUp())
                     {
@@ -228,7 +202,7 @@ public class Follow : MonoBehaviour {
                         moveHor = !moveHor;
                     }
                 }
-                else transform.Translate(new Vector3(dir.x + Mathf.Sign(nearestDot.transform.position.x - transform.position.x) * Mathf.Abs(dir.y), 0f, 0f));
+                else transform.Translate(new Vector3(dir.x + Mathf.Sign(dir.x) * Mathf.Abs(dir.y) * 0.5f, 0f, 0f));
             }
         }
             

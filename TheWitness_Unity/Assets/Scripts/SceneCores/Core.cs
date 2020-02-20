@@ -28,12 +28,6 @@ public class Core : MonoBehaviour {
     public Material EltPointMaterial;
     public Material EltWrongPointMaterial;
 
-
-    //private static Vector3 pathstepz = new Vector3(0f, 0f, -0.5f);
-
-    //private static Vector3 stepx = new Vector3(5f, 0f, 0f);
-    //private static Vector3 stepy = new Vector3(0f, -5f, 0f);
-
     [HideInInspector]
     public bool pathIsShown = false;
     [HideInInspector]
@@ -47,7 +41,8 @@ public class Core : MonoBehaviour {
     public static class PolePreferences
     {
         
-        public static int poleSize = 5;
+        public static int height = 5;
+        public static int width = 5;
         public static int complexity = 20;
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;
@@ -72,6 +67,7 @@ public class Core : MonoBehaviour {
         public static string info = "";
         public static string mode = "normal";
     }
+    public static List<string> LevelList = new List<string>();
     public void ButtonComplexity()
     {
         Complexity.countComplexity(activePole.GetComponent<Pole>().poleDots, activePole.GetComponent<Pole>());
@@ -139,6 +135,7 @@ public class Core : MonoBehaviour {
         str += "*";
         if (activePole.GetComponent<Pole>().eltsManager.points.Count != 0)
         {
+            Debug.Log(activePole.GetComponent<Pole>().eltsManager.points.Count); 
             str += "p";
             foreach (PoleEltPoint point in activePole.GetComponent<Pole>().eltsManager.points)
             {
@@ -251,7 +248,7 @@ public class Core : MonoBehaviour {
         GUIUtility.systemCopyBuffer = str;
         Debug.Log(str);
 
-        //File.AppendAllText("Assets/Resources/introductionLevels.txt", str + Environment.NewLine);
+        File.AppendAllText("Assets/Resources/LvlsShapesSum.txt", str + Environment.NewLine);
 
         /*using System; 
 class Demo { 
@@ -324,13 +321,14 @@ static void Main() {
     {
         if (SceneManager.GetActiveScene().name == "Introduction")
         {
-            if (MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) < MenuManager.MainSettings.levels.Count - 1)
+            if (Core.LevelList.IndexOf(Core.PolePreferences.info) < Core.LevelList.Count - 1)
             {
-                Core.PolePreferences.info = MenuManager.MainSettings.levels[MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) + 1];
+                Core.PolePreferences.info = Core.LevelList[Core.LevelList.IndexOf(Core.PolePreferences.info) + 1];
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             else
             {
+                PlayerPrefs.SetInt("IntroSkip", 1);
                 ButtonMenu();
             }
         }
@@ -415,8 +413,8 @@ static void Main() {
          
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
-        int height = PolePreferences.poleSize;
-        int width = PolePreferences.poleSize;
+        int height = PolePreferences.height;
+        int width = PolePreferences.width;
         activePole = Instantiate(PolePF);
         switch (SceneManager.GetActiveScene().name)
         {
@@ -456,15 +454,14 @@ static void Main() {
                     activePole.GetComponent<Pole>().StartScaling(start);
                 break;
             case "Introduction":
+				if (PlayerPrefs.GetInt("IntroSkip") > 0)
+                {
+                    SceneManager.LoadScene("MainMenu");
+                }
                 if (Core.PolePreferences.info == "")
                 {
-                    StreamReader sr = new StreamReader("Assets/Resources/introductionLevels.txt");
-                    MenuManager.MainSettings.levels = new List<string>();
-                    while (sr.Peek() >= 0)
-                    {
-                        MenuManager.MainSettings.levels.Add(sr.ReadLine());
-                    }
-                    Core.PolePreferences.info = MenuManager.MainSettings.levels[0];
+                    MenuManager.ParseLevels("LvlsPoints");
+                    Core.PolePreferences.info = Core.LevelList[0];
                     GameObject.FindGameObjectWithTag("Canvas").GetComponent<CanvasScript>().ShowText();
                 }
                 activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
@@ -474,7 +471,7 @@ static void Main() {
         }
 
 
-        MenuManager.MainSettings.speed = Mathf.Max(activePole.GetComponent<Pole>().height, activePole.GetComponent<Pole>().width) / 5f;
+        
 
         pathIsShown = false;
         playerPathLinesOnScreen = new List<GameObject>();
@@ -517,6 +514,8 @@ static void Main() {
                 {
                     //path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerGoodPathMaterial, 1f);
                     path.GetComponent<Renderer>().material = PlayerGoodPathMaterial;
+                    if (SceneManager.GetActiveScene().name == "Introduction")
+                        GameObject.FindGameObjectWithTag("Canvas").GetComponent<CanvasScript>().ShowNextButton();
                 }
             }
             else
@@ -524,7 +523,8 @@ static void Main() {
                 foreach (GameObject path in GameObject.FindGameObjectsWithTag("Path"))
                 {
                     //path.GetComponent<Renderer>().material.Lerp(path.GetComponent<Renderer>().material, PlayerWrongPathMaterial, 1f);
-                    path.GetComponent<Renderer>().material = PlayerGoodPathMaterial;
+                    path.GetComponent<Renderer>().material = PlayerWrongPathMaterial;
+                    path.GetComponent<Path>().fade = true;
                 }
                 foreach (Elements point in activePole.GetComponent<Pole>().eltsManager.unsolvedElts)
                 {
@@ -533,8 +533,7 @@ static void Main() {
             }
 
             MenuManager.DebugMessage.SavePath(activePole.GetComponent<Pole>().PathToStr(activePath.GetComponent<ActivePath>().dotsOnPole[0]));
-            //SDRDRURDDLDRRF
-            if (SceneManager.GetActiveScene().name == "Introduction" && MenuManager.MainSettings.levels.IndexOf(Core.PolePreferences.info) == 3 && MenuManager.DebugMessage.path == "SDRDRURDDLDRRF")
+            if (SceneManager.GetActiveScene().name == "Introduction" && Core.LevelList.IndexOf(Core.PolePreferences.info) == 3 && MenuManager.DebugMessage.path == "SDRDRURDDLDRRF")
             {
                 GameObject.FindGameObjectWithTag("Canvas").GetComponent<CanvasScript>().ShowEditorButton();
             }
