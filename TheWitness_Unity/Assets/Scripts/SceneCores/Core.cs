@@ -86,20 +86,7 @@ public class Core : MonoBehaviour {
             Core.PolePreferences.mode = "custom";
             Core.PolePreferences.info = CustomPuzzle.text;
             Debug.Log(Core.PolePreferences.info);
-            activePole.GetComponent<Pole>().ClearPole();
-            foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
-                Destroy(point);
-            foreach (GameObject shape in GameObject.FindGameObjectsWithTag("EltShape"))
-                Destroy(shape);
-            foreach (GameObject clrRing in GameObject.FindGameObjectsWithTag("EltClrRing"))
-                Destroy(clrRing);
-            Destroy(activePole);
-            activePole = Instantiate(PolePF);
-            activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
-            //activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
-            //activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
-            foreach (GameObject start in activePole.GetComponent<Pole>().starts)
-                activePole.GetComponent<Pole>().StartScaling(start);
+            SceneManager.LoadScene("PoleLevel");
         }
     }
     //????
@@ -174,10 +161,10 @@ public class Core : MonoBehaviour {
             {
                 str += ring.location.GetComponent<PoleSquare>().indexJ;// rework points not set 
                 str += ring.location.GetComponent<PoleSquare>().indexI;
-                str += Color2HEX((int)(ring.c.r * 255));
-                str += Color2HEX((int)(ring.c.g * 255));
-                str += Color2HEX((int)(ring.c.b * 255));
-                str += Color2HEX((int)(ring.c.a * 255));
+                str += Color2HEX((int)(ring.c.color.r * 255));
+                str += Color2HEX((int)(ring.c.color.g * 255));
+                str += Color2HEX((int)(ring.c.color.b * 255));
+                str += Color2HEX((int)(ring.c.color.a * 255));
             }
             str += "*";
         }
@@ -421,39 +408,48 @@ static void Main() {
         switch (SceneManager.GetActiveScene().name)
         {
             case "PoleLevel":
-                activePole.GetComponent<Pole>().Init(height, width);
-                // START and FINISH creating
-                var borderDots = new List<GameObject>();
-                foreach(GameObject curdot in GameObject.FindGameObjectsWithTag("PoleDot"))
+                if (PolePreferences.mode == "custom")
                 {
-                    var poledot = curdot.GetComponent<PoleDot>();
-                    if (poledot.posX == 0 || poledot.posX == width - 1 || poledot.posY == 0 || poledot.posY == height - 1)
-                        borderDots.Add(curdot);
+                    activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
+                    foreach (GameObject start in activePole.GetComponent<Pole>().starts)
+                        activePole.GetComponent<Pole>().StartScaling(start);
                 }
-                GameObject dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
-                activePole.GetComponent<Pole>().AddStart(dot);
-                borderDots.Remove(dot);
-                dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
-                activePole.GetComponent<Pole>().AddFinish(dot);
-                borderDots.Remove(dot);
+                else
+                {
+                    activePole.GetComponent<Pole>().Init(height, width);
+                    // START and FINISH creating
+                    var borderDots = new List<GameObject>();
+                    foreach (GameObject curdot in GameObject.FindGameObjectsWithTag("PoleDot"))
+                    {
+                        var poledot = curdot.GetComponent<PoleDot>();
+                        if (poledot.posX == 0 || poledot.posX == width - 1 || poledot.posY == 0 || poledot.posY == height - 1)
+                            borderDots.Add(curdot);
+                    }
+                    GameObject dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
+                    activePole.GetComponent<Pole>().AddStart(dot);
+                    borderDots.Remove(dot);
+                    dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
+                    activePole.GetComponent<Pole>().AddFinish(dot);
+                    borderDots.Remove(dot);
 
-                activePole.GetComponent<Pole>().CreateSolution();
+                    activePole.GetComponent<Pole>().CreateSolution();
 
-                //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
-                //activePole.GetComponent<Pole>().AddStart(dot);
-                //borderDots.Remove(dot);
-                //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
-                //activePole.GetComponent<Pole>().AddFinish(dot);
-                //borderDots.Remove(dot);
-                //for (int a = 0; a < 3; ++a)
-                //{
-                //    activePole.GetComponent<Pole>().poleLines[PolePreferences.MyRandom.GetRandom() % activePole.GetComponent<Pole>().poleLines.Count].GetComponent<PoleLine>().cut = true;
-                //}
-                activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
-                activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
-                activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-                foreach (GameObject start in activePole.GetComponent<Pole>().starts)
-                    activePole.GetComponent<Pole>().StartScaling(start);
+                    //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
+                    //activePole.GetComponent<Pole>().AddStart(dot);
+                    //borderDots.Remove(dot);
+                    //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
+                    //activePole.GetComponent<Pole>().AddFinish(dot);
+                    //borderDots.Remove(dot);
+                    //for (int a = 0; a < 3; ++a)
+                    //{
+                    //    activePole.GetComponent<Pole>().poleLines[PolePreferences.MyRandom.GetRandom() % activePole.GetComponent<Pole>().poleLines.Count].GetComponent<PoleLine>().cut = true;
+                    //}
+                    activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
+                    activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
+                    activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                    foreach (GameObject start in activePole.GetComponent<Pole>().starts)
+                        activePole.GetComponent<Pole>().StartScaling(start);
+                }
                 break;
             case "Introduction":
                 if (Core.PolePreferences.info == "")

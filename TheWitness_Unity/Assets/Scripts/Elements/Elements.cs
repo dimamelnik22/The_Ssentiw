@@ -9,7 +9,7 @@ public class Elements : MonoBehaviour
     public GameObject location;
 
     [Header("Color")]
-    public Color c;
+    public Material c;
 
     protected bool colorlerping = false;
     protected float countdown = 0.5f;
@@ -45,7 +45,7 @@ public class Elements : MonoBehaviour
     public void ShowNormalizedColor()
     {
         colorlerping = false;
-        GetComponent<Renderer>().material.color = c;
+        GetComponent<Renderer>().material = c;
     }
     public virtual IEnumerator Do()
     {
@@ -55,9 +55,9 @@ public class Elements : MonoBehaviour
             if (countdown > 0f)
             {
                 if (tored)
-                    GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c, 2 * countdown);
+                    GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c.color, 2 * countdown);
                 else
-                    GetComponent<Renderer>().material.color = Color.Lerp(c, Color.red, 2 * countdown);
+                    GetComponent<Renderer>().material.color = Color.Lerp(c.color, Color.red, 2 * countdown);
             }
             else
             {

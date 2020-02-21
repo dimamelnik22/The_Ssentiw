@@ -28,7 +28,10 @@ public class Pole : MonoBehaviour
     public GameObject DotPF;
     public GameObject VerticalLinePF;
     public GameObject HorizontalLinePF;
-
+    public Material[] ColorMaterials = new Material[6];
+    // https://lospec.com/palette-list/sweetie-16
+    // https://lospec.com/palette-list/linear-color-palette-basic
+    //https://flatuicolors.com/palette/au
     [HideInInspector]
     public PoleElts eltsManager;
     [HideInInspector]
@@ -55,7 +58,6 @@ public class Pole : MonoBehaviour
     [HideInInspector]
     public int quantityRing = 0;
     private readonly List<Color> colorStar = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
-    private readonly List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
     //?????????????????????????????????????????????????
 
     private static Vector3 stepx = new Vector3(5f,0f,0f);
@@ -420,11 +422,11 @@ public class Pole : MonoBehaviour
                     {
                         if (c == Color.red)
                         {
-                            c = z.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c;
+                            c = z.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
                         }
                         else
                         {
-                            if (c != z.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c)
+                            if (c != z.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
                             {
                                 localIsSolved = false;
                             }
@@ -749,7 +751,7 @@ public class Pole : MonoBehaviour
             sq.hasElem = true;
             sq.element = Instantiate(ClrRingPF, sq.transform).GetComponent<Elements>();
             sq.element.GetComponent<Renderer>().material.color = col;
-            sq.element.GetComponent<PoleEltClrRing>().c = col;
+            sq.element.GetComponent<PoleEltClrRing>().c.color = col;// rework !!
         }
     }
     public void ShapeDecode(string input)
@@ -1368,7 +1370,7 @@ public class Pole : MonoBehaviour
                 --i;
             }
         }
-        zoneQuantity = (Core.PolePreferences.MyRandom.GetRandom()) % (color.Count - zoneQuantity) + zoneQuantity;
+        zoneQuantity = (Core.PolePreferences.MyRandom.GetRandom()) % (ColorMaterials.Length - zoneQuantity) + zoneQuantity;
         if (zoneQuantity > localZone.Count)
         {
             Debug.Log( "free zones less than need"+ "need:"+ zoneQuantity + " have:" + localZone.Count);
@@ -1419,6 +1421,7 @@ public class Pole : MonoBehaviour
             ++quantityClrRingInZone[k];
             --ringQuantity;
         }
+        List<Material> color = new List<Material>(ColorMaterials);
         for(int j = 0;j < zoneQuantity;++j)
         {
             int k = Core.PolePreferences.MyRandom.GetRandom() % color.Count;
@@ -1430,7 +1433,7 @@ public class Pole : MonoBehaviour
                 coloredZones[j][i].GetComponent<PoleSquare>().element.location = coloredZones[j][i];
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c = color[k];
                 eltsManager.clrRing.Add(coloredZones[j][i].GetComponent<PoleSquare>().element);
-                coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = color[k];
+                coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material = color[k];
                 quantityClrRingInZone[j]--;
                 coloredZones[j].RemoveAt(i);
             }
@@ -1479,14 +1482,14 @@ public class Pole : MonoBehaviour
                     {
                         if (zone[i][g].GetComponent<PoleSquare>().hasElem == true)
                         {
-                            c = zone[i][g].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c;
+                            c = zone[i][g].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
                             break;
                         }
                     }
                     int j = Core.PolePreferences.MyRandom.GetRandom() % localZones[i].Count;
                     localZones[i][j].GetComponent<PoleSquare>().hasElem = true;
                     localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPF, localZones[i][j].transform.position, ClrStarPF.transform.rotation).GetComponent<Elements>();
-                    localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = c;
+                    localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c.color = c;
                     eltsManager.clrRing.Add(localZones[i][j].GetComponent<PoleSquare>().element);
                     localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = c;
                     localZones[i].RemoveAt(j);
@@ -1498,7 +1501,7 @@ public class Pole : MonoBehaviour
                     {
                         if(zone[i][j].GetComponent<PoleSquare>().hasElem == true)
                         {
-                            c = zone[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c;
+                            c = zone[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
                             break;
                         }
                     }
@@ -1512,7 +1515,7 @@ public class Pole : MonoBehaviour
                         int j = Core.PolePreferences.MyRandom.GetRandom() % localZones[i].Count;
                         localZones[i][j].GetComponent<PoleSquare>().hasElem = true;
                         localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPF, localZones[i][j].transform.position, ClrStarPF.transform.rotation).GetComponent<Elements>();
-                        localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = colorStar[t];
+                        localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c.color = colorStar[t];
                         eltsManager.clrRing.Add(localZones[i][j].GetComponent<PoleSquare>().element);
                         localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = colorStar[t];
                         localZones[i].RemoveAt(j);

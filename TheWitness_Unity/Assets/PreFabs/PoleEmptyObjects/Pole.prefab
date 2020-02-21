@@ -64,6 +64,13 @@ MonoBehaviour:
     type: 3}
   HorizontalLinePF: {fileID: 6820176348997654938, guid: 8046834cbc33449438b69b6a1c6aba7c,
     type: 3}
+  ColorMaterials:
+  - {fileID: 2100000, guid: 7bbec257f0d9d754bae89b815570a2f1, type: 2}
+  - {fileID: 2100000, guid: 1047d2161a4c3014b9adfefc881273c3, type: 2}
+  - {fileID: 2100000, guid: 6f8830cffc985fa4d9c16f8e8b034f7e, type: 2}
+  - {fileID: 2100000, guid: e97ecb9e5b6094f4d998e19b902edec5, type: 2}
+  - {fileID: 2100000, guid: 7ed8f41a73c47fd438dd6800f37ecfd1, type: 2}
+  - {fileID: 2100000, guid: 2edfe6f9dda8bec4384bcc95d2e1931d, type: 2}
   poleLines: []
   quantityColor: 3
   quantityRing: 0

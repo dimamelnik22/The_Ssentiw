@@ -61,6 +61,6 @@ public class PoleEltPoint : Elements {
     }
     void Start()
     {
-        c = this.GetComponent<Renderer>().material.color;
+        c = new Material(this.GetComponent<Renderer>().material);
     }
 }
