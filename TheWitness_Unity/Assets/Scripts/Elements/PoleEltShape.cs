@@ -40,6 +40,7 @@ public class PoleEltShape : Elements
                 }
             }
         }
+        c = new Material(blocks[0].GetComponent<Renderer>().material);
         int size = Mathf.Max(boolList.Count, boolList[0].Count);
         float scale = 1f;
         if (size >= 4)
@@ -63,7 +64,7 @@ public class PoleEltShape : Elements
     {
         colorlerping = false;
         foreach (GameObject block in blocks)
-            block.GetComponent<Renderer>().material.color = c;
+            block.GetComponent<Renderer>().material.color = c.color;
     }
     // Start is called before the first frame update
     public override IEnumerator Do()
@@ -75,9 +76,9 @@ public class PoleEltShape : Elements
             {
                 foreach (GameObject block in blocks)
                     if (tored)
-                        block.GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c, 2 * countdown);
+                        block.GetComponent<Renderer>().material.color = Color.Lerp(Color.red, c.color, 2 * countdown);
                     else
-                        block.GetComponent<Renderer>().material.color = Color.Lerp(c, Color.red, 2 * countdown);
+                        block.GetComponent<Renderer>().material.color = Color.Lerp(c.color, Color.red, 2 * countdown);
             }
             else
             {

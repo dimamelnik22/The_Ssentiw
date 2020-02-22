@@ -57,8 +57,6 @@ MonoBehaviour:
     type: 3}
   ActivePathPF: {fileID: 1919482870161848, guid: c0226f6b9af8d6e49830bb46b6e55349,
     type: 3}
-  WelcomeTextPF: {fileID: 7061436962928366065, guid: 694b5a7b6a490ee458ca6658be0714b4,
-    type: 3}
   PlayerWrongPathMaterial: {fileID: 2100000, guid: 19431b65307a6eb4a8af1763c32a0614,
     type: 2}
   PlayerGoodPathMaterial: {fileID: 2100000, guid: 36711baae0e04d242b182674ace56e6f,
