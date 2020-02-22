@@ -45,17 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f03fc4ea85d27448a3cfac2bf076a2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dot: {fileID: 0}
-  nextdot: {fileID: 0}
   currentLine: {fileID: 0}
   nearestDot: {fileID: 0}
   path: {fileID: 0}
-  onDot: 1
-  moveHor: 1
-  notActive: 0
-  lastpos: {x: 0, y: 0}
-  debugtext: {fileID: 0}
   pathDots: []
+  upLimit: 0
+  downLimit: 0
+  leftLimit: 0
+  rightLimit: 0
 --- !u!198 &1116142981988979136
 ParticleSystem:
   m_ObjectHideFlags: 0

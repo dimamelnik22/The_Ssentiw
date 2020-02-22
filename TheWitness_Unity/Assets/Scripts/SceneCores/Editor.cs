@@ -17,16 +17,17 @@ public class Editor : MonoBehaviour
     [Header("Prefabs")]
     public GameObject PolePF;
     public GameObject ShapePF;
+    public GameObject ClrRingPF;
     public GameObject PathDotPF;
     public GameObject PathVerticalLinePF;
     public GameObject PathHorizontalLinePF;
     public GameObject PathStartPF;
     public GameObject PathFinishPF;
+    public int NumOfColor = 0;
 
     [HideInInspector]
     private readonly List<Color> color = new List<Color>() { Color.cyan, Color.yellow, Color.green, Color.magenta, Color.blue };
     [HideInInspector]
-    private int k = 0;
     private GameObject activePole;
     private List<List<bool>> boolList;
     private string element = "";
@@ -147,7 +148,11 @@ public class Editor : MonoBehaviour
     }
     public void ButtonAddClrRing()
     {
-
+        ++NumOfColor;
+        if (NumOfColor == activePole.GetComponent<Pole>().ColorMaterials.Length)
+        {
+            NumOfColor = 0;
+        }
         HideEditButtons();
         ShowEditButtonsSqueres();
         element = "clrRing";
@@ -227,7 +232,20 @@ public class Editor : MonoBehaviour
     public void EditSquare(GameObject square)
     {
         var sq = square.GetComponent<PoleSquare>();
-        if (element == "shapeplace")
+        if (element == "clrRing")
+        {
+            Elements clrRing = Instantiate(ClrRingPF, square.transform).GetComponent<Elements>();
+            sq.GetComponent<PoleSquare>().hasElem = true;
+            sq.GetComponent<PoleSquare>().element = clrRing;
+            activePole.GetComponent<Pole>().eltsManager.clrRing.Add(clrRing);
+            clrRing.location = sq.gameObject;
+            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c = activePole.GetComponent<Pole>().ColorMaterials[NumOfColor];
+            sq.GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material = activePole.GetComponent<Pole>().ColorMaterials[NumOfColor];
+            NumOfColor--;
+            ButtonAddClrRing();
+            //HideEditButtons();
+        }
+        else if (element == "shapeplace")
         {
             Elements shapeElt = Instantiate(ShapePF, square.transform).GetComponent<Elements>();
             sq.GetComponent<PoleSquare>().hasElem = true;

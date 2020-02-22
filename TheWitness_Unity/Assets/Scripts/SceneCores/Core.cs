@@ -379,7 +379,22 @@ static void Main() {
             {
                 if (dot.GetComponent<PoleDot>().isUsedBySolution)
                 {
-                    if (dot == activePole.GetComponent<Pole>().starts[0]) Instantiate(PathStartPF, dot.transform);
+                    foreach (var f in activePole.GetComponent<Pole>().finishes)
+                    {
+                        if (dot == f)
+                        {
+                            int i = 0;
+                            if (f.GetComponent<PoleDot>().AllowedToDown()  && f.GetComponent<PoleDot>().down.GetComponent<PoleLine>().isUsedBySolution) ++i;
+                            if (f.GetComponent<PoleDot>().AllowedToUp()    && f.GetComponent<PoleDot>().up.GetComponent<PoleLine>().isUsedBySolution) ++i;
+                            if (f.GetComponent<PoleDot>().AllowedToLeft()  && f.GetComponent<PoleDot>().left.GetComponent<PoleLine>().isUsedBySolution) ++i;
+                            if (f.GetComponent<PoleDot>().AllowedToRight() && f.GetComponent<PoleDot>().right.GetComponent<PoleLine>().isUsedBySolution) ++i;
+                            if(i == 1)Instantiate(PathFinishPF, activePole.GetComponent<Pole>().finishes[0].transform);
+                        }
+                    }
+                    if (dot == activePole.GetComponent<Pole>().starts[0])
+                    {
+                        Instantiate(PathStartPF, dot.transform);
+                    }
                     else Instantiate(PathDotPF, dot.transform);
                 }
             }
@@ -392,7 +407,7 @@ static void Main() {
                 }
             }
             //do something to find real finish
-            Instantiate(PathFinishPF, activePole.GetComponent<Pole>().finishes[0].transform);
+            //Instantiate(PathFinishPF, activePole.GetComponent<Pole>().finishes[0].transform);
         }
         pathIsShown = !pathIsShown;
     }

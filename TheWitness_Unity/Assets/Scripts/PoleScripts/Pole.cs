@@ -31,7 +31,7 @@ public class Pole : MonoBehaviour
     public Material[] ColorMaterials = new Material[6];
     // https://lospec.com/palette-list/sweetie-16
     // https://lospec.com/palette-list/linear-color-palette-basic
-    //https://flatuicolors.com/palette/au
+    // https://flatuicolors.com/palette/au
     [HideInInspector]
     public PoleElts eltsManager;
     [HideInInspector]
