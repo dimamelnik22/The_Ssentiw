@@ -32,6 +32,8 @@ public class Core : MonoBehaviour {
     public bool pathIsShown = false;
     [HideInInspector]
     public GameObject activePath;
+    [HideInInspector]
+    public GameObject mirrorPath;
 
     private GameObject activePole;
     private List<GameObject> playerPathLinesOnScreen;
@@ -42,7 +44,7 @@ public class Core : MonoBehaviour {
     {
         
         public static int height = 5;
-        public static int width = 5;
+        public static int width = 6;
         public static int complexity = 20;
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;
@@ -447,11 +449,11 @@ static void Main() {
                 //{
                 //    activePole.GetComponent<Pole>().poleLines[PolePreferences.MyRandom.GetRandom() % activePole.GetComponent<Pole>().poleLines.Count].GetComponent<PoleLine>().cut = true;
                 //}
+
                 activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                 activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
                 activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
-                foreach (GameObject start in activePole.GetComponent<Pole>().starts)
-                    activePole.GetComponent<Pole>().StartScaling(start);
+                
                 break;
             case "Introduction":
 				if (PlayerPrefs.GetInt("IntroSkip") > 0)
@@ -465,19 +467,33 @@ static void Main() {
                     GameObject.FindGameObjectWithTag("Canvas").GetComponent<CanvasScript>().ShowText();
                 }
                 activePole.GetComponent<Pole>().Custom(Core.PolePreferences.info);
-                foreach (GameObject start in activePole.GetComponent<Pole>().starts)
-                    activePole.GetComponent<Pole>().StartScaling(start);
+                break;
+            case "Test":
+                activePole.GetComponent<Pole>().Init(height, width);
+                activePole.GetComponent<Pole>().AddStart(activePole.GetComponent<Pole>().poleDots[0][0]);
+                activePole.GetComponent<Pole>().AddStart(activePole.GetComponent<Pole>().poleDots[height - 1][width - 1]);
+                activePole.GetComponent<Pole>().AddFinish(activePole.GetComponent<Pole>().poleDots[0][width - 1]);
+                activePole.GetComponent<Pole>().AddFinish(activePole.GetComponent<Pole>().poleDots[height - 1][0]);
+                activePath = Instantiate(ActivePathPF);
+                activePath.GetComponent<ActivePath>().InitWithClone(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
+                
                 break;
         }
 
+        //55s0444*f0040*p032312*t022111312111*
 
-        
-
+        foreach (GameObject start in activePole.GetComponent<Pole>().starts)
+            activePole.GetComponent<Pole>().StartScaling(start);
         pathIsShown = false;
         playerPathLinesOnScreen = new List<GameObject>();
         playerPathDotsOnScreen = new List<GameObject>();
-        activePath = Instantiate(ActivePathPF);
-        activePath.GetComponent<ActivePath>().Init(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
+        if (activePath == null)
+        {
+            activePath = Instantiate(ActivePathPF);
+            //activePath.GetComponent<ActivePath>().Init(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
+            activePath.GetComponent<ActivePath>().InitWithClone(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
+
+        }
 
     }
 

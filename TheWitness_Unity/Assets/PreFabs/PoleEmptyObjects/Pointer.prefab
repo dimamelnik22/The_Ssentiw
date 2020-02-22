@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 114467667272530272}
   - component: {fileID: 1116142981988979136}
   - component: {fileID: 248712351607603949}
+  - component: {fileID: 5619523833149646065}
   m_Layer: 0
   m_Name: Pointer
   m_TagString: Untagged
@@ -45,17 +46,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f03fc4ea85d27448a3cfac2bf076a2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dot: {fileID: 0}
-  nextdot: {fileID: 0}
   currentLine: {fileID: 0}
   nearestDot: {fileID: 0}
   path: {fileID: 0}
-  onDot: 1
-  moveHor: 1
-  notActive: 0
-  lastpos: {x: 0, y: 0}
-  debugtext: {fileID: 0}
   pathDots: []
+  allPathDots: []
+  upLimit: 0
+  downLimit: 0
+  leftLimit: 0
+  rightLimit: 0
+  lastPos: {x: 0, y: 0}
 --- !u!198 &1116142981988979136
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4722,3 +4722,16 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!135 &5619523833149646065
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1945388496061064}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
