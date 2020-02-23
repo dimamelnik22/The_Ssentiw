@@ -47,7 +47,7 @@ public class Core : MonoBehaviour {
     public static class PolePreferences
     {
         
-        public static int poleSize = 5;
+        public static int poleSize = 6;
         public static int complexity = 20;
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;

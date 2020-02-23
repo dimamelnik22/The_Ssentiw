@@ -747,11 +747,11 @@ public class Pole : MonoBehaviour
                                 (float)int.Parse(input.Substring(i + 6, 2), System.Globalization.NumberStyles.HexNumber) / 255,
                                 (float)int.Parse(input.Substring(i + 8, 2), System.Globalization.NumberStyles.HexNumber) / 255);
 
-            PoleSquare sq = poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().right.GetComponent<PoleSquare>();
-            sq.hasElem = true;
-            sq.element = Instantiate(ClrRingPF, sq.transform).GetComponent<Elements>();
-            sq.element.GetComponent<Renderer>().material.color = col;
-            sq.element.GetComponent<PoleEltClrRing>().c.color = col;// rework !!
+            //PoleSquare sq = poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().right.GetComponent<PoleSquare>();
+            //sq.hasElem = true;
+            //sq.element = Instantiate(ClrRingPF, sq.transform).GetComponent<Elements>();
+            //sq.element.GetComponent<Renderer>().material.color = col;
+            //sq.element.GetComponent<PoleEltClrRing>().c.color = col;// rework !!
         }
     }
     public void ShapeDecode(string input)
