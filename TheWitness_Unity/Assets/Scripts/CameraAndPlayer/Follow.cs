@@ -74,7 +74,7 @@ public class Follow : MonoBehaviour {
             nextDot = nextDot.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left;
             leftLimit = nextDot.transform.position.x;
         }
-        if (path.clone != null)
+        if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
         {
             GameObject dot = path.clone.GetComponent<ActivePath>().pointer;
             if (dot.transform.position.y == transform.position.y && dot.transform.position.x > transform.position.x && dot.transform.position.x <= rightLimit)
@@ -99,7 +99,7 @@ public class Follow : MonoBehaviour {
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.y == transform.position.y && dot.transform.position.x > transform.position.x && dot.transform.position.x <= rightLimit)
             {
                 rightLimit = dot.transform.position.x - 1f;
-                if (path.clone != null)
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
                 {
                     var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
                     if (dot == list[list.Count - 1])
@@ -111,7 +111,7 @@ public class Follow : MonoBehaviour {
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.y == transform.position.y && dot.transform.position.x < transform.position.x && dot.transform.position.x >= leftLimit)
             {
                 leftLimit = dot.transform.position.x + 1f;
-                if (path.clone != null)
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
                 {
                     var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
                     if (dot == list[list.Count - 1])
@@ -123,7 +123,7 @@ public class Follow : MonoBehaviour {
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.y > transform.position.y && dot.transform.position.y <= upLimit)
             {
                 upLimit = dot.transform.position.y - 1f;
-                if (path.clone != null)
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
                 {
                     var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
                     if (dot == list[list.Count - 1])
@@ -135,7 +135,7 @@ public class Follow : MonoBehaviour {
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.y < transform.position.y && dot.transform.position.y >= downLimit)
             {
                 downLimit = dot.transform.position.y + 1f;
-                if (path.clone != null)
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
                 {
                     var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
                     if (dot == list[list.Count - 1])

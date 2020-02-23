@@ -411,6 +411,7 @@ static void Main() {
         }
         pathIsShown = !pathIsShown;
     }
+    
 
     //check update
     void Start() {
@@ -524,16 +525,7 @@ static void Main() {
         {
             activePole.GetComponent<Pole>().playerPath.Clear();
             activePath.GetComponent<ActivePath>().EndSolution();
-            foreach (GameObject dot in activePath.GetComponent<ActivePath>().dotsOnPole)
-            {
-                dot.GetComponent<PoleDot>().isUsedByPlayer = true;
-                activePole.GetComponent<Pole>().playerPath.dots.Add(dot);
-            }
-            foreach (GameObject line in activePath.GetComponent<ActivePath>().linesOnPole)
-            {
-                line.GetComponent<PoleLine>().isUsedByPlayer = true;
-                activePole.GetComponent<Pole>().playerPath.lines.Add(line);
-            }
+            activePath.GetComponent<ActivePath>().MarkPath();
 
             if (activePole.GetComponent<Pole>().eltsManager.CheckSolution(activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down))
             {
@@ -566,11 +558,8 @@ static void Main() {
             }
 
 
-            foreach (GameObject dot in activePole.GetComponent<Pole>().playerPath.dots)
-                dot.GetComponent<PoleDot>().isUsedByPlayer = false;
-            foreach (GameObject line in activePole.GetComponent<Pole>().playerPath.lines)
-                line.GetComponent<PoleLine>().isUsedByPlayer = false;
-            activePath.GetComponent<ActivePath>().pointer.SetActive(false);
+            
+            
             
         }
 

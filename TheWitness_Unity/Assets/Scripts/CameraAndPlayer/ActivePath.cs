@@ -82,7 +82,10 @@ public class ActivePath : MonoBehaviour
     public void Restart(List<GameObject> start, List<GameObject> _finishes)
     {
         if (!isMirroredHor && !isMirroredVert && !isSymmetric)
+        {
             pole.GetComponent<Pole>().NormalizeColors();
+            pole.GetComponent<Pole>().ClearPaths();
+        }
         isStarted = !isStarted;
         foreach (GameObject obj in dots) Destroy(obj);
         foreach (GameObject obj in lines) Destroy(obj);
@@ -175,6 +178,10 @@ public class ActivePath : MonoBehaviour
 
     public void EndSolution()
     {
+        if (clone != null && (clone.GetComponent<ActivePath>().isMirroredHor || clone.GetComponent<ActivePath>().isMirroredVert || clone.GetComponent<ActivePath>().isSymmetric))
+        {
+            clone.GetComponent<ActivePath>().EndSolution();
+        }
         if (isFinished)
         {
             if (dotsOnPole[dotsOnPole.Count - 1] != currentFinishOnPole)
@@ -210,10 +217,29 @@ public class ActivePath : MonoBehaviour
                 currentLine = Instantiate(PathLinePF, dots[dots.Count - 1].transform.position, PathLinePF.transform.rotation);
                 currentLine.transform.parent = this.transform;
                 lines.Add(currentLine);
+                
             }
         }
     }
 
+    public void MarkPath()
+    {
+        if (clone != null && (clone.GetComponent<ActivePath>().isMirroredHor || clone.GetComponent<ActivePath>().isMirroredVert || clone.GetComponent<ActivePath>().isSymmetric))
+        {
+            clone.GetComponent<ActivePath>().MarkPath();
+        }
+        foreach (GameObject dot in dotsOnPole)
+        {
+            dot.GetComponent<PoleDot>().isUsedByPlayer = true;
+            pole.GetComponent<Pole>().playerPath.dots.Add(dot);
+        }
+        foreach (GameObject line in linesOnPole)
+        {
+            line.GetComponent<PoleLine>().isUsedByPlayer = true;
+            pole.GetComponent<Pole>().playerPath.lines.Add(line);
+        }
+        pointer.SetActive(false);
+    }
 
     public void SystemStep(GameObject dot)
     {

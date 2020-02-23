@@ -1725,6 +1725,13 @@ public class Pole : MonoBehaviour
         return boolList;
         
     }
+    public void ClearPaths()
+    {
+        foreach (GameObject dot in playerPath.dots)
+            dot.GetComponent<PoleDot>().isUsedByPlayer = false;
+        foreach (GameObject line in playerPath.lines)
+            line.GetComponent<PoleLine>().isUsedByPlayer = false;
+    }
     public void ClearPole()
     {
         for (int y = 0; y < height; y++)

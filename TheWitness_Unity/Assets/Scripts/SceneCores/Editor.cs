@@ -428,11 +428,11 @@ public class Editor : MonoBehaviour
                             {
                                 if (c == Color.red)
                                 {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c;
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
                                 }
                                 else
                                 {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c)
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
                                     {
                                         localIsSolved = false;
                                     }
@@ -496,11 +496,11 @@ public class Editor : MonoBehaviour
                             {
                                 if (c == Color.red)
                                 {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c;
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
                                 }
                                 else
                                 {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c)
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
                                     {
                                         localIsSolved = false;
                                     }
@@ -556,11 +556,11 @@ public class Editor : MonoBehaviour
                             {
                                 if (c == Color.red)
                                 {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c;
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
                                 }
                                 else
                                 {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c)
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
                                     {
                                         localIsSolved = false;
                                     }
@@ -616,11 +616,11 @@ public class Editor : MonoBehaviour
                             {
                                 if (c == Color.red)
                                 {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c;
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
                                 }
                                 else
                                 {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c)
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
                                     {
                                         localIsSolved = false;
                                     }
