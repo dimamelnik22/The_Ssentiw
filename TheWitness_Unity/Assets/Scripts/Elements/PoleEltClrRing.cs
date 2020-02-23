@@ -9,14 +9,18 @@ public class PoleEltClrRing : Elements {
 
     private void Awake()
     {
-        Generate();
+
     }
-    private void Generate()
+    public void Generate()
     {
-        vertices = new Vector3[NumOfPoint + 1];
+
+        Color[] colors = new Color[NumOfPoint];
+        Color normal = c.color;
+        Color transparent = new Color(c.color.r, c.color.g, c.color.b,0);
+
+        vertices = new Vector3[NumOfPoint];
         GetComponent<MeshFilter>().mesh = mesh = new Mesh();
         mesh.name = "Procedural Grid";
-        
         float r1 = 0.5f;
         float r2 = 0.35f;
         for (int i = 0; i < NumOfPoint ; ++i)
@@ -28,22 +32,17 @@ public class PoleEltClrRing : Elements {
             {
                 dx = r1 * Mathf.Cos(angle);
                 dy = r1 * Mathf.Sin(angle);
+                colors[i] = normal;
             }
             else
             {
                 dx = r2 * Mathf.Cos(angle);
                 dy = r2 * Mathf.Sin(angle);
+                colors[i] = transparent;
             }
             vertices[i] = new Vector3(dx, dy);
         }
-        //for (int i = 0, y = 0; y <= ySize; y++)
-        //{
-        //    for (int x = 0; x <= xSize; x++, i++)
-        //    {
-        //        vertices[i] = new Vector3(x, y);
-        //    }
-        //}
-        mesh.vertices = vertices;
+        
         int[] triangles = new int[(NumOfPoint + 1) * 3];
         for (int i = 0; i<NumOfPoint-2; i+=2)
         {
@@ -56,7 +55,12 @@ public class PoleEltClrRing : Elements {
         triangles[3 * (NumOfPoint - 1) + 1] = triangles[3 * (NumOfPoint - 2) + 1] = NumOfPoint - 1;
         triangles[3 * (NumOfPoint - 1) + 2] = 1;
         triangles[3 * (NumOfPoint - 2)] = NumOfPoint - 2;
+
+        mesh.vertices = vertices;
         mesh.triangles = triangles;
+        mesh.colors = colors;
+
+
         mesh.RecalculateNormals();
     }
 }

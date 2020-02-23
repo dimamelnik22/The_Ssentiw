@@ -1411,7 +1411,8 @@ public class Pole : MonoBehaviour
                 coloredZones[j][i].GetComponent<PoleSquare>().element.location = coloredZones[j][i];
                 coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c = color[k];
                 eltsManager.clrRing.Add(coloredZones[j][i].GetComponent<PoleSquare>().element);
-                coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material = color[k];
+                coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().Generate();
+                //coloredZones[j][i].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material = color[k];
                 quantityClrRingInZone[j]--;
                 coloredZones[j].RemoveAt(i);
             }
