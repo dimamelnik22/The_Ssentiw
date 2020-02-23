@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 99ae181683af1ca449173a02d16c7b0f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - WronColor: {fileID: 2100000, guid: 19431b65307a6eb4a8af1763c32a0614, type: 2}
+  - FadeColor: {fileID: 2100000, guid: 995a4569baa26d440a5107a712115744, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

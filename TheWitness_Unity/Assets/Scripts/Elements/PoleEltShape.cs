@@ -41,8 +41,18 @@ public class PoleEltShape : Elements
             }
         }
         c = new Material(blocks[0].GetComponent<Renderer>().material);
-
-        transform.Translate(new Vector3(-boolList[0].Count + 1, boolList.Count - 1, 0f) / 2);
+        int size = Mathf.Max(boolList.Count, boolList[0].Count);
+        float scale = 1f;
+        if (size >= 4)
+        {
+            scale = 3.7f / size;
+        }
+        else if (size <= 3)
+        {
+            scale = 1f + 0.5f / size;
+        }
+        transform.localScale = new Vector3(scale,scale,1f);
+        transform.Translate(new Vector3(-boolList[0].Count + 1, boolList.Count - 1, 0f) / 2 * scale);
     }
 
     public new void ShowUnsolvedColor()

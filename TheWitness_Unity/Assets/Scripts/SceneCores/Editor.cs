@@ -83,19 +83,22 @@ public class Editor : MonoBehaviour
     {
         ButtonHideSolution();
         HideEditButtons();
-        activePole.GetComponent<Pole>().ClearPole();
-        foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
-            Destroy(point);
-        foreach (GameObject shape in GameObject.FindGameObjectsWithTag("EltShape"))
-            Destroy(shape);
-        foreach (GameObject clrRing in GameObject.FindGameObjectsWithTag("EltClrRing"))
-            Destroy(clrRing);
-        Destroy(activePole);
-        activePole = Instantiate(PolePF);
-        activePole.GetComponent<Pole>().Init(System.Int32.Parse(heightInput.text), System.Int32.Parse(widthInput.text));
-        UpdateBoolList();
-        activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
-        activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
+        if (System.Int32.Parse(heightInput.text) > 0 && System.Int32.Parse(widthInput.text) > 0)
+        {
+            activePole.GetComponent<Pole>().ClearPole();
+            foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
+                Destroy(point);
+            foreach (GameObject shape in GameObject.FindGameObjectsWithTag("EltShape"))
+                Destroy(shape);
+            foreach (GameObject clrRing in GameObject.FindGameObjectsWithTag("EltClrRing"))
+                Destroy(clrRing);
+            Destroy(activePole);
+            activePole = Instantiate(PolePF);
+            activePole.GetComponent<Pole>().Init(System.Int32.Parse(heightInput.text), System.Int32.Parse(widthInput.text));
+            UpdateBoolList();
+            activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
+            activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
+        }
     }
     public void ButtonAddStart()
     {
@@ -212,7 +215,7 @@ public class Editor : MonoBehaviour
         {
             line.GetComponent<PoleLine>().hasPoint = true;
             line.GetComponent<PoleLine>().CreatePoint();
-            activePole.GetComponent<Pole>().eltsManager.points.Add(line.GetComponent<PoleLine>().point);
+            //activePole.GetComponent<Pole>().eltsManager.points.Add(line.GetComponent<PoleLine>().point);
             ButtonAddPoint();
         }
         else if (element == "delete")
@@ -265,7 +268,7 @@ public class Editor : MonoBehaviour
         else if (element == "delete")
         {
             sq.hasElem = false;
-            Destroy(sq.element);
+            Destroy(sq.element.gameObject);
             ButtonDelete();
             //HideEditButtons();
         }
@@ -319,7 +322,27 @@ public class Editor : MonoBehaviour
         activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
         //myPole.GetComponent<Pole>().SetClrRing(myPole.GetComponent<Pole>().quantityColor, myPole.GetComponent<Pole>().quantityRing);
     }
-
+    private bool CheckSquerePoints(GameObject sq)
+    {
+        bool res = true;
+        var line = sq.GetComponent<PoleSquare>().up;
+        if (line.GetComponent<PoleLine>().hasPoint && !line.GetComponent<PoleLine>().isUsedByPlayer
+            || line.GetComponent<PoleLine>().right.GetComponent<PoleDot>().hasPoint && !line.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
+            res = false;
+        line = sq.GetComponent<PoleSquare>().right;
+        if (line.GetComponent<PoleLine>().hasPoint && !line.GetComponent<PoleLine>().isUsedByPlayer
+            || line.GetComponent<PoleLine>().down.GetComponent<PoleDot>().hasPoint && !line.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
+            res = false;
+        line = sq.GetComponent<PoleSquare>().down;
+        if (line.GetComponent<PoleLine>().hasPoint && !line.GetComponent<PoleLine>().isUsedByPlayer
+            || line.GetComponent<PoleLine>().left.GetComponent<PoleDot>().hasPoint && !line.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
+            res = false;
+        line = sq.GetComponent<PoleSquare>().left;
+        if (line.GetComponent<PoleLine>().hasPoint && !line.GetComponent<PoleLine>().isUsedByPlayer
+            || line.GetComponent<PoleLine>().up.GetComponent<PoleDot>().hasPoint && !line.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
+            res = false;
+        return res;
+    }
 
     private bool TrySolve(GameObject begin, List<GameObject> ends, GameObject prevDot)
     {
@@ -365,318 +388,267 @@ public class Editor : MonoBehaviour
         bool border = false;
         if (prevDot != null)
             if (prevDot.GetComponent<PoleDot>().posX > 0 && prevDot.GetComponent<PoleDot>().posX < activePole.GetComponent<Pole>().width - 1 && prevDot.GetComponent<PoleDot>().posY > 0 && prevDot.GetComponent<PoleDot>().posY < activePole.GetComponent<Pole>().height - 1
-                    && (beginDot.posX == 0 || beginDot.posY == 0 || beginDot.posX == activePole.GetComponent<Pole>().width - 1 || beginDot.posY == activePole.GetComponent<Pole>().height - 1))
-            {
-                border = true;
-                activePole.GetComponent<Pole>().eltsManager.SetZone(activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down);
-                
-            }
-        string deb = "";
+                    && (beginDot.posX == 0 || beginDot.posY == 0 || beginDot.posX == activePole.GetComponent<Pole>().width - 1 || beginDot.posY == activePole.GetComponent<Pole>().height - 1))
+            {
+                border = true;
+                activePole.GetComponent<Pole>().eltsManager.SetZone(activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down);
+            }
+        string deb = "";
         List<GameObject> dots = new List<GameObject>();
-        if (beginDot.AllowedToUp() && !beginDot.up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)
-        {
-            bool localIsSolved = true;
-            GameObject squere = null;
-            if (border)
-            {
-                if (activePole.GetComponent<Pole>().FindUnsolvedPoint(beginDot.down.GetComponent<PoleLine>().down))
-                {
-                    List<GameObject> zoneToCheck = new List<GameObject>();
-                    
-
-                    Color c = Color.red;
-                    if (beginDot.AllowedToLeft())
-                    {
-                        squere = beginDot.left.GetComponent<PoleLine>().down;
-                    }
-                    else
-                    {
-                        squere = beginDot.right.GetComponent<PoleLine>().down;
-                    }
-                    foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
-                    {
-                        if (zone.Contains(squere))
-                        {
-                            zoneToCheck = zone;
-                            break;
-                        }
-                    }
-                    List<Elements> shapeList = new List<Elements>();
-                    foreach (GameObject sq in zoneToCheck)
-                    {
-                        if (sq.GetComponent<PoleSquare>().hasElem)
-                        {
-                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
-                            {
-                                if (c == Color.red)
-                                {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
-                                }
-                                else
-                                {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
-                                    {
-                                        localIsSolved = false;
-                                    }
-                                }
-                            }
-                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
-                            {
-                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
-                            }
-                        }
-                        if (sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                    }
-                    if (localIsSolved && shapeList.Count > 0)
-                    {
-                        localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
-                    }
-                }
-                else localIsSolved = false;
-            }
-            if (localIsSolved)
-                dots.Add(beginDot.up.GetComponent<PoleLine>().up);
-        }
-        if (beginDot.AllowedToRight() && !beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
-        {
-            bool localIsSolved = true;
-            GameObject squere = null;
-            if (border)
-            {
-                if (activePole.GetComponent<Pole>().FindUnsolvedPoint(beginDot.left.GetComponent<PoleLine>().left))
-                {
-                    List<GameObject> zoneToCheck = new List<GameObject>();
-
-                    Color c = Color.red;
-                    if (beginDot.AllowedToDown())
-                    {
-                        squere = beginDot.down.GetComponent<PoleLine>().left;
-                    }
-                    else
-                    {
-                        squere = beginDot.up.GetComponent<PoleLine>().left;
-                    }
-                    foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
-                    {
-                        if (zone.Contains(squere))
-                        {
-                            zoneToCheck = zone;
-                            break;
-                        }
-                    }
-                    deb += zoneToCheck.Count;
-                    List<Elements> shapeList = new List<Elements>();
-                    foreach (GameObject sq in zoneToCheck)
-                    {
-                        if (sq.GetComponent<PoleSquare>().hasElem)
-                        {
-                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
-                            {
-                                if (c == Color.red)
-                                {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
-                                }
-                                else
-                                {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
-                                    {
-                                        localIsSolved = false;
-                                    }
-                                }
-                            }
-                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
-                            {
-                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
-                            }
-                        }
-                        if (sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                    }
-                    deb += " " + shapeList.Count;
-                    if (localIsSolved && shapeList.Count > 0)
-                    {
-                        localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
-                    }
-                }
-                else localIsSolved = false;
-            }
-            if (localIsSolved)
-                dots.Add(beginDot.right.GetComponent<PoleLine>().right);
-        }
-        if (beginDot.AllowedToDown() && !beginDot.down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)
-        {
-            bool localIsSolved = true;
-            GameObject squere = null;
-            if (border)
-            {
-                if (activePole.GetComponent<Pole>().FindUnsolvedPoint(beginDot.up.GetComponent<PoleLine>().up))
-                {
-                    List<GameObject> zoneToCheck = new List<GameObject>();
-
-                    Color c = Color.red;
-                    if (beginDot.AllowedToLeft())
-                    {
-                        squere = beginDot.left.GetComponent<PoleLine>().up;
-                    }
-                    else
-                    {
-                        squere = beginDot.right.GetComponent<PoleLine>().up;
-                    }
-                    foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
-                    {
-                        if (zone.Contains(squere))
-                        {
-                            zoneToCheck = zone;
-                            break;
-                        }
-                    }
-                    List<Elements> shapeList = new List<Elements>();
-                    foreach (GameObject sq in zoneToCheck)
-                    {
-                        if (sq.GetComponent<PoleSquare>().hasElem)
-                        {
-                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
-                            {
-                                if (c == Color.red)
-                                {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
-                                }
-                                else
-                                {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
-                                    {
-                                        localIsSolved = false;
-                                    }
-                                }
-                            }
-                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
-                            {
-                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
-                            }
-                        }
-                        if (sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                    }
-                    if (localIsSolved && shapeList.Count > 0)
-                    {
-                        localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
-                    }
-                }
-                else localIsSolved = false;
-            }
-            if (localIsSolved)
-                dots.Add(beginDot.down.GetComponent<PoleLine>().down);
-        }
-        if (beginDot.AllowedToLeft() && !beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)
-        {
-            bool localIsSolved = true;
-            GameObject squere = null;
-            if (border)
-            {
-                if (activePole.GetComponent<Pole>().FindUnsolvedPoint(beginDot.right.GetComponent<PoleLine>().right))
-                {
-                    List<GameObject> zoneToCheck = new List<GameObject>();
-
-                    Color c = Color.red;
-                    if (beginDot.AllowedToDown())
-                    {
-                        squere = beginDot.down.GetComponent<PoleLine>().right;
-                    }
-                    else
-                    {
-                        squere = beginDot.up.GetComponent<PoleLine>().right;
-                    }
-                    foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
-                    {
-                        if (zone.Contains(squere))
-                        {
-                            zoneToCheck = zone;
-                            break;
-                        }
-                    }
-                    List<Elements> shapeList = new List<Elements>();
-                    foreach (GameObject sq in zoneToCheck)
-                    {
-                        if (sq.GetComponent<PoleSquare>().hasElem)
-                        {
-                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
-                            {
-                                if (c == Color.red)
-                                {
-                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
-                                }
-                                else
-                                {
-                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
-                                    {
-                                        localIsSolved = false;
-                                    }
-                                }
-                            }
-                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
-                            {
-                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
-                            }
-                        }
-                        if (sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().up.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().right.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().down.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                        else if (sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().hasPoint && !sq.GetComponent<PoleSquare>().left.GetComponent<PoleLine>().isUsedByPlayer)
-                            localIsSolved = false;
-                    }
-                    if (localIsSolved && shapeList.Count > 0)
-                    {
-                        localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
-                    }
-                }
-                else localIsSolved = false;
-            }
-            if (localIsSolved)
-                dots.Add(beginDot.left.GetComponent<PoleLine>().left);
-        }
+        if (beginDot.AllowedToUp() && !beginDot.up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer)        {
+            bool localIsSolved = true;            GameObject squere = null;            if (border)
+            {
 
-        if (border)
-        {
-            string zz = "";
-            for (int k = 0; k < activePole.GetComponent<Pole>().eltsManager.checkZones.Length; ++k)
-            {
-                for (int j = 0; j < activePole.GetComponent<Pole>().eltsManager.checkZones[k].Length; ++j)
-                {
-                    zz += " " + (int)activePole.GetComponent<Pole>().eltsManager.checkZones[k][j];
-                }
-                zz += "\n";
-            }
-            zz += dots.Count + " " + deb;
-            //Debug.Log(zz);
-        }
-        var tmp = new List<GameObject>();
+                List<GameObject> zoneToCheck = new List<GameObject>();
+                Color c = Color.red;
+                if (beginDot.AllowedToLeft())
+                {
+                    squere = beginDot.left.GetComponent<PoleLine>().down;
+                }
+                else
+                {
+                    squere = beginDot.right.GetComponent<PoleLine>().down;
+                }
+                foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
+                {
+                    if (zone.Contains(squere))
+                    {
+                        zoneToCheck = zone;
+                        break;
+                    }
+                }
+                List<Elements> shapeList = new List<Elements>();
+                foreach (GameObject sq in zoneToCheck)
+                {
+                    if (CheckSquerePoints(sq))
+                    {
+                        if (sq.GetComponent<PoleSquare>().hasElem)
+                        {
+                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
+                            {
+                                if (c == Color.red)
+                                {
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
+                                }
+                                else
+                                {
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
+                                    {
+                                        localIsSolved = false;
+                                    }
+                                }
+                            }
+                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
+                            {
+                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        localIsSolved = false;
+                        break;
+                    }
+                }
+                if (localIsSolved && shapeList.Count > 0)
+                {
+                    localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
+                }
+
+            }
+            if (localIsSolved)
+                dots.Add(beginDot.up.GetComponent<PoleLine>().up);
+        }
+        if (beginDot.AllowedToRight() && !beginDot.right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer)
+        {
+            bool localIsSolved = true;
+            GameObject squere = null;
+            if (border)
+            {
+
+                List<GameObject> zoneToCheck = new List<GameObject>();
+                Color c = Color.red;
+                if (beginDot.AllowedToDown())
+                {
+                    squere = beginDot.down.GetComponent<PoleLine>().left;
+                }
+                else
+                {
+                    squere = beginDot.up.GetComponent<PoleLine>().left;
+                }
+                foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
+                {
+                    if (zone.Contains(squere))
+                    {
+                        zoneToCheck = zone;
+                        break;
+                    }
+                }
+                deb += zoneToCheck.Count;
+                List<Elements> shapeList = new List<Elements>();
+                foreach (GameObject sq in zoneToCheck)
+                {
+                    if (CheckSquerePoints(sq))
+                    {
+                        if (sq.GetComponent<PoleSquare>().hasElem)
+                        {
+                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
+                            {
+                                if (c == Color.red)
+                                {
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
+                                }
+                                else
+                                {
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
+                                    {
+                                        localIsSolved = false;
+                                    }
+                                }
+                            }
+                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
+                            {
+                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        localIsSolved = false;
+                        break;
+                    }
+                }
+                deb += " " + shapeList.Count;
+                if (localIsSolved && shapeList.Count > 0)
+                {
+                    localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
+                }
+
+            }            if (localIsSolved)                dots.Add(beginDot.right.GetComponent<PoleLine>().right);        }
+        if (beginDot.AllowedToDown() && !beginDot.down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer)        {            bool localIsSolved = true;            GameObject squere = null;            if (border)            {
+
+                List<GameObject> zoneToCheck = new List<GameObject>();
+                Color c = Color.red;
+                if (beginDot.AllowedToLeft())
+                {
+                    squere = beginDot.left.GetComponent<PoleLine>().up;
+                }
+                else
+                {
+                    squere = beginDot.right.GetComponent<PoleLine>().up;
+                }
+                foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
+                {
+                    if (zone.Contains(squere))
+                    {
+                        zoneToCheck = zone;
+                        break;
+                    }
+                }
+                List<Elements> shapeList = new List<Elements>();
+                foreach (GameObject sq in zoneToCheck)
+                {
+                    if (CheckSquerePoints(sq))
+                    {
+                        if (sq.GetComponent<PoleSquare>().hasElem)
+                        {
+                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
+                            {
+                                if (c == Color.red)
+                                {
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
+                                }
+                                else
+                                {
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
+                                    {
+                                        localIsSolved = false;
+                                    }
+                                }
+                            }
+                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
+                            {
+                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        localIsSolved = false;
+                        break;
+                    }
+                }
+                if (localIsSolved && shapeList.Count > 0)
+                {
+                    localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
+                }
+
+            }            if (localIsSolved)                dots.Add(beginDot.down.GetComponent<PoleLine>().down);        }
+        if (beginDot.AllowedToLeft() && !beginDot.left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer)        {
+            bool localIsSolved = true;            GameObject squere = null;            if (border)            {
+
+                List<GameObject> zoneToCheck = new List<GameObject>();
+                Color c = Color.red;
+                if (beginDot.AllowedToDown())
+                {
+                    squere = beginDot.down.GetComponent<PoleLine>().right;
+                }
+                else
+                {
+                    squere = beginDot.up.GetComponent<PoleLine>().right;
+                }
+                foreach (var zone in activePole.GetComponent<Pole>().eltsManager.zone)
+                {
+                    if (zone.Contains(squere))
+                    {
+                        zoneToCheck = zone;
+                        break;
+                    }
+                }
+                List<Elements> shapeList = new List<Elements>();
+                foreach (GameObject sq in zoneToCheck)
+                {
+                    if (CheckSquerePoints(sq))
+                    {
+                        if (sq.GetComponent<PoleSquare>().hasElem)
+                        {
+                            if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
+                            {
+                                if (c == Color.red)
+                                {
+                                    c = sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
+                                }
+                                else
+                                {
+                                    if (c != sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color)
+                                    {
+                                        localIsSolved = false;
+                                    }
+                                }
+                            }
+                            else if (sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
+                            {
+                                shapeList.Add(sq.GetComponent<PoleSquare>().element);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        localIsSolved = false;
+                        break;
+                    }
+                }
+                if (localIsSolved && shapeList.Count > 0)
+                {
+                    localIsSolved = activePole.GetComponent<Pole>().eltsManager.CheckShapeSplit(zoneToCheck, shapeList);
+                }
+
+            }            if (localIsSolved)                dots.Add(beginDot.left.GetComponent<PoleLine>().left);        }
+        if (border)        {            string zz = "";            for (int k = 0; k < activePole.GetComponent<Pole>().eltsManager.checkZones.Length; ++k)            {                for (int j = 0; j < activePole.GetComponent<Pole>().eltsManager.checkZones[k].Length; ++j)                {                    zz += " " + (int)activePole.GetComponent<Pole>().eltsManager.checkZones[k][j];                }                zz += "\n";            }            zz += dots.Count + " " + deb;            //Debug.Log(zz);        }        var tmp = new List<GameObject>();
         foreach (GameObject dot in dots)
             if (activePole.GetComponent<Pole>().FindFinish(dot))
                 tmp.Add(dot);
         dots = new List<GameObject>(tmp);
-
         bool success = false;
         foreach (GameObject next in dots)
         {

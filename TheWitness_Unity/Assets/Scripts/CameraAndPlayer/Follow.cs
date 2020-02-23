@@ -15,6 +15,8 @@ public class Follow : MonoBehaviour {
     public GameObject[][] poleDots;
     [HideInInspector]
     public List<GameObject> pathDots;
+    [HideInInspector]
+    public List<GameObject> allPathDots;
     public float upLimit;
     public float downLimit;
     public float leftLimit;
@@ -22,11 +24,11 @@ public class Follow : MonoBehaviour {
 
     private readonly float eps = 0.9f;
     private bool moveHor = true;
-    private Vector2 lastPos;
-    private Vector3 maxDistance = new Vector3(10f,10f,10f);
+    public Vector2 lastPos;
+    private Vector3 maxDistance = new Vector3(10f, 10f, 10f);
     private Vector3 stepz = new Vector3(0f, 0f, -0.5f);
 
-    void Start () {
+    void Start() {
 #if UNITY_EDITOR
         lastPos = Input.mousePosition;
 #else
@@ -39,36 +41,11 @@ public class Follow : MonoBehaviour {
             }
 #endif
     }
+    void OnCollisionEnter(Collision col)
+    {
 
-    void Update () {
-        //upLimit = transform.position.y;
-        //downLimit = transform.position.y;
-        //leftLimit = transform.position.x;
-        //rightLimit = transform.position.x;
-        //for (int y = 0; y < poleDots.Length; y++)
-        //    for (int x = 0; x < poleDots[y].Length; x++) 
-        //    {
-        //        if (poleDots[y][x] !=null)
-        //        {
-        //            GameObject dot = poleDots[y][x];
-        //            if (dot.transform.position.y == transform.position.y && dot.transform.position.x > transform.position.x && dot.transform.position.x > rightLimit)
-        //            {
-        //                rightLimit = dot.transform.position.x;
-        //            }
-        //            if (dot.transform.position.y == transform.position.y && dot.transform.position.x < transform.position.x && dot.transform.position.x < leftLimit)
-        //            {
-        //                leftLimit = dot.transform.position.x;
-        //            }
-        //            if (dot.transform.position.x == transform.position.x && dot.transform.position.y > transform.position.y && dot.transform.position.y > upLimit)
-        //            {
-        //                upLimit = dot.transform.position.y;
-        //            }
-        //            if (dot.transform.position.x == transform.position.x && dot.transform.position.y < transform.position.y && dot.transform.position.y < downLimit)
-        //            {
-        //                downLimit = dot.transform.position.y;
-        //            }
-        //        }
-        //    }
+    }
+    void Update() {
         var nextDot = path.dotsOnPole[path.dotsOnPole.Count - 1];
         upLimit = nextDot.transform.position.y;
         downLimit = nextDot.transform.position.y;
@@ -97,34 +74,88 @@ public class Follow : MonoBehaviour {
             nextDot = nextDot.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left;
             leftLimit = nextDot.transform.position.x;
         }
-        foreach (GameObject dot in pathDots)
+        if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
+        {
+            GameObject dot = path.clone.GetComponent<ActivePath>().pointer;
+            if (dot.transform.position.y == transform.position.y && dot.transform.position.x > transform.position.x && dot.transform.position.x <= rightLimit)
+            {
+                rightLimit = (dot.transform.position.x + this.transform.position.x) / 2 - 0.6f;
+            }
+            if (dot.transform.position.y == transform.position.y && dot.transform.position.x < transform.position.x && dot.transform.position.x >= leftLimit)
+            {
+                leftLimit = (dot.transform.position.x + this.transform.position.x) / 2 + 0.6f;
+            }
+            if (dot.transform.position.x == transform.position.x && dot.transform.position.y > transform.position.y && dot.transform.position.y <= upLimit)
+            {
+                upLimit = (dot.transform.position.y + this.transform.position.y) / 2 - 0.6f;
+            }
+            if (dot.transform.position.x == transform.position.x && dot.transform.position.y < transform.position.y && dot.transform.position.y >= downLimit)
+            {
+                downLimit = (dot.transform.position.y + this.transform.position.y) / 2 + 0.6f;
+            }
+        }
+        foreach (GameObject dot in allPathDots)
         {
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.y == transform.position.y && dot.transform.position.x > transform.position.x && dot.transform.position.x <= rightLimit)
             {
                 rightLimit = dot.transform.position.x - 1f;
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
+                {
+                    var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
+                    if (dot == list[list.Count - 1])
+                    {
+                        rightLimit -= 2f;
+                    }
+                }
             }
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.y == transform.position.y && dot.transform.position.x < transform.position.x && dot.transform.position.x >= leftLimit)
             {
                 leftLimit = dot.transform.position.x + 1f;
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
+                {
+                    var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
+                    if (dot == list[list.Count - 1])
+                    {
+                        leftLimit += 2f;
+                    }
+                }
             }
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.y > transform.position.y && dot.transform.position.y <= upLimit)
             {
                 upLimit = dot.transform.position.y - 1f;
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
+                {
+                    var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
+                    if (dot == list[list.Count - 1])
+                    {
+                        upLimit -= 2f;
+                    }
+                }
             }
             if (dot != pathDots[pathDots.Count - 1] && dot.transform.position.x == transform.position.x && dot.transform.position.y < transform.position.y && dot.transform.position.y >= downLimit)
             {
                 downLimit = dot.transform.position.y + 1f;
+                if (path.clone != null && (path.clone.GetComponent<ActivePath>().isMirroredHor || path.clone.GetComponent<ActivePath>().isMirroredVert || path.clone.GetComponent<ActivePath>().isSymmetric))
+                {
+                    var list = path.clone.GetComponent<ActivePath>().pointer.GetComponent<Follow>().pathDots;
+                    if (dot == list[list.Count - 1])
+                    {
+                        downLimit += 2f;
+                    }
+                }
             }
+            
         }
+        
 
         Vector2 dir = new Vector2(0f, 0f);
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (Input.GetMouseButton(0))
         {
 
             GetComponent<ParticleSystem>().Play();
-            dir = 0.03f * MenuManager.MainSettings.speed * new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
+            dir = 0.025f * MenuManager.MainSettings.speed * new Vector2(Input.mousePosition.x - lastPos.x, Input.mousePosition.y - lastPos.y);
             lastPos = Input.mousePosition;
         }
         else
@@ -132,9 +163,7 @@ public class Follow : MonoBehaviour {
             GetComponent<ParticleSystem>().Stop();
             lastPos = Input.mousePosition;
         }
-        #endif
-
-        #if !UNITY_EDITOR
+#else
         if (Input.touchCount > 0)
         {
 
@@ -143,11 +172,11 @@ public class Follow : MonoBehaviour {
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    lastpos = touch.position;
+                    lastPos = touch.position;
                     break;
                 case TouchPhase.Moved:
-                    dir = 0.02f * MenuManager.MainSettings.speed * (touch.position - lastpos);
-                    lastpos = touch.position;
+                    dir = 0.02f * MenuManager.MainSettings.speed * (touch.position - lastPos);
+                    lastPos = touch.position;
                     break;
             }   
         }
@@ -155,8 +184,12 @@ public class Follow : MonoBehaviour {
         {
             GetComponent<ParticleSystem>().Stop();
         }
-        #endif
+#endif
 
+        float camerarot = GameObject.FindGameObjectWithTag("MainCamera").transform.rotation.eulerAngles.z;
+        Vector2 tmp = dir;
+        dir.x = (tmp.x * Mathf.Cos(camerarot / 180f * Mathf.PI) - tmp.y * Mathf.Sin(camerarot / 180f * Mathf.PI));
+        dir.y = (tmp.x * Mathf.Sin(camerarot / 180f * Mathf.PI) + tmp.y * Mathf.Cos(camerarot / 180f * Mathf.PI));
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("PoleDot"))
         {
             if (Mathf.Sqrt(Mathf.Abs(go.transform.position.x - transform.position.x) * Mathf.Abs(go.transform.position.x - transform.position.x) + Mathf.Abs(go.transform.position.y - transform.position.y) * Mathf.Abs(go.transform.position.y - transform.position.y)) <
@@ -177,63 +210,81 @@ public class Follow : MonoBehaviour {
             }
         }
         maxDistance = new Vector3(10f, 10f, 10f);
-        if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+        if (path.isSymmetric || path.isMirroredVert || path.isMirroredHor)
         {
-            if (moveHor)
+            Vector3 orig = GameObject.FindGameObjectWithTag("Core").GetComponent<Core>().activePath.GetComponent<ActivePath>().pointer.transform.position;
+            if (path.isMirroredHor)
             {
-                transform.Translate(new Vector3(dir.x /*+ Mathf.Sign(dir.x) * Mathf.Abs(dir.y)*/, 0f, 0f));
+                transform.position = new Vector3(orig.x, - (path.pole.GetComponent<Pole>().height - 1) * 5f - orig.y, orig.z);
             }
-            else
+            else if (path.isMirroredVert)
             {
-                if (Mathf.Abs(transform.position.y - nearestDot.transform.position.y) < eps)
-                {
-                    if (dir.x > 0 && nearestDot.GetComponent<PoleDot>().AllowedToRight())
-                    {
-                        transform.position = nearestDot.transform.position;
-                        transform.Translate(stepz);
-                        moveHor = !moveHor;
-                    }
-                    else if (dir.x < 0 && nearestDot.GetComponent<PoleDot>().AllowedToLeft())
-                    {
-                        transform.position = nearestDot.transform.position;
-                        transform.Translate(stepz);
-                        moveHor = !moveHor;
-                    }
-                }
-                else transform.Translate(new Vector3(0f, dir.y + Mathf.Sign(nearestDot.transform.position.y - transform.position.y) * Mathf.Abs(dir.x), 0f));
+                transform.position = new Vector3((path.pole.GetComponent<Pole>().width - 1) * 5f - orig.x, orig.y, orig.z);
+            }
+            else if (path.isSymmetric)
+            {
+                transform.position = new Vector3((path.pole.GetComponent<Pole>().width - 1) * 5f - orig.x, - (path.pole.GetComponent<Pole>().height - 1) * 5f - orig.y, orig.z);
             }
         }
         else
         {
-            if (!moveHor)
+            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
             {
-                transform.Translate(new Vector3(0f, dir.y /*+ Mathf.Sign(dir.y) * Mathf.Abs(dir.x)*/, 0f));
+                if (moveHor)
+                {
+                    transform.Translate(new Vector3(dir.x /*+ Mathf.Sign(dir.x) * Mathf.Abs(dir.y)*/, 0f, 0f));
+                }
+                else
+                {
+                    if (Mathf.Abs(transform.position.y - nearestDot.transform.position.y) < eps && (nearestDot.GetComponent<PoleDot>().AllowedToRight() || nearestDot.GetComponent<PoleDot>().AllowedToLeft()))
+                    {
+                        if (dir.x > 0 && nearestDot.GetComponent<PoleDot>().AllowedToRight())
+                        {
+                            transform.position = nearestDot.transform.position;
+                            transform.Translate(stepz);
+                            moveHor = !moveHor;
+                        }
+                        else if (dir.x < 0 && nearestDot.GetComponent<PoleDot>().AllowedToLeft())
+                        {
+                            transform.position = nearestDot.transform.position;
+                            transform.Translate(stepz);
+                            moveHor = !moveHor;
+                        }
+                    }
+                    else transform.Translate(new Vector3(0f, dir.y + Mathf.Sign(dir.y) * Mathf.Abs(dir.x) * 0.5f, 0f));
+                }
             }
             else
             {
-                if (Mathf.Abs(transform.position.x - nearestDot.transform.position.x) < eps)
+                if (!moveHor)
                 {
-                    if (dir.y > 0 && nearestDot.GetComponent<PoleDot>().AllowedToUp())
-                    {
-                        transform.position = nearestDot.transform.position;
-                        transform.Translate(stepz);
-                        currentLine = nearestDot.GetComponent<PoleDot>().up;
-                        moveHor = !moveHor;
-                    }
-                    else if (dir.y < 0 && nearestDot.GetComponent<PoleDot>().AllowedToDown())
-                    {
-                        transform.position = nearestDot.transform.position;
-                        transform.Translate(stepz);
-                        currentLine = nearestDot.GetComponent<PoleDot>().down;
-                        moveHor = !moveHor;
-                    }
+                    transform.Translate(new Vector3(0f, dir.y /*+ Mathf.Sign(dir.y) * Mathf.Abs(dir.x)*/, 0f));
                 }
-                else transform.Translate(new Vector3(dir.x + Mathf.Sign(nearestDot.transform.position.x - transform.position.x) * Mathf.Abs(dir.y), 0f, 0f));
+                else
+                {
+                    if (Mathf.Abs(transform.position.x - nearestDot.transform.position.x) < eps && (nearestDot.GetComponent<PoleDot>().AllowedToUp() || nearestDot.GetComponent<PoleDot>().AllowedToDown()))
+                    {
+                        if (dir.y > 0 && nearestDot.GetComponent<PoleDot>().AllowedToUp())
+                        {
+                            transform.position = nearestDot.transform.position;
+                            transform.Translate(stepz);
+                            currentLine = nearestDot.GetComponent<PoleDot>().up;
+                            moveHor = !moveHor;
+                        }
+                        else if (dir.y < 0 && nearestDot.GetComponent<PoleDot>().AllowedToDown())
+                        {
+                            transform.position = nearestDot.transform.position;
+                            transform.Translate(stepz);
+                            currentLine = nearestDot.GetComponent<PoleDot>().down;
+                            moveHor = !moveHor;
+                        }
+                    }
+                    else transform.Translate(new Vector3(dir.x + Mathf.Sign(dir.x) * Mathf.Abs(dir.y) * 0.5f, 0f, 0f));
+                }
             }
+
+            transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.y)), 0f) + stepz;
         }
-            
-        transform.position = new Vector3(Mathf.Min(rightLimit, Mathf.Max(leftLimit, transform.position.x)), Mathf.Min(upLimit, Mathf.Max(downLimit, transform.position.y)), 0f) + stepz;
-        
         
     }
 

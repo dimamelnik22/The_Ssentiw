@@ -6,6 +6,10 @@ public class CanvasScript : MonoBehaviour
 {
     public GameObject WelcomeTextPF;
     public GameObject EditorButtonPF;
+    public GameObject NextButtonPF;
+
+    private GameObject editButton;
+    private GameObject nextButton;
     
     public void ShowText()
     {
@@ -13,6 +17,12 @@ public class CanvasScript : MonoBehaviour
     }
     public void ShowEditorButton()
     {
-        Instantiate(EditorButtonPF, transform);
+        if (editButton == null)
+            editButton = Instantiate(EditorButtonPF, transform);
+    }
+    public void ShowNextButton()
+    {
+        if (nextButton == null)
+            nextButton = Instantiate(NextButtonPF, transform);
     }
 }
