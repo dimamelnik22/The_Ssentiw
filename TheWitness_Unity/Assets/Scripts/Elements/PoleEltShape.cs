@@ -7,6 +7,8 @@ public class PoleEltShape : Elements
     [Header("Prefabs")]
     public GameObject BlockPF;
 
+    public bool rot = false;
+
     [HideInInspector]
     public List<List<bool>> boolList = new List<List<bool>>();
     
@@ -51,8 +53,14 @@ public class PoleEltShape : Elements
         {
             scale = 1f + 0.5f / size;
         }
+        if (rot) scale *= 0.85f;
         transform.localScale = new Vector3(scale,scale,1f);
-        transform.Translate(new Vector3(-boolList[0].Count + 1, boolList.Count - 1, 0f) / 2 * scale);
+        foreach (var block in blocks)
+        {
+            block.transform.Translate(new Vector3(-boolList[0].Count + 1, boolList.Count - 1, 0f) / 2 * scale);
+        }
+        //transform.Translate(new Vector3(-0.3f, 0f, 0f) / 2 * scale);
+        if (rot) transform.Rotate(new Vector3(0f, 0f, 20f));
     }
 
     public new void ShowUnsolvedColor()

@@ -256,6 +256,7 @@ public class Editor : MonoBehaviour
             shapeElt.location = sq.gameObject;
             CutBoolList();
             shapeElt.GetComponent<PoleEltShape>().boolList = boolList;
+            shapeElt.GetComponent<PoleEltShape>().rot = true;
             shapeElt.GetComponent<PoleEltShape>().Create();
             ButtonShapePlace();
             //HideEditButtons();

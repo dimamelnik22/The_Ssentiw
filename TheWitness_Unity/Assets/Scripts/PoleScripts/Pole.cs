@@ -112,6 +112,20 @@ public class Pole : MonoBehaviour
         {
             public List<List<bool>> s;
             public int count;
+            public bool rot = false;
+            public void Rotate()
+            {
+                List<List<bool>> tmp = new List<List<bool>>();
+                for (int i = 0; i < s[0].Count; ++i)
+                {
+                    tmp.Add(new List<bool>());
+                    for (int j = s.Count - 1; j >=0; --j)
+                    {
+                        tmp[i].Add(s[j][i]);
+                    }
+                }
+                s = tmp;
+            }
         }
         public int height;
         public int width;
@@ -236,7 +250,7 @@ public class Pole : MonoBehaviour
                 bool flag = true;
                 for(int j = 0; j < shapesList.Count;++j)
                 {
-                    if(shapesList[j].s == shapes[i].GetComponent<PoleEltShape>().boolList)
+                    if(shapesList[j].s == shapes[i].GetComponent<PoleEltShape>().boolList && shapesList[j].rot == shapes[i].GetComponent<PoleEltShape>().rot)
                     {
                         shapesList[j].count += 1;
                         flag = false;
@@ -247,6 +261,7 @@ public class Pole : MonoBehaviour
                 {
                     shapesList.Add(new Shape());
                     shapesList[shapesList.Count - 1].count = 1;
+                    shapesList[shapesList.Count - 1].rot = shapes[i].GetComponent<PoleEltShape>().rot;
                     shapesList[shapesList.Count - 1].s = shapes[i].GetComponent<PoleEltShape>().boolList;
                 }
             }
@@ -263,7 +278,7 @@ public class Pole : MonoBehaviour
             if (shapesCount == 0)
             {
                 if (q == 0) return true;
-                for (int y = 0; y < zoneBoolList.Count;++y)
+                for (int y = 0; y < zoneBoolList.Count; ++y)
                 {
                     for (int x = 0; x < zoneBoolList[y].Count; ++x)
                     {
@@ -281,38 +296,29 @@ public class Pole : MonoBehaviour
                 {
                     for(int k = 0;k < shapesList.Count;++k)
                     {
-                        
-                        if (shapesList[k].count == 0 ||
-                            ii + shapesList[k].s.Count > zoneBoolList.Count ||
-                            jj + shapesList[k].s[0].Count > zoneBoolList[0].Count) continue;
-                        bool filt = true;
-                        for (int y = 0; y < shapesList[k].s.Count;++y)
+                        for (int r = 0; r < 4; ++r)
                         {
-                            for (int x = 0; x < shapesList[k].s[0].Count;++x)
+                            if (shapesList[k].count == 0 ||
+                                ii + shapesList[k].s.Count > zoneBoolList.Count ||
+                                jj + shapesList[k].s[0].Count > zoneBoolList[0].Count)
                             {
-                                if(shapesList[k].s[y][x] && !zoneBoolList[ii+y][jj+x])
-                                {
-                                    filt = false;
-                                    break;
-                                }
+                                if (shapesList[k].rot) shapesList[k].Rotate();
+                                continue;
                             }
-                            if (!filt) break;
-                        }
-                        if (filt)
-                        {
+                            bool filt = true;
                             for (int y = 0; y < shapesList[k].s.Count; ++y)
                             {
-                                for (int x = 0; x < shapesList[k].s[y].Count; ++x)
+                                for (int x = 0; x < shapesList[k].s[0].Count; ++x)
                                 {
-                                    if (shapesList[k].s[y][x])
+                                    if (shapesList[k].s[y][x] && !zoneBoolList[ii + y][jj + x])
                                     {
-                                        zoneBoolList[ii + y][jj + x] = false;
+                                        filt = false;
+                                        break;
                                     }
                                 }
+                                if (!filt) break;
                             }
-                            shapesList[k].count--;
-                            bool flag = FillShape(zoneBoolList, shapesList, ii, jj, 1);
-                            if (!flag)
+                            if (filt)
                             {
                                 for (int y = 0; y < shapesList[k].s.Count; ++y)
                                 {
@@ -320,16 +326,31 @@ public class Pole : MonoBehaviour
                                     {
                                         if (shapesList[k].s[y][x])
                                         {
-                                            zoneBoolList[ii + y][jj + x] = true;
+                                            zoneBoolList[ii + y][jj + x] = false;
                                         }
                                     }
                                 }
-                                shapesList[k].count++;
+                                shapesList[k].count--;
+                                bool flag = FillShape(zoneBoolList, shapesList, ii, jj, 1);
+                                if (!flag)
+                                {
+                                    for (int y = 0; y < shapesList[k].s.Count; ++y)
+                                    {
+                                        for (int x = 0; x < shapesList[k].s[y].Count; ++x)
+                                        {
+                                            if (shapesList[k].s[y][x])
+                                            {
+                                                zoneBoolList[ii + y][jj + x] = true;
+                                            }
+                                        }
+                                    }
+                                    shapesList[k].count++;
+                                }
+                                else return true;
                             }
-                            else return true;
-                        
+                            if (!shapesList[k].rot) break;
+                            else shapesList[k].Rotate();
                         }
-                        
                     }
                     if (zoneBoolList[ii][jj])
                     {
@@ -340,69 +361,6 @@ public class Pole : MonoBehaviour
             }
             return false;
         }
-        /*public bool FillShape(List<List<bool>> zoneBoolList, List<List<List<bool>>> shapesList, int i)
-        {
-            if (i == shapesList.Count)
-            {
-                if (i == 0) return true;
-                for (int y = 0; y < zoneBoolList.Count; y++)
-                    for (int x = 0; x < zoneBoolList[0].Count; x++)
-                        if (zoneBoolList[y][x])
-                        {
-                            return false;
-                        }
-                return true;
-            }
-            
-            bool fits = true;
-            for (int k = 0; k < zoneBoolList.Count - shapesList[i].Count + 1; k++)
-            {
-                for (int j = 0; j < zoneBoolList[0].Count - shapesList[i][0].Count + 1; j++)
-                {
-                    fits = true;
-                    for (int y = 0; y < shapesList[i].Count; y++)
-                    {
-                        for (int x = 0; x < shapesList[i][0].Count; x++)
-                            if (shapesList[i][y][x] && !zoneBoolList[k+y][j+x])
-
-                            {
-                                fits = false;
-                                break;
-                            }
-                        if (!fits) break;
-                    }
-                    if (fits)
-                    {
-                        for (int y = 0; y < shapesList[i].Count; y++)
-                        {
-                            for (int x = 0; x < shapesList[i][0].Count; x++)
-                                if (shapesList[i][y][x])
-                                {
-                                    zoneBoolList[k + y][j + x] = false;
-                                }
-                        }
-                        fits = FillShape(zoneBoolList, shapesList, i + 1);
-                        if (!fits)
-                        {
-                            for (int y = 0; y < shapesList[i].Count; y++)
-                            {
-                                for (int x = 0; x < shapesList[i][0].Count; x++)
-                                    if (shapesList[i][y][x])
-                                    {
-                                        zoneBoolList[k + y][j + x] = true;  
-                                    }
-                            }
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    
-                }
-            }
-            return false;
-        }*/
         public bool CheckSolution(GameObject square)
         {
             if (height == 1 || width == 1) return true;

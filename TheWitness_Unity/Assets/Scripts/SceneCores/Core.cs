@@ -490,9 +490,7 @@ static void Main() {
                 activePath.GetComponent<ActivePath>().InitWithClone(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
                 
                 break;
-        }
-
-        //55s0444*f0040*p032312*t022111312111*
+        }   
 
         foreach (GameObject start in activePole.GetComponent<Pole>().starts)
             activePole.GetComponent<Pole>().StartScaling(start);
@@ -503,7 +501,7 @@ static void Main() {
         {
             activePath = Instantiate(ActivePathPF);
             //activePath.GetComponent<ActivePath>().Init(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
-            activePath.GetComponent<ActivePath>().InitWithClone(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
+            activePath.GetComponent<ActivePath>().Init(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
 
         }
 
