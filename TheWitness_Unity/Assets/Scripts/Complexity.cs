@@ -391,24 +391,30 @@ public static class Complexity
             {
                 if (mustVisit[i].dot1 == mustVisit[j].dot1)
                 {
+                    mustVisit[i].dot1.GetComponent<PoleDot>().isUsedByPlayer = true;
                     mustVisit[i].dot1 = mustVisit[j].dot2;
                     mustVisit.RemoveAt(j);
                     --j;
                 }
                 else if (mustVisit[i].dot1 == mustVisit[j].dot2)
                 {
+
+                    mustVisit[i].dot1.GetComponent<PoleDot>().isUsedByPlayer = true;
                     mustVisit[i].dot1 = mustVisit[j].dot1;
                     mustVisit.RemoveAt(j);
                     --j;
                 }
                 else if (mustVisit[i].dot2 == mustVisit[j].dot1)
                 {
+
+                    mustVisit[i].dot2.GetComponent<PoleDot>().isUsedByPlayer = true;
                     mustVisit[i].dot2 = mustVisit[j].dot2;
                     mustVisit.RemoveAt(j);
                     --j;
                 }
                 else if (mustVisit[i].dot2 == mustVisit[j].dot2)
                 {
+                    mustVisit[i].dot2.GetComponent<PoleDot>().isUsedByPlayer = true;
                     mustVisit[i].dot2 = mustVisit[j].dot1;
                     mustVisit.RemoveAt(j);
                     --j;

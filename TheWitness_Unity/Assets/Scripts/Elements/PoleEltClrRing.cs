@@ -9,14 +9,14 @@ public class PoleEltClrRing : Elements {
 
     private void Awake()
     {
-
+        Generate();
     }
     public void Generate()
     {
 
         Color[] colors = new Color[NumOfPoint];
-        Color normal = c.color;
-        Color transparent = new Color(c.color.r, c.color.g, c.color.b,0);
+        //Color normal = c.color;
+        //Color transparent = new Color(c.color.r, c.color.g, c.color.b,0);
 
         vertices = new Vector3[NumOfPoint];
         GetComponent<MeshFilter>().mesh = mesh = new Mesh();
@@ -32,13 +32,13 @@ public class PoleEltClrRing : Elements {
             {
                 dx = r1 * Mathf.Cos(angle);
                 dy = r1 * Mathf.Sin(angle);
-                colors[i] = normal;
+                //colors[i] = normal;
             }
             else
             {
                 dx = r2 * Mathf.Cos(angle);
                 dy = r2 * Mathf.Sin(angle);
-                colors[i] = transparent;
+                //colors[i] = normal;
             }
             vertices[i] = new Vector3(dx, dy);
         }
@@ -58,7 +58,7 @@ public class PoleEltClrRing : Elements {
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        mesh.colors = colors;
+        //mesh.colors = colors;
 
 
         mesh.RecalculateNormals();
