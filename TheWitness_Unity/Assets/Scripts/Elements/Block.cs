@@ -24,31 +24,43 @@ public class Block : MonoBehaviour
 
         //Color[] colors = new Color[(xSize + 1)];
 
-        vertices = new Vector3[(xSize + 1) * (ySize + 1)];
+        vertices = new Vector3[(xSize + ySize+2) * 2];
         normals = new Vector3[vertices.Length];
-        int[] triangles = new int[xSize * ySize * 6];
+        int[] triangles = new int[(xSize + ySize+2) * 6];
+        vertices[0] = new Vector3(0, 0);
 
-
-        for (int i = 0, y = 0; y <= ySize; y++)
         {
-            for (int x = 0; x <= xSize; x++, i++)
+            int i = 1;
+            int y = 0;
+            int x = 0;
+            for (; x <= xSize; x++, ++i)
+            {
+                SetVertex(i, (float)x, (float)y);
+
+            }
+            for (++y; y <= ySize; y++, ++i)
+            {
+                SetVertex(i, (float)x, (float)y);
+            }
+            for (--x; x >= 0; x--, ++i)
+            {
+                SetVertex(i, (float)x, (float)y);
+
+            }
+            for (--y; y >= 0; y--, ++i)
             {
                 SetVertex(i, (float)x, (float)y);
             }
         }
-
-        for (int ti = 0, vi = 0, y = 0; y < ySize; y++, vi++)
+        for (int i = 0; i < (xSize + ySize+2) * 2-1; ++i)
         {
-            for (int x = 0; x < xSize; x++, ti += 6, vi++)
-            {
-                triangles[ti] = vi;
-                triangles[ti + 3] = triangles[ti + 2] = vi + 1;
-                triangles[ti + 4] = triangles[ti + 1] = vi + xSize + 1;
-                triangles[ti + 5] = vi + xSize + 2;
-            }
+            triangles[3 * i] = 0;
+            triangles[3 * i + 1] = i + 1;
+            triangles[3 * i + 2] = i;
         }
-
-
+        triangles[3 * ((xSize + ySize+2) * 2 - 1)] = 0;
+        triangles[3 * ((xSize + ySize+2) * 2 - 1) + 1] = 1;
+        triangles[3 * ((xSize + ySize+2) * 2 - 1) + 2] = (xSize + ySize + 2) * 2 -1;
         mesh.vertices = vertices;
         mesh.normals = normals;
         mesh.triangles = triangles;

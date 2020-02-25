@@ -9,7 +9,6 @@ public class PoleEltClrRing : Elements {
 
     private void Awake()
     {
-        Generate();
     }
     public void Generate()
     {
@@ -38,7 +37,7 @@ public class PoleEltClrRing : Elements {
             {
                 dx = r2 * Mathf.Cos(angle);
                 dy = r2 * Mathf.Sin(angle);
-                //colors[i] = normal;
+                //colors[i] = transparent;
             }
             vertices[i] = new Vector3(dx, dy);
         }
