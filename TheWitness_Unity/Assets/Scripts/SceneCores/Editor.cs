@@ -243,6 +243,7 @@ public class Editor : MonoBehaviour
             activePole.GetComponent<Pole>().eltsManager.clrRing.Add(clrRing);
             clrRing.location = sq.gameObject;
             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c = activePole.GetComponent<Pole>().ColorMaterials[NumOfColor];
+            sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().Generate();
             sq.GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material = activePole.GetComponent<Pole>().ColorMaterials[NumOfColor];
             NumOfColor--;
             ButtonAddClrRing();

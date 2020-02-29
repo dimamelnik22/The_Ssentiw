@@ -738,20 +738,18 @@ public class Pole : MonoBehaviour
         int y;
         int f;
         string hex = "";
-        for (int i = 0; i < input.Length; i += 10)
+        for (int i = 0; i < input.Length; i += 3)
         {
             x = input[i] - '0';
             y = input[i + 1] - '0';
-            Color col = new Color((float)int.Parse(input.Substring(i + 2, 2), System.Globalization.NumberStyles.HexNumber) / 255,
-                                (float)int.Parse(input.Substring(i + 4, 2), System.Globalization.NumberStyles.HexNumber) / 255,
-                                (float)int.Parse(input.Substring(i + 6, 2), System.Globalization.NumberStyles.HexNumber) / 255,
-                                (float)int.Parse(input.Substring(i + 8, 2), System.Globalization.NumberStyles.HexNumber) / 255);
+            f = input[i + 2] - '0';
 
-            //PoleSquare sq = poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().right.GetComponent<PoleSquare>();
-            //sq.hasElem = true;
-            //sq.element = Instantiate(ClrRingPF, sq.transform).GetComponent<Elements>();
-            //sq.element.GetComponent<Renderer>().material.color = col;
-            //sq.element.GetComponent<PoleEltClrRing>().c.color = col;// rework !!
+            PoleSquare sq = poleDots[y][x].GetComponent<PoleDot>().down.GetComponent<PoleLine>().right.GetComponent<PoleSquare>();
+            sq.hasElem = true;
+            sq.element = Instantiate(ClrRingPF, sq.transform).GetComponent<Elements>();
+            sq.element.GetComponent<Renderer>().material = ColorMaterials[f];
+            sq.element.GetComponent<PoleEltClrRing>().c = ColorMaterials[f];
+            sq.element.GetComponent<PoleEltClrRing>().Generate();
         }
     }
     public void ShapeDecode(string input)
@@ -1421,88 +1419,90 @@ public class Pole : MonoBehaviour
     }
 
     //????
-    public void SetClrStar(int starQuantity)
+    public void SetClrStar(int starZoneQuantity)
     {
-        int k = 0;
-        List<List<GameObject>> localZones = new List<List<GameObject>>();
-        for (int i = 0; i < zone.Count; ++i)
+        int availableZone = 0;
+        List<List<GameObject>> localZones = new List<List<GameObject>>(zone);
+        for (int i = 0; i < localZones.Count; ++i)
         {
-            localZones.Add(new List<GameObject>());
-            for (int j = 0; j < zone[i].Count; ++j)
+            int sumElt = 0;
+            for(int j = 0;j < localZones[i].Count;++j)
             {
-                if (zone[i][j].GetComponent<PoleSquare>().hasElem == false)
+                if(localZones[i][j].GetComponent<PoleSquare>().hasElem)
                 {
-                    localZones[i].Add(zone[i][j]);
+                    sumElt++;
                 }
             }
-        }
-        for (int i = 0; i < zone.Count; ++i)
-        {
-            if (localZones[i].Count > 1)
+            if (localZones[i].Count - sumElt > 1) // this does not take into account a zone with 1 clrRing or with shape only
             {
-                k += 2;
+                availableZone += 2;
             }
-
-
-        }
-        if (starQuantity <= k)
-        {
-            while(starQuantity > 0)
+            else
             {
-                int i;
-                do
+                localZones.RemoveAt(i);
+                --i;
+            }
+        }
+        if (starZoneQuantity <= availableZone)
+        {
+            Debug.Log("1");
+            while(starZoneQuantity > 0)
+            {
+                Debug.Log("2");
+                int i = Core.PolePreferences.MyRandom.GetRandom() % localZones.Count;
+                int numShape = 0;
+                int numClrRing = 0;
+                for (int g = 0; g < localZones[i].Count; ++g)
                 {
-                    i = Core.PolePreferences.MyRandom.GetRandom() % localZones.Count;
-                } while (localZones[i].Count < 2);
-                if(localZones[i].Count == zone[i].Count - 1 && Core.PolePreferences.MyRandom.GetRandom() % 2 == 0)
-                {
-                    Color c = new Color();
-                    for (int g = 0; g < zone[i].Count; ++g)
+                    if (localZones[i][g].GetComponent<PoleSquare>().hasElem && localZones[i][g].GetComponent<PoleSquare>().element.GetComponent<PoleEltShape>() != null)
                     {
-                        if (zone[i][g].GetComponent<PoleSquare>().hasElem == true)
+                        numShape++;
+                    }
+                    if (localZones[i][g].GetComponent<PoleSquare>().hasElem && localZones[i][g].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
+                    {
+                        numClrRing++;
+                    }
+                }
+                Debug.Log(numClrRing+" "+ numShape);
+                if (numClrRing > 1)
+                {
+                    List<Material> localStarClr = new List<Material>(ColorMaterials);
+                    for(int j = 0; j < localZones[i].Count; ++j)
+                    {
+                        if(localZones[i][j].GetComponent<PoleSquare>().hasElem && localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>() != null)
                         {
-                            c = zone[i][g].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
+                            localStarClr.Remove(localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c);
                             break;
                         }
                     }
-                    int j = Core.PolePreferences.MyRandom.GetRandom() % localZones[i].Count;
-                    localZones[i][j].GetComponent<PoleSquare>().hasElem = true;
-                    localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPF, localZones[i][j].transform.position, ClrStarPF.transform.rotation).GetComponent<Elements>();
-                    localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c.color = c;
-                    eltsManager.clrRing.Add(localZones[i][j].GetComponent<PoleSquare>().element);
-                    localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = c;
-                    localZones[i].RemoveAt(j);
-                }
-                else
-                {
-                    Color c = new Color();
-                    for(int j = 0;j < zone[i].Count;++j)
+                    for (int j = 0; j < localZones[i].Count; ++j)
                     {
-                        if(zone[i][j].GetComponent<PoleSquare>().hasElem == true)
+                        if (localZones[i][j].GetComponent<PoleSquare>().hasElem)
                         {
-                            c = zone[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c.color;
-                            break;
+                            localZones[i].RemoveAt(j);
+                            --j;
                         }
                     }
-                    int t;
-                    do
+                    int clrNum = Core.PolePreferences.MyRandom.GetRandom() % localStarClr.Count;
+                    for (int r = 0; r < 2; ++r)
                     {
-                        t = Core.PolePreferences.MyRandom.GetRandom() % colorStar.Count;
-                    } while (c == colorStar[t]);
-                    for (int g = 0; g < 2; ++g)
-                    { 
+                        Debug.Log("generate");
                         int j = Core.PolePreferences.MyRandom.GetRandom() % localZones[i].Count;
                         localZones[i][j].GetComponent<PoleSquare>().hasElem = true;
-                        localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPF, localZones[i][j].transform.position, ClrStarPF.transform.rotation).GetComponent<Elements>();
-                        localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c.color = colorStar[t];
+                        localZones[i][j].GetComponent<PoleSquare>().element = Instantiate(ClrStarPF, localZones[i][j].transform).GetComponent<Elements>();
+                        localZones[i][j].GetComponent<PoleSquare>().element.location = localZones[i][j];
+                        localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().c = localStarClr[clrNum];
+                        localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<PoleEltStar>().Generate();
                         eltsManager.clrRing.Add(localZones[i][j].GetComponent<PoleSquare>().element);
-                        localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material.color = colorStar[t];
+                        localZones[i][j].GetComponent<PoleSquare>().element.GetComponent<MeshRenderer>().material = localStarClr[clrNum];
                         localZones[i].RemoveAt(j);
                     }
                 }
-                starQuantity -= 2;
-                localZones.RemoveAt(i);
-                zone.RemoveAt(i);
+                else
+                {
+
+                }
+                starZoneQuantity--;
             }
         }
         else

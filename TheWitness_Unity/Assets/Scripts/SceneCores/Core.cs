@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -160,10 +161,15 @@ public class Core : MonoBehaviour {
             {
                 str += ring.location.GetComponent<PoleSquare>().indexJ;// rework points not set 
                 str += ring.location.GetComponent<PoleSquare>().indexI;
-                str += Color2HEX((int)(ring.c.color.r * 255));
-                str += Color2HEX((int)(ring.c.color.g * 255));
-                str += Color2HEX((int)(ring.c.color.b * 255));
-                str += Color2HEX((int)(ring.c.color.a * 255));
+                var c = activePole.GetComponent<Pole>().ColorMaterials;
+                for (int i = 0; i < activePole.GetComponent<Pole>().ColorMaterials.Length;++i)
+                {
+                    if(c[i] == ring.c)
+                    {
+                        str += i;
+                        break;
+                    }
+                }
             }
             str += "*";
         }
@@ -237,7 +243,7 @@ public class Core : MonoBehaviour {
         GUIUtility.systemCopyBuffer = str;
         Debug.Log(str);
 
-        File.AppendAllText("Assets/Resources/LvlsShapesSum.txt", str + Environment.NewLine);
+        File.AppendAllText("Assets/Resources/LvlsShapesSum.txt", Encoding.ASCII.GetBytes(str) + Environment.NewLine);
 
         /*using System; 
 class Demo { 
@@ -462,7 +468,8 @@ static void Main() {
                     //}
                     activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                     activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
-                    activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);
+                    activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);                    activePole.GetComponent<Pole>().SetClrStar(1);
+
                     foreach (GameObject start in activePole.GetComponent<Pole>().starts)
                         activePole.GetComponent<Pole>().StartScaling(start);
                 }
@@ -502,8 +509,8 @@ static void Main() {
         if (activePath == null)
         {
             activePath = Instantiate(ActivePathPF);
-            //activePath.GetComponent<ActivePath>().Init(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
-            activePath.GetComponent<ActivePath>().InitWithClone(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
+            activePath.GetComponent<ActivePath>().Init(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
+            //activePath.GetComponent<ActivePath>().InitWithClone(activePole, activePole.GetComponent<Pole>().starts, activePole.GetComponent<Pole>().finishes);
 
         }
 
