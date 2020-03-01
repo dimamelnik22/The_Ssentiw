@@ -54,7 +54,15 @@ public class PoleEltShape : Elements
         transform.localScale = new Vector3(scale,scale,1f);
         transform.Translate(new Vector3(-boolList[0].Count + 1, boolList.Count - 1, 0f) / 2 * scale);
     }
-
+    public void reSetColor(Material material)
+    {
+        c = material;
+        foreach(var b in blocks)
+        {
+            b.GetComponent<Renderer>().material = material;
+        }
+        
+    }
     public new void ShowUnsolvedColor()
     {
         colorlerping = true;

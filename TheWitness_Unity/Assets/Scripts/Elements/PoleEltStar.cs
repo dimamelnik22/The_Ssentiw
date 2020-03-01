@@ -16,10 +16,10 @@ public class PoleEltStar : Elements
         vertices = new Vector3[NumOfPoint + 1];
         GetComponent<MeshFilter>().mesh = mesh = new Mesh();
         mesh.name = "Procedural Grid";
-        float r1 = 0.7f;
-        float r2 = 0.5f;
+        float r1 = 0.8f;
+        float r2 = 0.6f;
         vertices[0] = new Vector3(0, 0);
-        for (int i = 1; i < NumOfPoint; ++i)
+        for (int i = 1; i < NumOfPoint+1; ++i)
         {
             float dx;
             float dy;
@@ -44,7 +44,9 @@ public class PoleEltStar : Elements
             triangles[3 * i + 1] = i + 1;
             triangles[3 * i + 2] = i;
         }
-
+        triangles[3 * NumOfPoint] = 0;
+        triangles[3 * NumOfPoint + 1] = 1;
+        triangles[3 * NumOfPoint + 2] = NumOfPoint;
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         Debug.Log("all good");

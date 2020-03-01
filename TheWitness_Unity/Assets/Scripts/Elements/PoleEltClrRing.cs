@@ -20,8 +20,8 @@ public class PoleEltClrRing : Elements {
         vertices = new Vector3[NumOfPoint];
         GetComponent<MeshFilter>().mesh = mesh = new Mesh();
         mesh.name = "Procedural Grid";
-        float r1 = 0.5f;
-        float r2 = 0.35f;
+        float r1 = 1f;
+        float r2 = 0.72f;
         for (int i = 0; i < NumOfPoint ; ++i)
         {
             float dx;

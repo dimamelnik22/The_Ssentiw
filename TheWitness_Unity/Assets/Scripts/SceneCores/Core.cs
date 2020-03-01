@@ -58,7 +58,7 @@ public class Core : MonoBehaviour {
             public static void SetSeed(int s = 0)
             {
                 seed = s;
-                r = s== 0 ? new System.Random():new System.Random(seed);
+                r = s == 0 ? new System.Random() : new System.Random(seed);
             }
             public static int GetRandom()
             {
@@ -468,7 +468,7 @@ static void Main() {
                     //}
                     activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
                     activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
-                    activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);                    activePole.GetComponent<Pole>().SetClrStar(1);
+                    activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);                    activePole.GetComponent<Pole>().SetClrStar(2);
 
                     foreach (GameObject start in activePole.GetComponent<Pole>().starts)
                         activePole.GetComponent<Pole>().StartScaling(start);
