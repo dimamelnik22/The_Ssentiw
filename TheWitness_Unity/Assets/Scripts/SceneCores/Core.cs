@@ -154,10 +154,10 @@ public class Core : MonoBehaviour {
             }
             str += "*";
         }
-        if (activePole.GetComponent<Pole>().eltsManager.clrRing.Count != 0)
+        if (activePole.GetComponent<Pole>().eltsManager.clrRings.Count != 0)
         {
             str += "r";
-            foreach (var ring in activePole.GetComponent<Pole>().eltsManager.clrRing)
+            foreach (var ring in activePole.GetComponent<Pole>().eltsManager.clrRings)
             {
                 str += ring.location.GetComponent<PoleSquare>().indexJ;// rework points not set 
                 str += ring.location.GetComponent<PoleSquare>().indexI;

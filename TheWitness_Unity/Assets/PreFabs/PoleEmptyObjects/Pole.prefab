@@ -58,6 +58,8 @@ MonoBehaviour:
     type: 3}
   ClrStarPF: {fileID: 3168919368890927314, guid: ddfcfc1334682354db6ae1dd0b3c17b5,
     type: 3}
+  ClrStarPrefab: {fileID: 6316823548575678373, guid: ddfcfc1334682354db6ae1dd0b3c17b5,
+    type: 3}
   SquerePF: {fileID: 1392544281636072, guid: c520f12892cf3964e9f8a17875d605a7, type: 3}
   DotPF: {fileID: 710910093910903250, guid: b37c0ed4bd4d3b340bdf432ad63a3024, type: 3}
   VerticalLinePF: {fileID: 3285808869419000342, guid: 2f4353df3550431489ad27b487a08d34,

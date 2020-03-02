@@ -17,7 +17,7 @@ public class PoleEltStar : Elements
         GetComponent<MeshFilter>().mesh = mesh = new Mesh();
         mesh.name = "Procedural Grid";
         float r1 = 0.8f;
-        float r2 = 0.6f;
+        float r2 = 0.62f;
         vertices[0] = new Vector3(0, 0);
         for (int i = 1; i < NumOfPoint+1; ++i)
         {
@@ -49,7 +49,6 @@ public class PoleEltStar : Elements
         triangles[3 * NumOfPoint + 2] = NumOfPoint;
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        Debug.Log("all good");
 
         mesh.RecalculateNormals();
     }

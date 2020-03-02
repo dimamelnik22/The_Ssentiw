@@ -352,7 +352,7 @@ public static class Complexity
         }
         poleDots = pDots;
         List<Elements> points = myPole.eltsManager.points;
-        List<Elements> clrRing = myPole.eltsManager.clrRing;
+        List<Elements> clrRing = myPole.eltsManager.clrRings;
         List<Elements> shape = myPole.eltsManager.shapes;
         List<GameObject> globalStarts = myPole.starts;
         List<GameObject> globalFinishes = myPole.finishes;

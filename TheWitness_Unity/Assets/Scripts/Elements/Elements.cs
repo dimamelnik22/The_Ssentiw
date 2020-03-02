@@ -40,6 +40,7 @@ public class Elements : MonoBehaviour
     {
         tored = true;
         colorlerping = true;
+        countdown = 0.5f;
         StartCoroutine(Do());
     }
     public void ShowNormalizedColor()

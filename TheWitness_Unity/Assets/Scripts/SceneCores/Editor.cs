@@ -240,7 +240,7 @@ public class Editor : MonoBehaviour
             Elements clrRing = Instantiate(ClrRingPF, square.transform).GetComponent<Elements>();
             sq.GetComponent<PoleSquare>().hasElem = true;
             sq.GetComponent<PoleSquare>().element = clrRing;
-            activePole.GetComponent<Pole>().eltsManager.clrRing.Add(clrRing);
+            activePole.GetComponent<Pole>().eltsManager.clrRings.Add(clrRing);
             clrRing.location = sq.gameObject;
             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().c = activePole.GetComponent<Pole>().ColorMaterials[NumOfColor];
             sq.GetComponent<PoleSquare>().element.GetComponent<PoleEltClrRing>().Generate();
