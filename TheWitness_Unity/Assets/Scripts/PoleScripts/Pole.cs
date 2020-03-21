@@ -601,7 +601,7 @@ public class Pole : MonoBehaviour
     }
     public void NormalizeColors()
     {
-        foreach (Elements clrRing in eltsManager.clrRings)
+        /*foreach (Elements clrRing in eltsManager.clrRings)
         {
             clrRing.ShowNormalizedColor();
         }
@@ -616,8 +616,7 @@ public class Pole : MonoBehaviour
         foreach (Elements clrStar in eltsManager.clrStars)
         {
             clrStar.ShowNormalizedColor();
-        }
-        /*
+        }*/
         foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltPoint"))
         {
             point.GetComponent<PoleEltPoint>().ShowNormalizedColor();
@@ -631,7 +630,11 @@ public class Pole : MonoBehaviour
         foreach (GameObject point in GameObject.FindGameObjectsWithTag("EltShape"))
         {
             point.GetComponent<PoleEltShape>().ShowNormalizedColor();
-        }*/
+        }
+        foreach (GameObject clrStar in GameObject.FindGameObjectsWithTag("EltStar"))
+        {
+            clrStar.GetComponent<PoleEltStar>().ShowNormalizedColor();
+        }
     }
     public void Init(int _height, int _width)
     {
@@ -1667,7 +1670,61 @@ public class Pole : MonoBehaviour
             return;
         }
     }
+    public void GenerateSolution(List<int> countSqureInZones)
+    {
+        List<PoleSquare> freeZone = new List<PoleSquare>();
+        List<List<PoleSquare>> zoneForGeneration = new List<List<PoleSquare>>();
+        for (int y = 0; y < height - 1; ++y)
+        {
+            for (int x = 0; x < width - 1; ++x)
+            {
+                freeZone.Add(poleDots[y][x].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down.GetComponent<PoleSquare>());
+            }
+        }
+        for (int i = 0; i < countSqureInZones.Count; ++i)
+        {
+            zoneForGeneration.Add(new List<PoleSquare>());
+            int y;
+            int x;
+            if (Core.PolePreferences.MyRandom.GetRandom() % 2 == 1)
+            {
+                y = Core.PolePreferences.MyRandom.GetRandom() % (height - 2);
+                if (Core.PolePreferences.MyRandom.GetRandom() % 2 == 1)
+                {
+                    x = 0;
+                }
+                else
+                {
+                    x = width - 2;
+                }
+            }
+            else
+            {
+                x = Core.PolePreferences.MyRandom.GetRandom() % (width - 2);
+                if (Core.PolePreferences.MyRandom.GetRandom() % 2 == 1)
+                {
+                    y = 0;
+                }
+                else
+                {
+                    y = height - 2;
+                }
+                y = Core.PolePreferences.MyRandom.GetRandom() % (height - 2);
+            }
+            bool squareFree = true;
+            if(freeZone.Contains(poleDots[y][x].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down.GetComponent<PoleSquare>())) squareFree = false;
 
+            Debug.Log(x+" "+y);           
+
+            if (squareFree)
+            {
+                zoneForGeneration[i].Add(poleDots[y][x].GetComponent<PoleDot>().right.GetComponent<PoleLine>().down.GetComponent<PoleSquare>());
+                
+                freeZone.Remove(zoneForGeneration[i][zoneForGeneration[i].Count - 1]);
+            }
+        }
+
+    }
     //skip
     public void CreateSolution()
     {

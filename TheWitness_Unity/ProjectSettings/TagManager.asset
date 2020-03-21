@@ -22,6 +22,8 @@ TagManager:
   - ShapeBool
   - EditButton
   - Canvas
+  - EltStar
+  - Complexity
   layers:
   - Default
   - TransparentFX

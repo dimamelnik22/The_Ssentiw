@@ -30,6 +30,8 @@ public class Core : MonoBehaviour {
     public Material EltWrongPointMaterial;
 
     [HideInInspector]
+    private Complexity complexityScript;
+    [HideInInspector]
     public bool pathIsShown = false;
     [HideInInspector]
     public GameObject activePath;
@@ -43,12 +45,12 @@ public class Core : MonoBehaviour {
     //need to change later
     public static class PolePreferences
     {
-        
         public static int height = 5;
         public static int width = 6;
         public static int complexity = 20;
         public static int numOfPoints = 7;
         public static int numOfCircles = 10;
+        public static int numOfClrRing = 5;
         public static int numOfStars = 5;
         public static int numOfShapes = 20;
         public static System.Random r = new System.Random();
@@ -69,11 +71,21 @@ public class Core : MonoBehaviour {
         }
         public static string info = "";
         public static string mode = "normal";
+        public static void CopyData(Complexity com)
+        {
+            height = com.height;
+            width = com.width;
+            numOfShapes = com.numOfShapes;
+            numOfPoints = com.numOfPoints;
+            numOfClrRing = com.numOfClrRing;
+            numOfStars = com.numOfStars;
+        }
+
     }
     public static List<string> LevelList = new List<string>();
     public void ButtonComplexity()
     {
-        Complexity.countComplexity(activePole.GetComponent<Pole>().poleDots, activePole.GetComponent<Pole>());
+        CalculateComplexity.countComplexity(activePole.GetComponent<Pole>().poleDots, activePole.GetComponent<Pole>());
     }
     //????
     public void ButtonLoadPuzzle()
@@ -421,11 +433,14 @@ static void Main() {
 
     //check update
     void Start() {
-         
+        complexityScript = this.transform.GetComponent<Complexity>();
+
+        complexityScript.GenerateCoefficient(complexityScript.GetDifficult());
+        PolePreferences.CopyData(complexityScript);
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 10;
-        int height = PolePreferences.height;
-        int width = PolePreferences.width;
+        int height = complexityScript.height;
+        int width = complexityScript.width;
         activePole = Instantiate(PolePF);
         switch (SceneManager.GetActiveScene().name)
         {
@@ -453,22 +468,39 @@ static void Main() {
                     dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
                     activePole.GetComponent<Pole>().AddFinish(dot);
                     borderDots.Remove(dot);
-
-                    activePole.GetComponent<Pole>().CreateSolution();
-
-                    //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
-                    //activePole.GetComponent<Pole>().AddStart(dot);
-                    //borderDots.Remove(dot);
-                    //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
-                    //activePole.GetComponent<Pole>().AddFinish(dot);
-                    //borderDots.Remove(dot);
-                    //for (int a = 0; a < 3; ++a)
-                    //{
-                    //    activePole.GetComponent<Pole>().poleLines[PolePreferences.MyRandom.GetRandom() % activePole.GetComponent<Pole>().poleLines.Count].GetComponent<PoleLine>().cut = true;
-                    //}
-                    activePole.GetComponent<Pole>().GenerateShapes(Core.PolePreferences.numOfShapes);
-                    activePole.GetComponent<Pole>().SetClrRing(activePole.GetComponent<Pole>().quantityColor, activePole.GetComponent<Pole>().quantityRing);
-                    activePole.GetComponent<Pole>().GeneratePoints(PolePreferences.numOfPoints);                    activePole.GetComponent<Pole>().SetClrStar(2);
+                    List<int> numOfZones = new List<int>();                    numOfZones.Add(2);
+                    numOfZones.Add(2);
+                    activePole.GetComponent<Pole>().CreateSolution();
+                    activePole.GetComponent<Pole>().GenerateSolution(numOfZones);
+
+
+                    //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
+
+                    //activePole.GetComponent<Pole>().AddStart(dot);
+
+                    //borderDots.Remove(dot);
+
+                    //dot = borderDots[Core.PolePreferences.MyRandom.GetRandom() % borderDots.Count];
+
+                    //activePole.GetComponent<Pole>().AddFinish(dot);
+
+                    //borderDots.Remove(dot);
+
+                    //for (int a = 0; a < 3; ++a)
+
+                    //{
+
+                    //    activePole.GetComponent<Pole>().poleLines[PolePreferences.MyRandom.GetRandom() % activePole.GetComponent<Pole>().poleLines.Count].GetComponent<PoleLine>().cut = true;
+
+                    //}
+
+
+
+                    activePole.GetComponent<Pole>().GenerateShapes(complexityScript.numOfShapes);
+                    activePole.GetComponent<Pole>().SetClrRing(complexityScript.quantityColor , complexityScript.numOfClrRing);
+                    activePole.GetComponent<Pole>().GeneratePoints(complexityScript.numOfPoints);                    activePole.GetComponent<Pole>().SetClrStar(complexityScript.numOfStars);
+
+
 
                     foreach (GameObject start in activePole.GetComponent<Pole>().starts)
                         activePole.GetComponent<Pole>().StartScaling(start);
