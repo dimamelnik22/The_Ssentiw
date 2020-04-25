@@ -99,6 +99,7 @@ public class Editor : MonoBehaviour
             activePole.GetComponent<Pole>().poleDots[0][0].GetComponent<PoleDot>().CreateDot();
             activePole.GetComponent<Pole>().StartScaling(activePole.GetComponent<Pole>().poleDots[0][0]);
         }
+        Debug.Log(GenDirector.Generate(400, new List<string>(), null));
     }
     public void ButtonAddStart()
     {

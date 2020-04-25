@@ -45,8 +45,9 @@ public class Pole : MonoBehaviour
 
     //no need?
     private PathDotStack dotData;
+    [HideInInspector]
+	public readonly List<List<GameObject>> zone = new List<List<GameObject>>();
 
-	private readonly List<List<GameObject>> zone = new List<List<GameObject>>();
     private readonly List<List<List<GameObject>>> shapes = new List<List<List<GameObject>>>();
     private readonly List<List<List<GameObject>>> activeShapes = new List<List<List<GameObject>>>();
     private readonly List<GameObject> scalingLines = new List<GameObject>();
@@ -889,25 +890,25 @@ public class Pole : MonoBehaviour
     public void GetZoneFreeDots(GameObject begin, List<GameObject> dots)
     {
         var newdots = new List<GameObject>();
-        if (begin.GetComponent<PoleDot>().up != null && !dots.Contains(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up)
+        if (begin.GetComponent<PoleDot>().AllowedToUp() && !dots.Contains(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up)
             && !begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedByPlayer && !begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up.GetComponent<PoleDot>().isUsedBySolution)
         {
             dots.Add(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up);
             newdots.Add(begin.GetComponent<PoleDot>().up.GetComponent<PoleLine>().up);
         }
-        if (begin.GetComponent<PoleDot>().right != null && !dots.Contains(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right)
+        if (begin.GetComponent<PoleDot>().AllowedToRight() && !dots.Contains(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right)
             && !begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedByPlayer && !begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right.GetComponent<PoleDot>().isUsedBySolution)
         {
             dots.Add(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
             newdots.Add(begin.GetComponent<PoleDot>().right.GetComponent<PoleLine>().right);
         }
-        if (begin.GetComponent<PoleDot>().down != null && !dots.Contains(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down)
+        if (begin.GetComponent<PoleDot>().AllowedToDown() && !dots.Contains(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down)
             && !begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedByPlayer && !begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down.GetComponent<PoleDot>().isUsedBySolution)
         {
             dots.Add(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down);
             newdots.Add(begin.GetComponent<PoleDot>().down.GetComponent<PoleLine>().down);
         }
-        if (begin.GetComponent<PoleDot>().left != null && !dots.Contains(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left)
+        if (begin.GetComponent<PoleDot>().AllowedToLeft() && !dots.Contains(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left)
             && !begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedByPlayer && !begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left.GetComponent<PoleDot>().isUsedBySolution)
         {
             dots.Add(begin.GetComponent<PoleDot>().left.GetComponent<PoleLine>().left);
@@ -1510,7 +1511,7 @@ public class Pole : MonoBehaviour
         //FindPath(starts[0], finishes, false);
         SetZone();
         SetShapes();
-        
+        Debug.Log(GenDirector.Generate(500, new List<string>(), this));
     }
     public void GenerateShapes(int zoneSize)
     {
